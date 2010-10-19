@@ -22,12 +22,10 @@
   <ItemGroup>
     <None Include="hge.dll" />
     <None Include="bass.dll" />
-    <None Include="lib\gcc\libhge.a" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\vc\hge.lib" />
     <Library Include="lib\vc\hgehelp.lib" />
-    <Library Include="lib\bc\hge.lib" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\hge.h">

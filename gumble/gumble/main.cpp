@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 	else
 	{
-		MessageBox(NULL, "mdr", "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
+		MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL);
 	}
 	hge->System_Shutdown();
 	hge->Release();

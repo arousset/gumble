@@ -71,10 +71,8 @@
   <ItemGroup>
     <None Include="bass.dll" />
     <None Include="hge.dll" />
-    <None Include="lib\gcc\libhge.a" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\bc\hge.lib" />
     <Library Include="lib\vc\hge.lib" />
     <Library Include="lib\vc\hgehelp.lib" />
   </ItemGroup>
