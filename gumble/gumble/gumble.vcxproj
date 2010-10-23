@@ -50,6 +50,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>lib\vc\hge.lib;%(AdditionalDependencies);</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBC.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -70,7 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bass.dll" />
-    <None Include="bgintro.jpg" />
     <None Include="hge.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -91,10 +93,6 @@
     <ClInclude Include="include\hgesprite.h" />
     <ClInclude Include="include\hgestrings.h" />
     <ClInclude Include="include\hgevector.h" />
-    <ClInclude Include="resource.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resource.res" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
