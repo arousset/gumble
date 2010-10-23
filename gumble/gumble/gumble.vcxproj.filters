@@ -22,9 +22,6 @@
   <ItemGroup>
     <None Include="hge.dll" />
     <None Include="bass.dll" />
-    <None Include="bgintro.jpg">
-      <Filter>Fichiers sources</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\vc\hge.lib" />
@@ -70,13 +67,5 @@
     <ClInclude Include="include\hgevector.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="resource.res">
-      <Filter>Fichiers sources</Filter>
-    </Resource>
   </ItemGroup>
 </Project>

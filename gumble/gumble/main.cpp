@@ -5,7 +5,7 @@
 #include <hgeanim.h>
 
 HGE *hge = 0;
-hgeResourceManager* myRes;
+hgeResourceManager* Res;
 hgeSprite* bgSprite;
 
 
@@ -22,6 +22,7 @@ bool FrameFunc() // Fonction appelée à chaque image
  hge->Gfx_BeginScene();
  hge->Gfx_Clear(0);  //clear the screen, filling it with black
  bgSprite->RenderStretch(0, 0, 800, 600); //render the background sprite stretched
+ //bgSprite->Render(0, 0);
  hge->Gfx_EndScene(); 
 
  return false;
@@ -36,12 +37,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->System_SetState(HGE_SHOWSPLASH, false);
 	hge->System_SetState(HGE_SCREENWIDTH, 800);
 	hge->System_SetState(HGE_SCREENHEIGHT, 600);
+	hge->System_SetState(HGE_LOGFILE,"bootlog.txt");
 
 
 	if(hge->System_Initiate()) 
 	{ 
-		myRes = new hgeResourceManager("resource.res");  
-		bgSprite = myRes->GetSprite("bgSprite");
+		Res = new hgeResourceManager("resource.res");  
+		bgSprite = Res->GetSprite("bgSprite");
 		hge->System_Start();
 	}
 	else
@@ -49,7 +51,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		MessageBox(NULL, hge->System_GetErrorMessage(), "Error", MB_OK | MB_ICONERROR | MB_APPLMODAL); // Erreur si le système ne s'initialise pas
 	}
 	
-	delete myRes;
+	delete Res;
 
 	hge->System_Shutdown();
 	hge->Release();
