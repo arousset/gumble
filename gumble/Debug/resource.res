@@ -1,6 +1,6 @@
 Texture background
 {
- filename=bgintro.jpg
+ filename=bgj.jpg
 }
 Sprite bgSprite
 {
