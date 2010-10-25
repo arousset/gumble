@@ -11,6 +11,16 @@
 HGE *hge = 0;
 hgeResourceManager* Res;
 hgeSprite* bgSprite;
+
+// Sprite pour les boules
+hgeAnimation* b_rouge; //rouge
+hgeAnimation* b_vert; // vert
+hgeAnimation* b_bleu; //bleu
+hgeAnimation* b_orange; //orange
+hgeAnimation* b_jaune; //jaune
+hgeAnimation* b_violet; //violet
+hgeAnimation* b_gris; //gris
+
 /*
 // Some resource handles
 HEFFECT				snd;
@@ -23,6 +33,8 @@ hgeSprite			*spr;
 */
 bool FrameFunc() // Fonction appelée à chaque image
 {
+	
+
  /* int id;
   static int lastid=0;
   float dt=hge->Timer_GetDelta();
@@ -54,10 +66,16 @@ bool FrameFunc() // Fonction appelée à chaque image
 
 bool RenderFunc()
 {
+	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
+	b_rouge->Update(dt);  //update the animation
+
 	// Render graphics
 	hge->Gfx_BeginScene();
 	bgSprite->Render(0, 0);
+	//b_rouge->Render(250, 70);
+	b_rouge->RenderStretch(250,70,290,110);
 	//gui->Render();
+	
 	hge->Gfx_EndScene();
 
 	return false;
@@ -82,7 +100,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Res = new hgeResourceManager("resource.res");  
 		// Chargement du background
 		bgSprite = Res->GetSprite("bgSprite");
-			
+		b_rouge = Res->GetAnimation("b");
+		b_rouge->Play();  //start playback of animation
+
 		// Chargement textures et sons
 		//tex=hge->Texture_Load("cursor.png");
 		//snd=hge->Effect_Load("boing_2.wav");
@@ -90,6 +110,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Chargement de la police et du sprite du cursor
 		//fnt=new hgeFont("font1.fnt");
 		//spr=new hgeSprite(tex,0,0,32,32);
+
 
 		// Initialise le GUI
 		/*gui=new hgeGUI();
