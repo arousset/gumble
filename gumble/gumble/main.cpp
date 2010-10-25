@@ -11,7 +11,7 @@
 HGE *hge = 0;
 hgeResourceManager* Res;
 hgeSprite* bgSprite;
-
+/*
 // Some resource handles
 HEFFECT				snd;
 HTEXTURE			tex;
@@ -20,10 +20,10 @@ HTEXTURE			tex;
 hgeGUI				*gui;
 hgeFont				*fnt;
 hgeSprite			*spr;
-
+*/
 bool FrameFunc() // Fonction appelée à chaque image
 {
-  int id;
+ /* int id;
   static int lastid=0;
   float dt=hge->Timer_GetDelta();
 
@@ -48,7 +48,7 @@ bool FrameFunc() // Fonction appelée à chaque image
   }
   else if(id) { lastid=id; gui->Leave(); }
 
-
+  */
  return false;
 }
 
@@ -57,7 +57,7 @@ bool RenderFunc()
 	// Render graphics
 	hge->Gfx_BeginScene();
 	bgSprite->Render(0, 0);
-	gui->Render();
+	//gui->Render();
 	hge->Gfx_EndScene();
 
 	return false;
@@ -84,15 +84,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		bgSprite = Res->GetSprite("bgSprite");
 			
 		// Chargement textures et sons
-		tex=hge->Texture_Load("cursor.png");
-		snd=hge->Effect_Load("boing_2.wav");
+		//tex=hge->Texture_Load("cursor.png");
+		//snd=hge->Effect_Load("boing_2.wav");
 		
 		// Chargement de la police et du sprite du cursor
-		fnt=new hgeFont("font1.fnt");
-		spr=new hgeSprite(tex,0,0,32,32);
+		//fnt=new hgeFont("font1.fnt");
+		//spr=new hgeSprite(tex,0,0,32,32);
 
 		// Initialise le GUI
-		gui=new hgeGUI();
+		/*gui=new hgeGUI();
 
 		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play"));
 		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Options"));
@@ -103,17 +103,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		gui->SetCursor(spr);
 		gui->SetFocus(1);
-		gui->Enter();
+		gui->Enter();*/
 
 		// Let's rock now!
 		hge->System_Start();
 
 		// Libération des ressoureces
-		delete gui;
+		/*delete gui;
 	    delete fnt;
 	    delete spr;
 	    hge->Texture_Free(tex);
-	    hge->Effect_Free(snd);
+	    hge->Effect_Free(snd);*/
 	}
 	
 	hge->System_Shutdown();
