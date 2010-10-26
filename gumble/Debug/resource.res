@@ -16,38 +16,46 @@ Texture boule
 Animation br
 {
  texture=boule
- rect=0, 0, 30.5, 30
+ rect=0, 0, 32, 32
  frames=4
- fps=2
- mode=FORWARD,LOOP
+ fps=4
+ mode=FORWARD,LOOP,PINGPONG
 }
 
-Animation bv
+Animation bj
 {
  texture=boule
- rect=30.5, 30, 30.5, 30
+ rect=0, 32, 32, 32
  frames=4
- fps=2
- mode=FORWARD,LOOP
-}
-
-
-Animation bb
-{
- texture=boule
- rect= 61, 60, 30.5, 30
- frames=4
- fps=2
- mode=FORWARD,LOOP
+ fps=8
+ mode=FORWARD,LOOP,PINGPONG
 }
 
 
 Animation bo
 {
  texture=boule
- rect=91.5, 90, 30.5, 30
+ rect= 0, 64, 32, 32
  frames=4
- fps=2
- mode=FORWARD,LOOP
+ fps=6
+ mode=FORWARD,LOOP,PINGPONG
 }
 
+
+Animation bb
+{
+ texture=boule
+ rect=0, 96, 32, 32
+ frames=4
+ fps=3
+ mode=FORWARD,LOOP,PINGPONG
+}
+
+Animation bv
+{
+ texture=boule
+ rect=0, 128, 32, 32
+ frames=4
+ fps=2
+ mode=FORWARD,LOOP,PINGPONG
+}
