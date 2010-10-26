@@ -15,9 +15,9 @@ hgeSprite* bgSprite;
 char* pMap = NULL; // pointeur sur la desctiption de la map
 int sizeX, sizeY;
 float fScale =27;
-const int xMap = 290; // abscisse de la plus basse ligne pour afficher les boules
+const int xMap = 280; // abscisse de la plus basse ligne pour afficher les boules
 const int yMap = 400; // ordonnée de la plus basse ligne pour afficher les boules
-const float bouleSize = 40; // taille de la boule
+const float bouleSize = 37; // taille de la boule
 float timeDown = 3; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
@@ -90,7 +90,7 @@ bool RenderFunc()
 			char* pMapTmp = new char[(sizeX*sizeY)];		// pour cela, on créé un nouveau tableau		
 			for(int cpt = 0; cpt < (sizeX*sizeY);cpt++)   // puis on recopie les valeurs de pMap en enlevant la premiere ligne
 			{
-				pMapTmp[cpt] = pMap[cpt+7];
+				pMapTmp[cpt] = pMap[cpt+sizeX];
 			}
 			char* toFree = pMap;
 			pMap = pMapTmp;
@@ -101,10 +101,10 @@ bool RenderFunc()
 		}
 	}
 
-	/*b_rouge->Update(dt);  //update the animation
+	b_rouge->Update(dt);  //update the animation
 	b_vert->Update(dt);
 	b_bleu->Update(dt);
-	b_orange->Update(dt);*/
+	b_orange->Update(dt);
 
 	// Render graphics
 	hge->Gfx_BeginScene();
