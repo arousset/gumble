@@ -16,7 +16,7 @@ char* pMap = NULL; // pointeur sur la desctiption de la map
 int sizeX, sizeY;
 float fScale =27;
 const int xMap = 280; // abscisse de la plus basse ligne pour afficher les boules
-const int yMap = 400; // ordonnée de la plus basse ligne pour afficher les boules
+const int yMap = 370; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSize = 37; // taille de la boule
 float timeDown = 3; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
@@ -142,7 +142,7 @@ bool RenderFunc()
 				float x2 = xMap+bouleSize+((x-1)*bouleSize+decalage);
 				float y2 = yMap-bouleSize-((y-1)*bouleSize);
 				if(isDowning)
-				{
+				{	
 					if(animDowning < bouleSize)
 					{
 						// Modification des coordonnées des boules si elles sont en train de descendre (descente progressive sur les y)
@@ -156,26 +156,32 @@ bool RenderFunc()
 						timeCpt = 0;
 					}
 				}
-
+					
 				float posX =x*fScale;
 
 				int index =y*sizeX+x;
-
-				switch (pMap[index])
+				
+				if(isDowning && y == 8)
+				{	
+				}
+				else
 				{
-					 case 'r': {
-						  b_rouge->RenderStretch(x1, y1, x2, y2);break;
-					}
-					case 'v': {
-						  b_vert->RenderStretch(x1, y1, x2, y2);break;
-					}
-					case 'b': {
-						  b_bleu->RenderStretch(x1, y1, x2, y2);break;
-					}
-					case 'o': {
-						  b_orange->RenderStretch(x1, y1, x2, y2);break;
-					}
-			   }
+					switch (pMap[index])
+					{
+						 case 'r': {
+							  b_rouge->RenderStretch(x1, y1, x2, y2);break;
+						}
+						case 'v': {
+							  b_vert->RenderStretch(x1, y1, x2, y2);break;
+						}
+						case 'b': {
+							  b_bleu->RenderStretch(x1, y1, x2, y2);break;
+						}
+						case 'o': {
+							  b_orange->RenderStretch(x1, y1, x2, y2);break;
+						}
+				   }
+				}
 			}
 		}
 	}	
