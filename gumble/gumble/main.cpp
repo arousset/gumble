@@ -16,9 +16,10 @@ char* pMap = NULL; // pointeur sur la desctiption de la map
 int sizeX, sizeY;
 float fScale =27;
 const int xMap = 280; // abscisse de la plus basse ligne pour afficher les boules
-const int yMap = 370; // ordonnée de la plus basse ligne pour afficher les boules
-const float bouleSize = 37; // taille de la boule
-float timeDown = 3; // temps avant de faire tomber les boules(secondes)
+const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
+const float bouleSizeX = 37; // taille de la boule
+const float bouleSizeY = 31;
+float timeDown = 0.5; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
@@ -117,7 +118,7 @@ bool RenderFunc()
 		float posY =y*fScale;
 		for(int x=0; x<sizeX; ++x)
 		{
-			if(y < 9)
+			if(y < 11)
 			{
 				if(y == 0 && x == 0 && isDowning) // si les boules sont en train de descendre, on leur attribut pour chaque image une position décalée de 0.05 px (descente petit à petit)
 					animDowning += 0.05;
@@ -125,7 +126,7 @@ bool RenderFunc()
 
 				float decalage = 0.0;       // si la ligne est paire, on la décale
 				if((y+swapPair)%2 == 0)
-					decalage = bouleSize/2;
+					decalage = bouleSizeX/2;
 				/*
 				On utilise swapPair pour regarder si on doit décaler ou non la ligne
 				Exemple : premieres secondes du jeu, la ligne 5 est impaire et la ligne 6 est paire
@@ -137,17 +138,17 @@ bool RenderFunc()
 				*/
 
 				// Nouvelles positions pour l'affichages des boules
-				float x1 = xMap+((x-1)*bouleSize+decalage);
-				float y1 = yMap-((y-1)*bouleSize);
-				float x2 = xMap+bouleSize+((x-1)*bouleSize+decalage);
-				float y2 = yMap-bouleSize-((y-1)*bouleSize);
+				float x1 = xMap+((x-1)*bouleSizeX+decalage);
+				float y1 = yMap-((y-1)*bouleSizeY);
+				float x2 = xMap+bouleSizeX+((x-1)*bouleSizeX+decalage);
+				float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
 				if(isDowning)
 				{	
-					if(animDowning < bouleSize)
+					if(animDowning < bouleSizeX)
 					{
 						// Modification des coordonnées des boules si elles sont en train de descendre (descente progressive sur les y)
-						y1 -= (bouleSize-animDowning);
-						y2 -= (bouleSize-animDowning);
+						y1 -= (bouleSizeX-animDowning);
+						y2 -= (bouleSizeX-animDowning);
 					}
 					else
 					{
@@ -161,7 +162,7 @@ bool RenderFunc()
 
 				int index =y*sizeX+x;
 				
-				if(isDowning && y == 8)
+				if(isDowning && y == 10)
 				{	
 				}
 				else
@@ -260,8 +261,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		/*gui=new hgeGUI();
 
 		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,bouleSize0,0.1f,"Options"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,4bouleSize,0.2f,"Instructions"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,bouleSizeX0,0.1f,"Options"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,4bouleSizeX,0.2f,"Instructions"));
 		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
 		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
 
