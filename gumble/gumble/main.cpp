@@ -8,10 +8,17 @@
 #include "hgefont.h"
 #include "hgegui.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <time.h>
+
 
 HGE *hge = 0;
 hgeResourceManager* Res;
 hgeSprite* bgSprite;
+hgeSprite* game_over;
+hgeSprite* you_win;
+
 char* pMap = NULL; // pointeur sur la desctiption de la map
 int sizeX, sizeY;
 float fScale =27;
@@ -28,11 +35,19 @@ float speedY = 0.05; // vitesse de la boule du joueur
 float speedX = 0.1; // inclinaison de la boule du joueur
 
 
+float mouseX, mouseY; // Coordonnées de la souris
+
+bool lunched = true; // Permet de savoir si la boule courante a été lancé ou non
+int alea = 0; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
+
 //test
 float posboulex = 240+(320/2)-(bouleSizeX/2);
 float posbouley = yMap-5;
 bool jesus = true;
 //test
+
+// Sprite pour le bouton du menu
+hgeAnimation* bt_menu; // bouton menu sur l'espace de jeux
 
 // Sprite pour les boules
 hgeAnimation* b_rouge; //rouge
@@ -43,16 +58,23 @@ hgeAnimation* b_jaune; //jaune
 hgeAnimation* b_violet; //violet
 hgeAnimation* b_gris; //gris
 
-/*
+
 // Some resource handles
-HEFFECT				snd;
+//HEFFECT				snd;
 HTEXTURE			tex;
 
 // Pointeurs pour HGE object
 hgeGUI				*gui;
-hgeFont				*fnt;
+//hgeFont				*fnt;
 hgeSprite			*spr;
-*/
+
+// Fonction permettant de générer un nombre aléatoire entre 2 bornes [x-y]
+int my_rand ()
+{
+	hge->Random_Seed(0);  //sets the seed to the current time
+	return (hge->Random_Int(1, 7));
+}
+
 
 int calculPosX(int x)
 {
@@ -90,35 +112,29 @@ bool Collision(int newX, int newY)
 
 bool FrameFunc() // Fonction appelée à chaque image
 {
-	
 	if(hge->Input_GetKeyState(HGEK_ESCAPE))
 		return true;
- /* int id;
-  static int lastid=0;
-  float dt=hge->Timer_GetDelta();
+	int id;
+	  static int lastid=0;
+	  float dt=hge->Timer_GetDelta();
 
-  // Si 'echap' => exit
-  if(hge->Input_GetKeyState(HGEK_ESCAPE)) { lastid=5; gui->Leave(); }
-
-  id=gui->Update(dt);
-  if(id == -1)
-  {
-    switch(lastid)
-    {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-        gui->SetFocus(1);
-        gui->Enter();
-        break;
-
-      case 5: return true;
-    }
-  }
-  else if(id) { lastid=id; gui->Leave(); }
-
-  */
+	  id=gui->Update(dt);
+	  if(id == -1)
+	  {
+		switch(lastid)
+		{
+		  case 1:
+		  case 2:
+		  case 3:
+		  case 4:
+			gui->SetFocus(1);
+			gui->Enter();
+			break;
+		  case 5: return true;
+		}
+	  }
+	  else if(id) { lastid=id; gui->Leave(); }
+  	
  return false;
 }
 
@@ -145,17 +161,34 @@ bool RenderFunc()
 		}
 	}
 
+	// Passe lunched à vrai (pour boule lancée) si espace pressé
+	if(hge->Input_GetKey()==HGEK_SPACE) lunched=true;  
+
+
+	hge->Input_GetMousePos(&mouseX, &mouseY);
+	
+
+	//Génerer un nombre aléatoire si la variable 'lunched' est à vrai
+	if(lunched==true)
+	{
+		alea = my_rand(); // Génére un nombre entre 1 et 7 compris
+		lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
+	}
+	
 	b_rouge->Update(dt);  //update the animation
 	b_vert->Update(dt);
 	b_bleu->Update(dt);
 	b_orange->Update(dt);
+	b_jaune->Update(dt);
+	b_violet->Update(dt);
+	b_gris->Update(dt);
+	//bt_menu->Update(dt);
 
 	// Render graphics
 	hge->Gfx_BeginScene();
 	bgSprite->Render(0, 0);
-	//b_rouge->Render(250, 70);
-	//b_rouge->RenderStretch(250,70,290,110);
-	//gui->Render();
+	bt_menu->Render(640,390);
+	gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
 	for(int y=0; y<sizeY; ++y)
 	{
 		float posY =y*fScale;
@@ -224,11 +257,50 @@ bool RenderFunc()
 						case 'o': {
 							  b_orange->RenderStretch(x1, y1, x2, y2);break;
 						}
+						case 'g': {
+							  b_gris->RenderStretch(x1, y1, x2, y2);break;
+						}
+						case 'j': {
+							  b_jaune->RenderStretch(x1, y1, x2, y2);break;
+						}
+						case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
+							  b_violet->RenderStretch(x1, y1, x2, y2);break;
+						}
 				   }
 				}
 			}
 		}
 	}	
+
+
+	/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
+	/* Bon Je sais c'est déguellasse car je code en dur les coordonnées :p */
+	switch (alea)
+	{
+		case 1: {
+			  b_rouge->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		}
+		case 2: {
+			  b_vert->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		}
+		case 3: {
+			  b_bleu->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		}
+		case 4: {
+			  b_orange->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		}
+		case 5: {
+			  b_gris->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		}
+		case 6: {
+			  b_jaune->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		}
+		case 7: {
+			  b_violet->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		}
+	}
+	
+	
 	// tests tout caca
 	if(jesus)
 	{
@@ -275,7 +347,7 @@ void LoadMap()
 	fgets(line, sizeof(line),f);
 	sizeY = atoi(line); // nombres de lignes
 
-	//!\\ La première ligne de la map est la ligne se tranvant le plus en bas sur le jeu. La dernière ligne de la map représente donc la ligne de boules le plus en haut possible
+	//!\\ La première ligne de la map est la ligne se trouvant le plus en bas sur le jeu. La dernière ligne de la map représente donc la ligne de boules le plus en haut possible
 
 	pMap = new char[sizeX*sizeY]; // la pointeur sur la map réserve la taille de la map en mémoire
 
@@ -309,39 +381,56 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Res = new hgeResourceManager("resource.res");  
 		// Chargement du background
 		bgSprite = Res->GetSprite("bgSprite");
+
+		//Chargement des différentes boules de couleurs
 		b_rouge = Res->GetAnimation("br");
 		b_vert = Res->GetAnimation("bv");
 		b_bleu = Res->GetAnimation("bb");
 		b_orange = Res->GetAnimation("bo");
+		b_jaune = Res->GetAnimation("bj");
+		b_violet = Res->GetAnimation("bvi");
+		b_gris = Res->GetAnimation("bgris");
+
+		// Chargement du 'GameOver' et du 'YouWin'
+		game_over = Res->GetAnimation("game_over");
+		you_win = Res->GetAnimation("you_win");
+	
+		// Chargement de l'animation du bouton 'menu' sur l'espace de jeux
+		bt_menu = Res->GetAnimation("bt_anim");
 
 		b_rouge->Play();  //start playback of animation
 		b_vert->Play();
 		b_bleu->Play();
 		b_orange->Play();
+		b_jaune->Play();
+		b_violet->Play();
+		b_gris->Play();
+		bt_menu->Play();
 		LoadMap(); // charge la map
 
 		// Chargement textures et sons
-		//tex=hge->Texture_Load("cursor.png");
+		tex=hge->Texture_Load("cursor.png");
 		//snd=hge->Effect_Load("boing_2.wav");
 		
 		// Chargement de la police et du sprite du cursor
 		//fnt=new hgeFont("font1.fnt");
-		//spr=new hgeSprite(tex,0,0,32,32);
+		spr=new hgeSprite(tex,0,0,32,32);
 
 
 		// Initialise le GUI
-		/*gui=new hgeGUI();
+		gui=new hgeGUI();
 
+		/*
 		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play"));
 		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,bouleSizeX0,0.1f,"Options"));
 		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,4bouleSizeX,0.2f,"Instructions"));
 		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
 		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
-
+		*/
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		gui->SetCursor(spr);
 		gui->SetFocus(1);
-		gui->Enter();*/
+		//gui->Enter();
 
 		// Let's rock now!
 		hge->System_Start();
