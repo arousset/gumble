@@ -14,6 +14,13 @@
 
 
 HGE *hge = 0;
+
+// Permet de créer un flux pour gérer la music
+HSTREAM myMusic;
+
+// Channel pour gere plusieurs flux musicaux
+HCHANNEL chan[2];
+
 hgeResourceManager* Res;
 hgeSprite* bgSprite;
 hgeSprite* game_over;
@@ -163,6 +170,8 @@ bool RenderFunc()
 
 	// Passe lunched à vrai (pour boule lancée) si espace pressé
 	if(hge->Input_GetKey()==HGEK_SPACE) lunched=true;  
+	
+	// Permet de récupérer les coordonnées de la souris
 	hge->Input_GetMousePos(&mouseX, &mouseY);
 	
 
@@ -409,6 +418,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 		// Chargement de l'animation du bouton 'menu' sur l'espace de jeux
 		bt_menu = Res->GetAnimation("bt_anim");
+
+		// Initialisation de la music
+		myMusic = Res->GetStream("theme");
+
+		// Jouer la music de fond 
+		chan[0] = hge->Stream_Play(myMusic, true);
 
 		b_rouge->Play();  //start playback of animation
 		b_vert->Play();
