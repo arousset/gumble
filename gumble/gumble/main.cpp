@@ -19,12 +19,20 @@ const int xMap = 280; // abscisse de la plus basse ligne pour afficher les boule
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 0.5; // temps avant de faire tomber les boules(secondes)
+float timeDown = 2; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
 float animDowning = 1; // utile pour faire une sorte d'animation lors de la descente des boules
+float speedY = 0.05; // vitesse de la boule du joueur
+float speedX = 0.1; // inclinaison de la boule du joueur
 
+
+//test
+float posboulex = 240+(320/2)-(bouleSizeX/2);
+float posbouley = yMap-5;
+bool jesus = true;
+//test
 
 // Sprite pour les boules
 hgeAnimation* b_rouge; //rouge
@@ -45,6 +53,41 @@ hgeGUI				*gui;
 hgeFont				*fnt;
 hgeSprite			*spr;
 */
+
+int calculPosX(int x)
+{
+	int mapX = 1;
+	while((320/8)*mapX < (x-xMap))
+		mapX++;
+	return mapX;
+}
+
+int calculPosY(int y)
+{
+	int mapY = 1; 
+	while((350/11)*mapY < (y-72))
+		mapY++;
+	mapY = 11-mapY;
+	return mapY;
+}
+
+bool Collision(int newX, int newY)
+{
+	int mapX = calculPosX(newX); 
+	int mapY = calculPosY(newY);
+	int index = mapY*sizeX+mapX;
+	bool bCollide = (pMap[index]!='x');
+
+	mapX = calculPosX(newX + bouleSizeX);
+	mapY = calculPosY(newY);
+	int index2 = mapY*sizeX+mapX;
+	bool bCollide2 = (pMap[index2]!='x');
+
+	if(bCollide || bCollide2)
+		return true;
+	return false;
+}
+
 bool FrameFunc() // Fonction appelée à chaque image
 {
 	
@@ -186,6 +229,35 @@ bool RenderFunc()
 			}
 		}
 	}	
+	// tests tout caca
+	if(jesus)
+	{
+		if(isDowning)
+		{
+			b_bleu->RenderStretch(posboulex-speedX, posbouley+speedY, posboulex+bouleSizeX-speedX, posbouley+bouleSizeX+speedY);
+		}
+		else
+		{
+			bool test = Collision(posboulex, posbouley);
+			if(!test)
+			{
+				if(posboulex <= 240 || posboulex+bouleSizeX >= 240+320)
+					speedX = -speedX;
+				b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
+				posbouley -= speedY;
+				posboulex += speedX;
+			}
+			else
+			{
+				int mapX = calculPosX(posboulex-speedX); 
+				int mapY = calculPosY(posbouley+speedY);
+				int index = mapY*sizeX+mapX;
+				pMap[index] = 'b';
+				jesus = false;
+			}
+		}
+	}
+	
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -193,7 +265,7 @@ bool RenderFunc()
 void LoadMap()
 {
 	FILE* f = NULL;
-	f = fopen("../Debug/map.txt", "rb"); // ouverture du fichier map
+	f = fopen("../Debug/map3.txt", "rb"); // ouverture du fichier map
 	if(f == NULL)
 		return;
 
