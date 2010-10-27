@@ -2,6 +2,42 @@ Texture background
 {
  filename=bgj.jpg
 }
+Texture anim_bt
+{
+ filename=anim_bt.png
+}
+
+Animation bt_anim
+{
+ texture=anim_bt
+ rect=0, 0, 130, 124
+ frames=2
+ fps=4
+ mode=FORWARD
+}
+
+Texture youwin
+{
+ filename=youwin.png
+}
+
+Sprite you_win
+{
+ texture=youwin
+ rect=0, 0, 231, 42 
+}
+
+Texture gameover
+{
+ filename=gameover.png
+}
+
+Sprite game_over
+{
+ texture=gameover
+ rect=0, 0, 276, 43
+}
+
 Sprite bgSprite
 {
  texture=background
@@ -27,7 +63,7 @@ Animation bj
  texture=boule
  rect=0, 32, 32, 32
  frames=4
- fps=8
+ fps=4
  mode=FORWARD,LOOP,PINGPONG
 }
 
@@ -55,6 +91,24 @@ Animation bv
 {
  texture=boule
  rect=0, 128, 32, 32
+ frames=4
+ fps=2
+ mode=FORWARD,LOOP,PINGPONG
+}
+
+Animation bvi
+{
+ texture=boule
+ rect=0, 160, 32, 32
+ frames=4
+ fps=2
+ mode=FORWARD,LOOP,PINGPONG
+}
+
+Animation bgris
+{
+ texture=boule
+ rect=0, 192, 32, 32
  frames=4
  fps=2
  mode=FORWARD,LOOP,PINGPONG
