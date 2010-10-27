@@ -113,3 +113,8 @@ Animation bgris
  fps=2
  mode=FORWARD,LOOP,PINGPONG
 }
+
+Stream theme
+{
+ filename=music.mp3
+}
