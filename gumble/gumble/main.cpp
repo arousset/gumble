@@ -33,7 +33,7 @@ bool isDowning = false; // les boules sont en train de descendre ?
 float animDowning = 1; // utile pour faire une sorte d'animation lors de la descente des boules
 float speedY = 0.05; // vitesse de la boule du joueur
 float speedX = 0.1; // inclinaison de la boule du joueur
-
+bool loose = false; // Permet de gérer si la partie est perdu
 
 float mouseX, mouseY; // Coordonnées de la souris
 
@@ -163,8 +163,6 @@ bool RenderFunc()
 
 	// Passe lunched à vrai (pour boule lancée) si espace pressé
 	if(hge->Input_GetKey()==HGEK_SPACE) lunched=true;  
-
-
 	hge->Input_GetMousePos(&mouseX, &mouseY);
 	
 
@@ -218,7 +216,7 @@ bool RenderFunc()
 				float y1 = yMap-((y-1)*bouleSizeY);
 				float x2 = xMap+bouleSizeX+((x-1)*bouleSizeX+decalage);
 				float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
-				if(isDowning)
+				if(isDowning && loose==false)
 				{	
 					if(animDowning < bouleSizeX)
 					{
@@ -228,6 +226,15 @@ bool RenderFunc()
 					}
 					else
 					{
+						
+						for(int i=0; i<7; i++)
+						{
+							if(pMap[i] != 'x')
+							{
+								loose = true;
+							}
+						}
+
 						animDowning = 1;
 						isDowning = false;
 						timeCpt = 0;
@@ -245,7 +252,7 @@ bool RenderFunc()
 				{
 					switch (pMap[index])
 					{
-						 case 'r': {
+						case 'r': {
 							  b_rouge->RenderStretch(x1, y1, x2, y2);break;
 						}
 						case 'v': {
@@ -272,6 +279,11 @@ bool RenderFunc()
 		}
 	}	
 
+	// Affiche le message GameOver 
+	if (loose == true)
+	{
+		game_over->Render(262,250);
+	}
 
 	/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
 	/* Bon Je sais c'est déguellasse car je code en dur les coordonnées :p */
@@ -392,8 +404,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		b_gris = Res->GetAnimation("bgris");
 
 		// Chargement du 'GameOver' et du 'YouWin'
-		game_over = Res->GetAnimation("game_over");
-		you_win = Res->GetAnimation("you_win");
+		game_over = Res->GetSprite("game_over");
+		you_win = Res->GetSprite("you_win");
 	
 		// Chargement de l'animation du bouton 'menu' sur l'espace de jeux
 		bt_menu = Res->GetAnimation("bt_anim");
