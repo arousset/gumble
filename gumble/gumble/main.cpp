@@ -26,6 +26,9 @@ hgeSprite* bgSprite;
 hgeSprite* game_over;
 hgeSprite* you_win;
 
+// Pointeur pour la police d'écriture
+hgeFont* font1;
+
 char* pMap = NULL; // pointeur sur la desctiption de la map
 int sizeX, sizeY;
 float fScale =27;
@@ -274,7 +277,7 @@ bool FrameFunc() // Fonction appelée à chaque image
 		}
 	  }
 	  else if(id) { lastid=id; gui->Leave(); }
-  	
+  
  return false;
 }
 
@@ -316,7 +319,6 @@ bool RenderFunc()
 	}
 
 	
-	
 	b_rouge->Update(dt);  //update the animation
 	b_vert->Update(dt);
 	b_bleu->Update(dt);
@@ -325,7 +327,7 @@ bool RenderFunc()
 	b_violet->Update(dt);
 	b_gris->Update(dt);
 	//bt_menu->Update(dt);
-	
+
 
 	// Render graphics
 	hge->Gfx_BeginScene();
@@ -427,6 +429,14 @@ bool RenderFunc()
 			}
 		}
 	}	
+			
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			float time = 0 ;
+			time = (int) hge->Timer_GetTime();
+			//time += hge->Timer_GetDelta();
+			font1->SetColor(ARGB(255,255,0,0));  //set color of text to black
+			font1->printf(660,200, HGETEXT_LEFT, "%f", time);
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	// Affiche le message GameOver 
@@ -540,8 +550,7 @@ void LoadMap()
 		memcpy(&pMap[iline*sizeX], line, sizeX);
 	}
 
-	fclose(f);
-	
+	fclose(f);	
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -573,6 +582,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		b_jaune = Res->GetAnimation("bj");
 		b_violet = Res->GetAnimation("bvi");
 		b_gris = Res->GetAnimation("bgris");
+
+		// Chargement de la police d'écriture
+		font1 = Res->GetFont("font1");
 
 		// Chargement du 'GameOver' et du 'YouWin'
 		game_over = Res->GetSprite("game_over");
