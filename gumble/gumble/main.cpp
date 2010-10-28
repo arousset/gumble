@@ -46,10 +46,12 @@ float speedX = 0.1; // inclinaison de la boule du joueur
 bool loose = false; // Permet de gérer si la partie est perdu
 float rot = 0; // Permet la rotation du canon
 float mouseX, mouseY; // Coordonnées de la souris
-float canonLocX = 333, canonLocY = 432; // Coordonnées pour le canon
-bool lunched = true; // Permet de savoir si la boule courante a été lancé ou non
-int alea = 0; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
+float canonLocX = 398, canonLocY = 498; // Coordonnées pour le canon
+bool lunched = false; // Permet de savoir si la boule courante a été lancé ou non
+int alea_c = 1; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
+int alea_n = 0; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
 
+bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
 
 //boolean pour stopper le temps
 bool stop_time = false;
@@ -60,8 +62,11 @@ int score = 0;
 // Variables pour gérer les boules 'courante' et 'suivante'
 	// Boule courante
 	char coul_bcourante;
-	float posX_bcourante;
-	float posY_bcourante;
+	float posX_bcourante = 0;
+	float posY_bcourante = 0;
+	
+	float posX_depart = 380; // Coordonnées de la boule de départ dans le canon
+	float posY_depart = 480;
 
 	// Boule suivante
 	char coul_bsuivante;
@@ -103,6 +108,8 @@ int my_rand ()
 	return (hge->Random_Int(1, 7));
 }
 
+
+
 void attrib_boule(int couleur)
 {
 	switch (couleur)
@@ -111,16 +118,16 @@ void attrib_boule(int couleur)
 			  coul_bcourante='r';break;
 		}
 		case 2: {
-			  coul_bcourante='r';break;
+			  coul_bcourante='v';break;
 		}
 		case 3: {
-			  coul_bcourante='r';break;
+			  coul_bcourante='b';break;
 		}
 		case 4: {
-			  coul_bcourante='r';break;
+			  coul_bcourante='o';break;
 		}
 		case 5: {
-			  coul_bcourante='r';break;
+			  coul_bcourante='g';break;
 		}
 		case 6: {
 			  coul_bcourante='j';break;
@@ -308,6 +315,51 @@ bool Collision(int newX, int newY)
 	return collision;
 }
 
+
+void lunched_boule(char couleur, float angle)
+{
+	bool test = Collision(posX_bcourante+(bouleSizeX/2), posY_bcourante+(bouleSizeX/2)); // methode 2 (en test)
+		if(!test)
+		{
+			switch (couleur)
+			{
+				case 'r': {
+					  b_rouge->RenderStretch(posX_bcourante,posY_bcourante,posX_bcourante+bouleSizeX,posY_bcourante+bouleSizeX);break;
+				}
+				case 'v': {
+					  b_vert->RenderStretch(posX_bcourante,posY_bcourante,posX_bcourante+bouleSizeX,posY_bcourante+bouleSizeX);break;
+				}
+				case 'b': {
+					  b_bleu->RenderStretch(posX_bcourante,posY_bcourante,posX_bcourante+bouleSizeX,posY_bcourante+bouleSizeX);break;
+				}
+				case 'o': {
+					  b_orange->RenderStretch(posX_bcourante,posY_bcourante,posX_bcourante+bouleSizeX,posY_bcourante+bouleSizeX);break;
+				}
+				case 'g': {
+					  b_gris->RenderStretch(posX_bcourante,posY_bcourante,posX_bcourante+bouleSizeX,posY_bcourante+bouleSizeX);break;
+				}
+				case 'j': {
+					  b_jaune->RenderStretch(posX_bcourante,posY_bcourante,posX_bcourante+bouleSizeX,posY_bcourante+bouleSizeX);break;
+				}
+				case 'w': {
+					  b_violet->RenderStretch(posX_bcourante,posY_bcourante,posX_bcourante+bouleSizeX,posY_bcourante+bouleSizeX);break;
+				}
+			}
+
+			posY_bcourante -= 1;
+		}
+		else
+		{
+			int x = calculPosX(posX_bcourante+(bouleSizeX/2));
+			int y = calculPosY(posY_bcourante+(bouleSizeX/2));
+			pMap[(y-1)*8+x-1] = couleur;
+			blunched_boule = false;
+			lunched=true;  
+		}
+}
+
+
+
 bool FrameFunc() // Fonction appelée à chaque image
 {
 	if(hge->Input_GetKeyState(HGEK_ESCAPE))
@@ -359,21 +411,40 @@ bool RenderFunc()
 		}
 	}
 
-	// Passe lunched à vrai (pour boule lancée) si espace pressé
-	if(hge->Input_GetKey()==HGEK_SPACE) lunched=true;  
 	
+
+	// Passe lunched à vrai (pour boule lancée) si espace pressé
+	if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
+	{
+			posX_bcourante = posX_depart;
+			posY_bcourante = posY_depart;
+			blunched_boule=true;
+	}
+
+
 	// Permet de récupérer les coordonnées de la souris
 	hge->Input_GetMousePos(&mouseX, &mouseY);
 	
 
-	//Génerer un nombre aléatoire si la variable 'lunched' est à vrai
+	//Génerer un nombre aléatoire si la variable 'lunched' est à vrai/////////////////////////////////////////////////////////////////////////////////////////////
 	if(lunched==true)
 	{
-		alea = my_rand(); // Génére un nombre entre 1 et 7 compris
+		alea_c = my_rand(); // Génére un nombre entre 1 et 7 compris pourl a boule courante
+		attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de boules
+		//alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+		//attrib_boule(alea_n); // idem
+
 		lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
 	}
+	
 
 	
+	// Render graphics
+	hge->Gfx_BeginScene();
+	bgSprite->Render(0, 0);
+	bt_menu->Render(640,390);
+	gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
+
 	b_rouge->Update(dt);  //update the animation
 	b_vert->Update(dt);
 	b_bleu->Update(dt);
@@ -384,11 +455,10 @@ bool RenderFunc()
 	//bt_menu->Update(dt);
 
 
-	// Render graphics
-	hge->Gfx_BeginScene();
-	bgSprite->Render(0, 0);
-	bt_menu->Render(640,390);
-	gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
+	if(blunched_boule)
+	{
+		lunched_boule(coul_bcourante, rot);
+	}
 
 	for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
 	{
@@ -500,7 +570,6 @@ bool RenderFunc()
 		font1->printf(678,142, HGETEXT_LEFT, "%.2f", time); // .2f pour afficher uniquement 2 décimales
 	}
 	
-
 	// Affiche le message GameOver 
 	if (loose == true)
 	{
@@ -519,40 +588,44 @@ bool RenderFunc()
 
 
 	// Affichage du canon
-	canon_img->SetHotSpot(0,0);
+	canon_img->SetHotSpot(65,65);
 	canon_img->RenderEx(canonLocX, canonLocY,rot);
 	
-	if(hge->Input_GetKeyState(HGEK_RIGHT)) rot += 0.1;
-	if(hge->Input_GetKeyState(HGEK_LEFT)) rot -= 0.1;
+		if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1) rot += 0.006; // utilisation de la valeur 1 MAGIC ! 
+		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1) rot -= 0.006;
+	
 
 	/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
 	/* Bon Je sais c'est déguellasse car je code en dur les coordonnées :p */
-	switch (alea)
+	if(!blunched_boule)
 	{
-		case 1: {
-			  b_rouge->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
-		}
-		case 2: {
-			  b_vert->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
-		}
-		case 3: {
-			  b_bleu->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
-		}
-		case 4: {
-			  b_orange->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
-		}
-		case 5: {
-			  b_gris->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
-		}
-		case 6: {
-			  b_jaune->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
-		}
-		case 7: {
-			  b_violet->RenderStretch(380,480,380+bouleSizeX,480+bouleSizeX);break;
+		switch (alea_c)
+		{
+			case 1: {
+				  b_rouge->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			}
+			case 2: {
+				  b_vert->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			}
+			case 3: {
+				  b_bleu->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			}
+			case 4: {
+				  b_orange->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			}
+			case 5: {
+				  b_gris->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			}
+			case 6: {
+				  b_jaune->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			}
+			case 7: {
+				  b_violet->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			}
 		}
 	}
 	
-	
+	/*
 	// tests tout caca
 	if(jesus)
 	{
@@ -584,11 +657,13 @@ bool RenderFunc()
 			jesus = false;
 			//b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
 		}
-	}
+	}*/
 	
 	hge->Gfx_EndScene();
 	return false;
 }
+
+
 
 void LoadMap()
 {
@@ -695,6 +770,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		gui->SetCursor(spr);
 		gui->SetFocus(1);
 		//gui->Enter();
+
+		attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de la 1er boule
 
 		// Let's rock now!
 		hge->System_Start();
