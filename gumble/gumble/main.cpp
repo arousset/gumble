@@ -25,7 +25,7 @@ hgeResourceManager* Res;
 hgeSprite* bgSprite;
 hgeSprite* game_over;
 hgeSprite* you_win;
-
+hgeSprite* canon_img;
 // Pointeur pour la police d'écriture
 hgeFont* font1;
 
@@ -44,11 +44,28 @@ float animDowning = 0; // utile pour faire une sorte d'animation lors de la desc
 float speedY = 0.05; // vitesse de la boule du joueur
 float speedX = 0.1; // inclinaison de la boule du joueur
 bool loose = false; // Permet de gérer si la partie est perdu
-
+float rot = 0; // Permet la rotation du canon
 float mouseX, mouseY; // Coordonnées de la souris
-
+float canonLocX = 333, canonLocY = 432; // Coordonnées pour le canon
 bool lunched = true; // Permet de savoir si la boule courante a été lancé ou non
 int alea = 0; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
+
+
+//boolean pour stopper le temps
+bool stop_time = false;
+
+// Variable pour calculer le score
+int score = 0;
+
+// Variables pour gérer les boules 'courante' et 'suivante'
+	// Boule courante
+	char coul_bcourante;
+	float posX_bcourante;
+	float posY_bcourante;
+
+	// Boule suivante
+	char coul_bsuivante;
+	
 
 //test
 float posboulex = 240+(320/2)-(bouleSizeX/2);
@@ -86,6 +103,33 @@ int my_rand ()
 	return (hge->Random_Int(1, 7));
 }
 
+void attrib_boule(int couleur)
+{
+	switch (couleur)
+	{
+		case 1: {
+			  coul_bcourante='r';break;
+		}
+		case 2: {
+			  coul_bcourante='r';break;
+		}
+		case 3: {
+			  coul_bcourante='r';break;
+		}
+		case 4: {
+			  coul_bcourante='r';break;
+		}
+		case 5: {
+			  coul_bcourante='r';break;
+		}
+		case 6: {
+			  coul_bcourante='j';break;
+		}
+		case 7: {
+			  coul_bcourante='w';break;
+		}
+	}
+}
 
 int calculPosX(int x)
 {
@@ -261,9 +305,6 @@ bool Collision(int newX, int newY)
 		if(detect < bouleSizeX*bouleSizeX)
 			collision = true;
 	}
-
-	
-
 	return collision;
 }
 
@@ -348,6 +389,7 @@ bool RenderFunc()
 	bgSprite->Render(0, 0);
 	bt_menu->Render(640,390);
 	gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
+
 	for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
 	{
 		float posY =y*bouleSizeY;
@@ -398,7 +440,8 @@ bool RenderFunc()
 						{
 							if(pMap[i] != 'x')
 							{
-								loose = true;
+								loose = true; // Permet d'arreter le jeux
+								stop_time = true; // Permet d'arreter le temps quand la partie GameOver
 							}
 						}
 
@@ -445,21 +488,42 @@ bool RenderFunc()
 			}
 		}
 	}	
-			
-			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			float time = 0 ;
-			time = (int) hge->Timer_GetTime();
-			//time += hge->Timer_GetDelta();
-			font1->SetColor(ARGB(255,255,0,0));  //set color of text to black
-			font1->printf(660,200, HGETEXT_LEFT, "%f", time);
-			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 
+	//!\\ A revoir car je dois faire un pointeur pour stopper le temps quand la partie est perdu ou gagné ! :)
+	// initialisation du compteur de temps et test pour l'affichage
+	if(stop_time == false)
+	{
+		float time=0; // Permet de gérer le compteur de temps
+		time = hge->Timer_GetTime();
+		font1->SetColor(ARGB(255,1,148,48));  //set color of text to black
+		font1->printf(678,142, HGETEXT_LEFT, "%.2f", time); // .2f pour afficher uniquement 2 décimales
+	}
+	
 
 	// Affiche le message GameOver 
 	if (loose == true)
 	{
 		game_over->Render(262,250);
 	}
+
+
+	// Affichage du score du joueur
+	font1->printf(120, 142, HGETEXT_LEFT,"%d", score);
+
+
+	//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
+	font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
+	//!\\
+
+
+
+	// Affichage du canon
+	canon_img->SetHotSpot(0,0);
+	canon_img->RenderEx(canonLocX, canonLocY,rot);
+	
+	if(hge->Input_GetKeyState(HGEK_RIGHT)) rot += 0.1;
+	if(hge->Input_GetKeyState(HGEK_LEFT)) rot -= 0.1;
 
 	/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
 	/* Bon Je sais c'est déguellasse car je code en dur les coordonnées :p */
@@ -572,7 +636,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		Res = new hgeResourceManager("resource.res");  
 		// Chargement du background
 		bgSprite = Res->GetSprite("bgSprite");
-
+		canon_img = Res->GetSprite("img_canon");
 		//Chargement des différentes boules de couleurs
 		b_rouge = Res->GetAnimation("br");
 		b_vert = Res->GetAnimation("bv");
