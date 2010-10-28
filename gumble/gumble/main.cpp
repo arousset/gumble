@@ -351,6 +351,8 @@ bool RenderFunc()
 					decalage = bouleSizeX/2;
 					if(y == 0)
 						premierelignepaire = true;
+					if(y == 1)
+						premierelignepaire = false;
 				}
 				/*
 				On utilise swapPair pour regarder si on doit décaler ou non la ligne
