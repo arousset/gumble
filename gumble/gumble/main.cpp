@@ -29,7 +29,7 @@ hgeSprite* you_win;
 char* pMap = NULL; // pointeur sur la desctiption de la map
 int sizeX, sizeY;
 float fScale =27;
-const int xMap = 280; // abscisse de la plus basse ligne pour afficher les boules
+const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boules
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
@@ -51,6 +51,7 @@ int alea = 0; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui repr
 float posboulex = 240+(320/2)-(bouleSizeX/2);
 float posbouley = yMap-5;
 bool jesus = true;
+bool premierelignepaire = false;
 //test
 
 // Sprite pour le bouton du menu
@@ -86,22 +87,34 @@ int my_rand ()
 int calculPosX(int x)
 {
 	int mapX = 1;
-	while((320/8)*mapX < (x-xMap))
+	while(bouleSizeX*mapX < (x-xMap))
 		mapX++;
 	return mapX;
 }
 
 int calculPosY(int y)
 {
-	int mapY = 1; 
+	/*int mapY = 1; 
 	while((350/11)*mapY < (y-72))
 		mapY++;
 	mapY = 11-mapY;
+	return mapY;
+	*/
+	//int mapY = 1;
+	int mapY = 11;
+	//while(mapY*bouleSizeY < y - 72)
+	int lol = (yMap+bouleSizeX)-(11*bouleSizeY);
+	while(mapY*bouleSizeY > y - ((yMap+bouleSizeY)-(11*bouleSizeY)))
+		mapY--;
+		//mapY++;
+	mapY = 11-mapY;
+	int jesus = 465456;
 	return mapY;
 }
 
 bool Collision(int newX, int newY)
 {
+	/* Premiere méthode
 	int mapX = calculPosX(newX); 
 	int mapY = calculPosY(newY);
 	int index = mapY*sizeX+mapX;
@@ -114,7 +127,178 @@ bool Collision(int newX, int newY)
 
 	if(bCollide || bCollide2)
 		return true;
-	return false;
+	return false;*/
+
+	// deuxieme méthode en test
+
+	//!\\ MERCI DE NE PAS TOUCHER A MA MERDE, CE N'EST PAS FONCTIONNEL MAIS JE SUIS SUR LA BONNE VOIE
+
+	int mapY = calculPosY(newY);
+	bool yPaire = premierelignepaire;
+	for(int cpt = 1;cpt < mapY;cpt++)
+		yPaire = !yPaire;
+	int mapX;
+	bool collision = false;
+	mapY -= 1;
+	if(yPaire)
+	{
+		mapX =  calculPosX(newX-(bouleSizeX/2));
+
+			int xcoll = 0;
+			int ycoll = 0;
+			if(mapX != 1)
+			if(pMap[(mapX-1)+(mapY*8)] != 'x')
+			{
+				xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY-1)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+					collision = true;
+			}
+			if(mapX < 8)
+			if(pMap[(mapX+1)+(mapY*8)] != 'x')
+			{
+				xcoll = xMap+(mapX+1*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY-1)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+			}
+			if(pMap[mapX+((mapY+1)*8)] != 'x')
+			{
+				xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY+1)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+			}
+			if(mapX < 8)
+			if(pMap[(mapX+1)+((mapY+1)*8)] != 'x')
+			{
+				xcoll = xMap+((mapX+1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+			}
+			if(mapX < 7)
+			if(pMap[(mapX+2)+((mapY+1)*8)] != 'x')
+			{
+				xcoll = xMap+((mapX+2)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+			}
+			if(mapX != 1)
+			if(pMap[(mapX-1)+((mapY+1)*8)] != 'x')
+			{
+				xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+			}
+			if(mapY != 0)
+			if(pMap[mapX+((mapY-1)*8)] != 'x')
+			{
+				xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+			}
+			if(mapX < 8)
+				if(mapY != 0)
+			if(pMap[(mapX+1)+((mapY-1)*8)] != 'x')
+			{
+				xcoll = xMap+((mapX+1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
+				ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+			}
+	}
+	else
+	{
+		mapX =  calculPosX(newX);
+		int xcoll = 0;
+		int ycoll = 0;
+		if(mapX != 1)
+		if(pMap[(mapX-1)+(mapY*8)] != 'x')
+		{
+			xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY-1)*bouleSizeY)+(bouleSizeX/2);
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+				collision = true;
+		}
+		if(mapX != 8)
+		if(pMap[(mapX+1)+(mapY*8)] != 'x')
+		{
+			xcoll = xMap+(mapX+1*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY-1)*bouleSizeY+(bouleSizeX/2));
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+		if(pMap[mapX+((mapY+1)*8)] != 'x')
+		{
+			xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+		if(mapX < 8)
+		if(pMap[(mapX+1)+((mapY+1)*8)] != 'x')
+		{
+			xcoll = xMap+((mapX+1)*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+		if(mapX > 2)
+		if(pMap[(mapX-2)+((mapY+1)*8)] != 'x')
+		{
+			xcoll = xMap+((mapX-2)*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+		if(mapX != 1)
+		if(pMap[(mapX-1)+((mapY+1)*8)] != 'x')
+		{
+			xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+		if(mapY != 0)
+		if(pMap[mapX+((mapY-1)*8)] != 'x')
+		{
+			xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+		if(mapX != 1)
+			if(mapY != 0)
+		if(pMap[(mapX-1)+((mapY-1)*8)] != 'x')
+		{
+			xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2);
+			ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
+			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+			if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+	}
+
+	return collision;
 }
 
 bool FrameFunc() // Fonction appelée à chaque image
@@ -181,6 +365,8 @@ bool RenderFunc()
 		alea = my_rand(); // Génére un nombre entre 1 et 7 compris
 		lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
 	}
+
+	
 	
 	b_rouge->Update(dt);  //update the animation
 	b_vert->Update(dt);
@@ -190,15 +376,16 @@ bool RenderFunc()
 	b_violet->Update(dt);
 	b_gris->Update(dt);
 	//bt_menu->Update(dt);
+	
 
 	// Render graphics
 	hge->Gfx_BeginScene();
 	bgSprite->Render(0, 0);
 	bt_menu->Render(640,390);
 	gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
-	for(int y=0; y<sizeY; ++y)
+	for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
 	{
-		float posY =y*fScale;
+		float posY =y*bouleSizeY;
 		for(int x=0; x<sizeX; ++x)
 		{
 			if(y < 11)
@@ -209,7 +396,11 @@ bool RenderFunc()
 
 				float decalage = 0.0;       // si la ligne est paire, on la décale
 				if((y+swapPair)%2 == 0)
+				{
 					decalage = bouleSizeX/2;
+					if(y == 1)
+						premierelignepaire = true;
+				}
 				/*
 				On utilise swapPair pour regarder si on doit décaler ou non la ligne
 				Exemple : premieres secondes du jeu, la ligne 5 est impaire et la ligne 6 est paire
@@ -221,9 +412,9 @@ bool RenderFunc()
 				*/
 
 				// Nouvelles positions pour l'affichages des boules
-				float x1 = xMap+((x-1)*bouleSizeX+decalage);
+				float x1 = xMap+((x)*bouleSizeX+decalage);
 				float y1 = yMap-((y-1)*bouleSizeY);
-				float x2 = xMap+bouleSizeX+((x-1)*bouleSizeX+decalage);
+				float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
 				float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
 				if(isDowning && loose==false)
 				{	
@@ -250,7 +441,7 @@ bool RenderFunc()
 					}
 				}
 					
-				float posX =x*fScale;
+				float posX =x*bouleSizeX;
 
 				int index =y*sizeX+x;
 				
@@ -287,6 +478,7 @@ bool RenderFunc()
 			}
 		}
 	}	
+
 
 	// Affiche le message GameOver 
 	if (loose == true)
@@ -325,28 +517,49 @@ bool RenderFunc()
 	// tests tout caca
 	if(jesus)
 	{
+		if(hge->Input_GetKeyState(HGEK_UP))
+			posbouley -= 0.1;
+		if(hge->Input_GetKeyState(HGEK_DOWN))
+			posbouley += 0.1;
+		if(hge->Input_GetKeyState(HGEK_LEFT))
+		{
+			if((posboulex -0.1)>xMap)
+				posboulex -= 0.1;
+		}
+		if(hge->Input_GetKeyState(HGEK_RIGHT))
+		{
+			if((posboulex+bouleSizeX+ 0.1)<xMap+(8.5*bouleSizeX))
+				posboulex += 0.1;
+		}
+		
 		if(isDowning)
 		{
 			b_bleu->RenderStretch(posboulex-speedX, posbouley+speedY, posboulex+bouleSizeX-speedX, posbouley+bouleSizeX+speedY);
 		}
 		else
 		{
-			bool test = Collision(posboulex, posbouley);
+			//bool test = Collision(posboulex, posbouley); // methode 1 
+			bool test = Collision(posboulex+(bouleSizeX/2), posbouley+(bouleSizeX/2)); // methode 2 (en test)
 			if(!test)
 			{
+				b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
+				/*
 				if(posboulex <= 240 || posboulex+bouleSizeX >= 240+320)
 					speedX = -speedX;
 				b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
 				posbouley -= speedY;
-				posboulex += speedX;
+				posboulex += speedX;*/
 			}
 			else
 			{
+				b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
+				/*
 				int mapX = calculPosX(posboulex-speedX); 
 				int mapY = calculPosY(posbouley+speedY);
 				int index = mapY*sizeX+mapX;
 				pMap[index] = 'b';
 				jesus = false;
+				*/
 			}
 		}
 	}
@@ -420,7 +633,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		bt_menu = Res->GetAnimation("bt_anim");
 
 		// Initialisation de la music
-		myMusic = Res->GetStream("theme");
+		//myMusic = Res->GetStream("theme");
 
 		// Jouer la music de fond 
 		chan[0] = hge->Stream_Play(myMusic, true);
