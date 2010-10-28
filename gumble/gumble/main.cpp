@@ -40,7 +40,7 @@ float timeDown = 2; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
-float animDowning = 1; // utile pour faire une sorte d'animation lors de la descente des boules
+float animDowning = 0; // utile pour faire une sorte d'animation lors de la descente des boules
 float speedY = 0.05; // vitesse de la boule du joueur
 float speedX = 0.1; // inclinaison de la boule du joueur
 bool loose = false; // Permet de gérer si la partie est perdu
@@ -120,8 +120,6 @@ bool Collision(int newX, int newY)
 	if(newY > yMap + bouleSizeX/2)
 		return false;
 
-	//!\\ MERCI DE NE PAS TOUCHER A MA MERDE, CE N'EST PAS FONCTIONNEL MAIS JE SUIS SUR LA BONNE VOIE
-
 	int mapY = calculPosY(newY);
 	bool yPaire = premierelignepaire;
 	for(int cpt = 1;cpt < mapY;cpt++)
@@ -142,6 +140,8 @@ bool Collision(int newX, int newY)
 		{
 		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -153,6 +153,8 @@ bool Collision(int newX, int newY)
 		{
 		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -170,6 +172,8 @@ bool Collision(int newX, int newY)
 		{
 		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -182,6 +186,8 @@ bool Collision(int newX, int newY)
 		{
 		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -204,6 +210,8 @@ bool Collision(int newX, int newY)
 	{
 		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -215,6 +223,8 @@ bool Collision(int newX, int newY)
 	{
 		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -230,6 +240,8 @@ bool Collision(int newX, int newY)
 	{
 		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -241,6 +253,8 @@ bool Collision(int newX, int newY)
 	{
 		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		if(isDowning)
+			ycoll -= (bouleSizeY-animDowning);
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
@@ -388,7 +402,7 @@ bool RenderFunc()
 							}
 						}
 
-						animDowning = 1;
+						animDowning = 0;
 						isDowning = false;
 						timeCpt = 0;
 					}
@@ -493,35 +507,18 @@ bool RenderFunc()
 				posboulex += 0.1;
 		}
 		
-		if(isDowning)
+		bool test = Collision(posboulex+(bouleSizeX/2), posbouley+(bouleSizeX/2)); // methode 2 (en test)
+		if(!test)
 		{
-			b_bleu->RenderStretch(posboulex-speedX, posbouley+speedY, posboulex+bouleSizeX-speedX, posbouley+bouleSizeX+speedY);
+			b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
 		}
 		else
 		{
-			//bool test = Collision(posboulex, posbouley); // methode 1 
-			bool test = Collision(posboulex+(bouleSizeX/2), posbouley+(bouleSizeX/2)); // methode 2 (en test)
-			if(!test)
-			{
-				b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
-				/*
-				if(posboulex <= 240 || posboulex+bouleSizeX >= 240+320)
-					speedX = -speedX;
-				b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
-				posbouley -= speedY;
-				posboulex += speedX;*/
-			}
-			else
-			{
-				b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
-				/*
-				int mapX = calculPosX(posboulex-speedX); 
-				int mapY = calculPosY(posbouley+speedY);
-				int index = mapY*sizeX+mapX;
-				pMap[index] = 'b';
-				jesus = false;
-				*/
-			}
+			int x = calculPosX(posboulex+(bouleSizeX/2));
+			int y = calculPosY(posbouley+(bouleSizeX/2));
+			pMap[(y-1)*8+x-1] = 'b';
+			jesus = false;
+			//b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
 		}
 	}
 	
