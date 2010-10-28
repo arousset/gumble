@@ -33,7 +33,7 @@ const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boule
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 5000; // temps avant de faire tomber les boules(secondes)
+float timeDown = 2; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
@@ -114,22 +114,8 @@ int calculPosY(int y)
 
 bool Collision(int newX, int newY)
 {
-	/* Premiere méthode
-	int mapX = calculPosX(newX); 
-	int mapY = calculPosY(newY);
-	int index = mapY*sizeX+mapX;
-	bool bCollide = (pMap[index]!='x');
-
-	mapX = calculPosX(newX + bouleSizeX);
-	mapY = calculPosY(newY);
-	int index2 = mapY*sizeX+mapX;
-	bool bCollide2 = (pMap[index2]!='x');
-
-	if(bCollide || bCollide2)
-		return true;
-	return false;*/
-
-	// deuxieme méthode en test
+	if(newY > yMap + bouleSizeX/2)
+		return false;
 
 	//!\\ MERCI DE NE PAS TOUCHER A MA MERDE, CE N'EST PAS FONCTIONNEL MAIS JE SUIS SUR LA BONNE VOIE
 
@@ -148,6 +134,7 @@ bool Collision(int newX, int newY)
 		//decalage = bouleSizeX/2;
 		mapX =  calculPosX(newX-bouleSizeX/2);
 		
+		if(mapX < 8 && mapY < 11)
 		if(pMap[(mapX)+((mapY)*8)] != 'x')
 		{
 		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
@@ -158,7 +145,7 @@ bool Collision(int newX, int newY)
 		if(detect < bouleSizeX*bouleSizeX)
 			collision = true;
 		}
-
+		if(mapX < 8 && mapY > 1)
 		if(pMap[(mapX)+((mapY-2)*8)] != 'x')
 		{
 		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
@@ -175,7 +162,8 @@ bool Collision(int newX, int newY)
 		mapX =  calculPosX(newX);
 		decalage = bouleSizeX/2;
 
-			if(pMap[(mapX-2)+((mapY)*8)] != 'x')
+		if(mapX > 1 && mapY < 11)
+		if(pMap[(mapX-2)+((mapY)*8)] != 'x')
 		{
 		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
 		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
@@ -186,6 +174,7 @@ bool Collision(int newX, int newY)
 			collision = true;
 		}
 
+		if(mapX > 1 && mapY > 1)
 		if(pMap[(mapX-2)+((mapY-2)*8)] != 'x')
 		{
 		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
@@ -207,6 +196,7 @@ bool Collision(int newX, int newY)
 		decalage = bouleSizeX/2;
 	else
 		decalage = 0;
+	if(mapX > 1)
 	if(pMap[(mapX-2)+((mapY-1)*8)] != 'x')
 	{
 		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
@@ -217,7 +207,7 @@ bool Collision(int newX, int newY)
 		if(detect < bouleSizeX*bouleSizeX)
 			collision = true;
 	}
-
+	if(mapX < 8)
 	if(pMap[(mapX)+((mapY-1)*8)] != 'x')
 	{
 		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
@@ -232,6 +222,7 @@ bool Collision(int newX, int newY)
 		decalage = bouleSizeX/2;
 	else
 		decalage = 0;
+	if(mapY < 11)
 	if(pMap[(mapX-1)+((mapY)*8)] != 'x')
 	{
 		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
@@ -242,6 +233,7 @@ bool Collision(int newX, int newY)
 		if(detect < bouleSizeX*bouleSizeX)
 			collision = true;
 	}
+	if(mapY > 1)
 	if(pMap[(mapX-1)+((mapY-2)*8)] != 'x')
 	{
 		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
