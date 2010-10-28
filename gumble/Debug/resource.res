@@ -16,6 +16,7 @@ Animation bt_anim
  mode=FORWARD
 }
 
+
 Texture youwin
 {
  filename=youwin.png
@@ -117,4 +118,9 @@ Animation bgris
 Stream theme
 {
  filename=music.mp3
+}
+
+Font font1
+{
+ filename=font1.fnt
 }
