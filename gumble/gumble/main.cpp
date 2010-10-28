@@ -33,7 +33,7 @@ const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boule
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 2; // temps avant de faire tomber les boules(secondes)
+float timeDown = 5000; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
@@ -139,164 +139,121 @@ bool Collision(int newX, int newY)
 		yPaire = !yPaire;
 	int mapX;
 	bool collision = false;
-	mapY -= 1;
+	//mapY -= 1;
+	int decalage = 0;
+	int xcoll = 0;
+	int ycoll = 0;
 	if(yPaire)
 	{
-		mapX =  calculPosX(newX-(bouleSizeX/2));
+		//decalage = bouleSizeX/2;
+		mapX =  calculPosX(newX-bouleSizeX/2);
+		
+		if(pMap[(mapX)+((mapY)*8)] != 'x')
+		{
+		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
-			int xcoll = 0;
-			int ycoll = 0;
-			if(mapX != 1)
-			if(pMap[(mapX-1)+(mapY*8)] != 'x')
-			{
-				xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY-1)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-					collision = true;
-			}
-			if(mapX < 8)
-			if(pMap[(mapX+1)+(mapY*8)] != 'x')
-			{
-				xcoll = xMap+(mapX+1*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY-1)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-			}
-			if(pMap[mapX+((mapY+1)*8)] != 'x')
-			{
-				xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY+1)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-			}
-			if(mapX < 8)
-			if(pMap[(mapX+1)+((mapY+1)*8)] != 'x')
-			{
-				xcoll = xMap+((mapX+1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-			}
-			if(mapX < 7)
-			if(pMap[(mapX+2)+((mapY+1)*8)] != 'x')
-			{
-				xcoll = xMap+((mapX+2)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-			}
-			if(mapX != 1)
-			if(pMap[(mapX-1)+((mapY+1)*8)] != 'x')
-			{
-				xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-			}
-			if(mapY != 0)
-			if(pMap[mapX+((mapY-1)*8)] != 'x')
-			{
-				xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-			}
-			if(mapX < 8)
-				if(mapY != 0)
-			if(pMap[(mapX+1)+((mapY-1)*8)] != 'x')
-			{
-				xcoll = xMap+((mapX+1)*bouleSizeX)+(bouleSizeX/2)+(bouleSizeX/2);
-				ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
-				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-				if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-			}
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
+
+		if(pMap[(mapX)+((mapY-2)*8)] != 'x')
+		{
+		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+		}
 	}
 	else
 	{
 		mapX =  calculPosX(newX);
-		int xcoll = 0;
-		int ycoll = 0;
-		if(mapX != 1)
-		if(pMap[(mapX-1)+(mapY*8)] != 'x')
+		decalage = bouleSizeX/2;
+
+			if(pMap[(mapX-2)+((mapY)*8)] != 'x')
 		{
-			xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY-1)*bouleSizeY)+(bouleSizeX/2);
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
-				collision = true;
-		}
-		if(mapX != 8)
-		if(pMap[(mapX+1)+(mapY*8)] != 'x')
-		{
-			xcoll = xMap+(mapX+1*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY-1)*bouleSizeY+(bouleSizeX/2));
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
+		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
 			collision = true;
 		}
-		if(pMap[mapX+((mapY+1)*8)] != 'x')
+
+		if(pMap[(mapX-2)+((mapY-2)*8)] != 'x')
 		{
-			xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
+		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
 			collision = true;
 		}
-		if(mapX < 8)
-		if(pMap[(mapX+1)+((mapY+1)*8)] != 'x')
-		{
-			xcoll = xMap+((mapX+1)*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
-		}
-		if(mapX > 2)
-		if(pMap[(mapX-2)+((mapY+1)*8)] != 'x')
-		{
-			xcoll = xMap+((mapX-2)*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
-		}
-		if(mapX != 1)
-		if(pMap[(mapX-1)+((mapY+1)*8)] != 'x')
-		{
-			xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY)*bouleSizeY)+(bouleSizeX/2);
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
-		}
-		if(mapY != 0)
-		if(pMap[mapX+((mapY-1)*8)] != 'x')
-		{
-			xcoll = xMap+(mapX*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
-		}
-		if(mapX != 1)
-			if(mapY != 0)
-		if(pMap[(mapX-1)+((mapY-1)*8)] != 'x')
-		{
-			xcoll = xMap+((mapX-1)*bouleSizeX)+(bouleSizeX/2);
-			ycoll = yMap-((mapY-2)*bouleSizeY)+(bouleSizeX/2);
-			int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-			if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
-		}
+
 	}
+
+	if(pMap[(mapX-1)+((mapY-1)*8)] != 'x')
+	{
+		collision = true;
+	}
+	if(yPaire)
+		decalage = bouleSizeX/2;
+	else
+		decalage = 0;
+	if(pMap[(mapX-2)+((mapY-1)*8)] != 'x')
+	{
+		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+	}
+
+	if(pMap[(mapX)+((mapY-1)*8)] != 'x')
+	{
+		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+	}
+	if(!yPaire)
+		decalage = bouleSizeX/2;
+	else
+		decalage = 0;
+	if(pMap[(mapX-1)+((mapY)*8)] != 'x')
+	{
+		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+	}
+	if(pMap[(mapX-1)+((mapY-2)*8)] != 'x')
+	{
+		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+
+		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+		if(detect < bouleSizeX*bouleSizeX)
+			collision = true;
+	}
+
+	
 
 	return collision;
 }
@@ -398,7 +355,7 @@ bool RenderFunc()
 				if((y+swapPair)%2 == 0)
 				{
 					decalage = bouleSizeX/2;
-					if(y == 1)
+					if(y == 0)
 						premierelignepaire = true;
 				}
 				/*
