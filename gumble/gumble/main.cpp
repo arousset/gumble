@@ -157,7 +157,6 @@ int calculPosY(int y)
 	//int mapY = 1;
 	int mapY = 11;
 	//while(mapY*bouleSizeY < y - 72)
-	int lol = (yMap+bouleSizeX)-(11*bouleSizeY);
 	while(mapY*bouleSizeY > y - ((yMap+bouleSizeY)-(11*bouleSizeY)))
 		mapY--;
 		//mapY++;
@@ -346,13 +345,22 @@ void lunched_boule(char couleur, float angle)
 				}
 			}
 
-			posY_bcourante -= 1;
+			posY_bcourante -= 0.5;
 		}
 		else
 		{
 			int x = calculPosX(posX_bcourante+(bouleSizeX/2));
 			int y = calculPosY(posY_bcourante+(bouleSizeX/2));
-			pMap[(y-1)*8+x-1] = couleur;
+			int index = (y-1)*8+x-1;
+			if(!isDowning)
+				pMap[index] = couleur;
+			else
+			{
+				if(posY_bcourante > 72+((11-y)*bouleSizeY)+6)
+					pMap[index-8] = couleur;
+				else
+					pMap[index] = couleur;
+			}
 			blunched_boule = false;
 			lunched=true;  
 		}
