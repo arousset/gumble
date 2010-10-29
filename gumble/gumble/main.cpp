@@ -49,9 +49,10 @@ float mouseX, mouseY; // Coordonnées de la souris
 float canonLocX = 398, canonLocY = 498; // Coordonnées pour le canon
 bool lunched = false; // Permet de savoir si la boule courante a été lancé ou non
 int alea_c = 1; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
-int alea_n = 0; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
+int alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
 
 bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
+bool first = true; // Pour la 1er génération de nombre aléatoire
 
 //boolean pour stopper le temps
 bool stop_time = false;
@@ -68,6 +69,10 @@ int score = 0;
 	float posX_depart = 380; // Coordonnées de la boule de départ dans le canon
 	float posY_depart = 480;
 
+
+	float bnext_X = 78;
+	float bnext_Y = 445;
+	
 	// Boule suivante
 	char coul_bsuivante;
 	
@@ -314,6 +319,35 @@ bool Collision(int newX, int newY)
 	return collision;
 }
 
+void affiche_next(char couleur)
+{
+	switch (couleur)
+			{
+				case 'r': {
+					  b_rouge->RenderStretch(bnext_X,bnext_Y,bnext_X+bouleSizeX,bnext_Y+bouleSizeX);break;
+				}
+				case 'v': {
+					  b_vert->RenderStretch(bnext_X,bnext_Y,bnext_X+bouleSizeX,bnext_Y+bouleSizeX);break;
+				}
+				case 'b': {
+					  b_bleu->RenderStretch(bnext_X,bnext_Y,bnext_X+bouleSizeX,bnext_Y+bouleSizeX);break;
+				}
+				case 'o': {
+					  b_orange->RenderStretch(bnext_X,bnext_Y,bnext_X+bouleSizeX,bnext_Y+bouleSizeX);break;
+				}
+				case 'g': {
+					  b_gris->RenderStretch(bnext_X,bnext_Y,bnext_X+bouleSizeX,bnext_Y+bouleSizeX);break;
+				}
+				case 'j': {
+					  b_jaune->RenderStretch(bnext_X,bnext_Y,bnext_X+bouleSizeX,bnext_Y+bouleSizeX);break;
+				}
+				case 'w': {
+					  b_violet->RenderStretch(bnext_X,bnext_Y,bnext_X+bouleSizeX,bnext_Y+bouleSizeX);break;
+				}
+			}
+}
+
+
 
 void lunched_boule(char couleur, float angle)
 {
@@ -427,9 +461,11 @@ bool RenderFunc()
 			posX_bcourante = posX_depart;
 			posY_bcourante = posY_depart;
 			blunched_boule=true;
+			//affiche_next(alea_n);
+			coul_bsuivante = coul_bcourante;
 	}
 
-
+	affiche_next(coul_bsuivante);
 	// Permet de récupérer les coordonnées de la souris
 	hge->Input_GetMousePos(&mouseX, &mouseY);
 	
@@ -441,7 +477,7 @@ bool RenderFunc()
 		attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de boules
 		//alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
 		//attrib_boule(alea_n); // idem
-
+		
 		lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
 	}
 	
@@ -465,7 +501,7 @@ bool RenderFunc()
 
 	if(blunched_boule)
 	{
-		lunched_boule(coul_bcourante, rot);
+		lunched_boule(coul_bsuivante, rot); // coul b_courante
 	}
 
 	for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
@@ -592,7 +628,8 @@ bool RenderFunc()
 	//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
 	font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
 	//!\\
-
+	
+	affiche_next(coul_bsuivante);
 
 
 	// Affichage du canon
@@ -754,6 +791,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		b_gris->Play();
 		bt_menu->Play();
 		LoadMap(); // charge la map
+		 
+		 
 
 		// Chargement textures et sons
 		tex=hge->Texture_Load("cursor.png");
@@ -779,7 +818,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		gui->SetFocus(1);
 		//gui->Enter();
 
-		attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de la 1er boule
+		if(first)
+		{
+			attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de la 1er boule
+			attrib_boule(alea_n); // idem
+			first = false;
+		}
 
 		// Let's rock now!
 		hge->System_Start();
