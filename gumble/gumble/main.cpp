@@ -78,6 +78,7 @@ int score = 0;
 	
 
 //test
+bool collg = false;
 float posboulex = 240+(320/2)-(bouleSizeX/2);
 float posbouley = yMap-5;
 bool jesus = true;
@@ -191,31 +192,37 @@ bool Collision(int newX, int newY)
 		mapX =  calculPosX(newX-bouleSizeX/2);
 		
 		if(mapX < 8 && mapY < 11)
-		if(pMap[(mapX)+((mapY)*8)] != 'x')
-		{
-		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
-		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			if(pMap[(mapX)+((mapY)*8)] != 'x')
+			{
+				xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+				ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+				if(isDowning)
+					ycoll -= (bouleSizeY-animDowning);
+				b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
-		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
-		}
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				{
+					collision = true;
+					collg = true;
+				}
+			}
 		if(mapX < 8 && mapY > 1)
-		if(pMap[(mapX)+((mapY-2)*8)] != 'x')
-		{
-		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
-		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			if(pMap[(mapX)+((mapY-2)*8)] != 'x')
+			{
+				xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
+				ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+				if(isDowning)
+					ycoll -= (bouleSizeY-animDowning);
+				b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
-		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
-		}
+				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
+				if(detect < bouleSizeX*bouleSizeX)
+				{
+					collision = true;
+					collg = true;
+				}
+			}
 	}
 	else
 	{
@@ -232,8 +239,11 @@ bool Collision(int newX, int newY)
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
+			if(detect < bouleSizeX*bouleSizeX)
+			{
+				collision = true;
+				collg = false;
+			}
 		}
 
 		if(mapX > 1 && mapY > 1)
@@ -246,8 +256,11 @@ bool Collision(int newX, int newY)
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
+			if(detect < bouleSizeX*bouleSizeX)
+				{
+					collision = true;
+					collg = false;
+				}
 		}
 
 	}
@@ -270,8 +283,11 @@ bool Collision(int newX, int newY)
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
+			if(detect < bouleSizeX*bouleSizeX)
+				{
+					collision = true;
+					collg = false;
+				}
 	}
 	if(mapX < 8)
 	if(pMap[(mapX)+((mapY-1)*8)] != 'x')
@@ -283,8 +299,11 @@ bool Collision(int newX, int newY)
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
+			if(detect < bouleSizeX*bouleSizeX)
+				{
+					collision = true;
+					collg = true;
+				}
 	}
 	if(!yPaire)
 		decalage = bouleSizeX/2;
@@ -300,8 +319,14 @@ bool Collision(int newX, int newY)
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
+			if(detect < bouleSizeX*bouleSizeX)
+				{
+					collision = true;
+					if(yPaire)
+						collg = false;
+					else
+						collg = true;
+				}
 	}
 	if(mapY > 1)
 	if(pMap[(mapX-1)+((mapY-2)*8)] != 'x')
@@ -313,8 +338,14 @@ bool Collision(int newX, int newY)
 		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
-		if(detect < bouleSizeX*bouleSizeX)
-			collision = true;
+				if(detect < bouleSizeX*bouleSizeX)
+				{
+					collision = true;
+					if(yPaire)
+						collg = false;
+					else
+						collg = true;
+				}
 	}
 	return collision;
 }
@@ -380,18 +411,36 @@ void lunched_boule(char couleur, float angle)
 			}
 
 			posY_bcourante -= 0.5;
+			posX_bcourante += 0.15;
 		}
 		else
 		{
 			int x = calculPosX(posX_bcourante+(bouleSizeX/2));
 			int y = calculPosY(posY_bcourante+(bouleSizeX/2));
-			int index = (y-1)*8+x-1;
+
+
+			bool yPaire = premierelignepaire;
+			for(int cpt = 1;cpt < y;cpt++)
+				yPaire = !yPaire;
+
+			int index;
+
+			if(collg)
+				index = (y-1)*8+x-1;
+			else
+				index = (y-1)*8+x-1;
+			if(!collg && yPaire)
+				index = (y-1)*8+x-2 ;
+
+
 			if(!isDowning)
 				pMap[index] = couleur;
 			else
 			{
-				if(posY_bcourante > 72+((11-y)*bouleSizeY)+6)
+				if(pMap[(x-1)+((y-1)*8)] != 'x')
+				{
 					pMap[index-8] = couleur;
+				}
 				else
 					pMap[index] = couleur;
 			}
@@ -840,4 +889,3 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge->Release();
 	return 0; 
 }
-
