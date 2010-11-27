@@ -95,10 +95,7 @@ bool Collision(int newX, int newY)
 
 				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 				if(detect < bouleSizeX*bouleSizeX)
-				{
 					collision = true;
-					collg = true;
-				}
 			}
 		if(mapX < 8 && mapY > 1)
 			if(pMap[(mapX)+((mapY-2)*8)] != 'x')
@@ -111,10 +108,7 @@ bool Collision(int newX, int newY)
 
 				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 				if(detect < bouleSizeX*bouleSizeX)
-				{
 					collision = true;
-					collg = true;
-				}
 			}
 	}
 	else
@@ -133,10 +127,7 @@ bool Collision(int newX, int newY)
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
-			{
 				collision = true;
-				collg = false;
-			}
 		}
 
 		if(mapX > 1 && mapY > 1)
@@ -150,10 +141,7 @@ bool Collision(int newX, int newY)
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
-				{
 					collision = true;
-					collg = false;
-				}
 		}
 
 	}
@@ -177,10 +165,7 @@ bool Collision(int newX, int newY)
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
-				{
 					collision = true;
-					collg = false;
-				}
 	}
 	if(mapX < 8)
 	if(pMap[(mapX)+((mapY-1)*8)] != 'x')
@@ -193,10 +178,7 @@ bool Collision(int newX, int newY)
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
-				{
 					collision = true;
-					collg = true;
-				}
 	}
 	if(!yPaire)
 		decalage = bouleSizeX/2;
@@ -213,13 +195,7 @@ bool Collision(int newX, int newY)
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
-				{
 					collision = true;
-					if(yPaire)
-						collg = false;
-					else
-						collg = true;
-				}
 	}
 	if(mapY > 1)
 	if(pMap[(mapX-1)+((mapY-2)*8)] != 'x')
@@ -232,13 +208,7 @@ bool Collision(int newX, int newY)
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 				if(detect < bouleSizeX*bouleSizeX)
-				{
 					collision = true;
-					if(yPaire)
-						collg = false;
-					else
-						collg = true;
-				}
 	}
 	return collision;
 }
@@ -303,27 +273,26 @@ void lunched_boule(char couleur, float angle)
 				}
 			}
 
-			posY_bcourante -= 0.5;
-			posX_bcourante += 0.15;
+			posY_bcourante -= 0.5; 
+			//posX_bcourante -= 0.15;
+			posX_bcourante += (mouseX-xMap-(((8*bouleSizeX)+(bouleSizeX/2))/2))/600;
 		}
 		else
 		{
-			int x = calculPosX(posX_bcourante+(bouleSizeX/2));
+			//int x = calculPosX(posX_bcourante+(bouleSizeX/2)-5);
 			int y = calculPosY(posY_bcourante+(bouleSizeX/2));
-
+			int x;
 
 			bool yPaire = premierelignepaire;
 			for(int cpt = 1;cpt < y;cpt++)
 				yPaire = !yPaire;
 
-			int index;
-
-			if(collg)
-				index = (y-1)*8+x-1;
+			if(yPaire)
+				x = calculPosX(posX_bcourante);
 			else
-				index = (y-1)*8+x-1;
-			if(!collg && yPaire)
-				index = (y-1)*8+x-2 ;
+				x = calculPosX(posX_bcourante+(bouleSizeX/2));
+
+			int index = (y-1)*8+x-1;
 
 
 			if(!isDowning)
@@ -569,6 +538,7 @@ bool RenderFunc()
 
 	//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
 	font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
+	font1->printf(5, 25, HGETEXT_LEFT,"%.2f", mouseX-xMap-(((8*bouleSizeX)+(bouleSizeX/2))/2)); //test
 	//!\\
 	
 	affiche_next(coul_bsuivante);

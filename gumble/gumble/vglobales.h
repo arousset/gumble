@@ -36,7 +36,7 @@ const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boule
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 2; // temps avant de faire tomber les boules(secondes)
+float timeDown = 400; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
@@ -78,7 +78,6 @@ int score = 0;
 	
 
 //test
-bool collg = false;
 float posboulex = 240+(320/2)-(bouleSizeX/2);
 float posbouley = yMap-5;
 bool jesus = true;
