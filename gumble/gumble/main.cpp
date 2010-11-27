@@ -275,7 +275,7 @@ void lunched_boule(char couleur, float angle)
 
 			posY_bcourante -= 0.5; 
 			//posX_bcourante -= 0.15;
-			posX_bcourante += (mouseX-xMap-(((8*bouleSizeX)+(bouleSizeX/2))/2))/600;
+			posX_bcourante += rot;
 		}
 		else
 		{
@@ -538,7 +538,6 @@ bool RenderFunc()
 
 	//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
 	font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
-	font1->printf(5, 25, HGETEXT_LEFT,"%.2f", mouseX-xMap-(((8*bouleSizeX)+(bouleSizeX/2))/2)); //test
 	//!\\
 	
 	affiche_next(coul_bsuivante);
