@@ -11,7 +11,7 @@ int my_rand ()
 
 void attrib_boule(int couleur)
 {
-	switch (couleur)
+	/*switch (couleur)
 	{
 		case 1: {
 			  coul_bcourante='r';break;
@@ -34,7 +34,8 @@ void attrib_boule(int couleur)
 		case 7: {
 			  coul_bcourante='w';break;
 		}
-	}
+	}*/
+	coul_bcourante = 'r';
 }
 
 int calculPosX(int x)
@@ -242,6 +243,72 @@ void affiche_next(char couleur)
 }
 
 
+void destroy(int index, char couleur, bool lignePaire)
+{
+	bool destroyBCourante = false;
+	if(index%8 != 1)
+		if(pMap[index-1] == couleur)
+		{
+			pMap[index-1] = 'x';
+			destroyBCourante = true;
+			destroy(index-1, couleur, lignePaire);
+		}
+	if(index%8 != 8)
+		if(pMap[index+1] == couleur)
+		{
+			pMap[index+1] = 'x';
+			destroyBCourante = true;
+			destroy(index+1, couleur, lignePaire);
+		}
+	if(pMap[index+8] == couleur)
+	{
+		pMap[index+8] = 'x';
+		destroyBCourante = true;
+		destroy(index+8, couleur, lignePaire);
+	}
+	if(pMap[index-8] == couleur)
+	{
+		pMap[index-8] = 'x';
+		destroyBCourante = true;
+		destroy(index-8, couleur, lignePaire);
+	}
+	if(lignePaire)
+	{
+		if(index%8 != 8)
+			if(pMap[index+8+1] == couleur)
+			{
+				pMap[index+8+1] = 'x';
+				destroyBCourante = true;
+				destroy(index+8+1, couleur, lignePaire);
+			}
+		if(index%8 != 8)
+			if(pMap[index-8+1] == couleur)
+			{
+				pMap[index-8+1] = 'x';
+				destroyBCourante = true;
+				destroy(index-8+1, couleur, lignePaire);
+			}
+	}
+	else
+	{
+		if(index%8 != 1)
+			if(pMap[index+8-1] == couleur)
+			{
+				pMap[index+8-1] = 'x';
+				destroyBCourante = true;
+				destroy(index+8-1, couleur, lignePaire);
+			}
+		if(index%8 != 1)
+			if(pMap[index-8-1] == couleur)
+			{
+				pMap[index-8-1] = 'x';
+				destroyBCourante = true;
+				destroy(index-8-1, couleur, lignePaire);
+			}
+	}
+	if(destroyBCourante)
+		pMap[index] = 'x';
+}
 
 void lunched_boule(char couleur, float angle)
 {
@@ -276,6 +343,10 @@ void lunched_boule(char couleur, float angle)
 			posY_bcourante -= 0.5; 
 			//posX_bcourante -= 0.15;
 			posX_bcourante += rot;
+			if(posX_bcourante < xMap)
+				rot = -rot;
+			if(posX_bcourante+bouleSizeX > xMap + (8*bouleSizeX) + bouleSizeX/2)
+				rot = -rot;
 		}
 		else
 		{
@@ -296,19 +367,28 @@ void lunched_boule(char couleur, float angle)
 
 
 			if(!isDowning)
+			{
 				pMap[index] = couleur;
+				destroy(index, couleur, yPaire);
+			}
 			else
 			{
 				if(pMap[(x-1)+((y-1)*8)] != 'x')
 				{
 					pMap[index-8] = couleur;
+					destroy(couleur, index-8, yPaire);
 				}
 				else
+				{
 					pMap[index] = couleur;
+					destroy(couleur, index, yPaire);
+				}
 			}
 			blunched_boule = false;
 			lunched=true;  
+
 		}
+
 }
 
 
@@ -547,8 +627,8 @@ bool RenderFunc()
 	canon_img->SetHotSpot(65,65);
 	canon_img->RenderEx(canonLocX, canonLocY,rot);
 	
-		if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1) rot += 0.006; // utilisation de la valeur 1 MAGIC ! 
-		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1) rot -= 0.006;
+		if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1) rot += 0.002; // utilisation de la valeur 1 MAGIC ! 
+		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1) rot -= 0.002;
 	
 
 	/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
@@ -624,7 +704,7 @@ bool RenderFunc()
 void LoadMap()
 {
 	FILE* f = NULL;
-	f = fopen("../Debug/map3.txt", "rb"); // ouverture du fichier map
+	f = fopen("../Debug/map4.txt", "rb"); // ouverture du fichier map
 	if(f == NULL)
 		return;
 
