@@ -24,7 +24,7 @@ Texture canon
 Sprite img_canon
 {
  texture=canon
- rect=0,0,256,256
+ rect=0,0,130,130
 }
 
 Texture youwin
