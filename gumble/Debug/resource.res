@@ -134,3 +134,21 @@ Font font1
 {
  filename=font1.fnt
 }
+
+Texture particleTexture
+{
+ filename=particles.png
+}
+
+Sprite particleSprite
+{
+ texture=particleTexture
+ rect=32, 64, 32, 32
+}
+
+Particle particle
+{
+ filename=particle.psi
+ sprite=particleSprite
+ fps=50.0
+}
