@@ -246,14 +246,14 @@ void affiche_next(char couleur)
 void destroy(int index, char couleur, bool lignePaire)
 {
 	bool destroyBCourante = false;
-	if(index%8 != 1)
+	if(index%8 != 0)
 		if(pMap[index-1] == couleur)
 		{
 			pMap[index-1] = 'x';
 			destroyBCourante = true;
 			destroy(index-1, couleur, lignePaire);
 		}
-	if(index%8 != 8)
+	if(index%8 != 7)
 		if(pMap[index+1] == couleur)
 		{
 			pMap[index+1] = 'x';
@@ -274,14 +274,14 @@ void destroy(int index, char couleur, bool lignePaire)
 	}
 	if(lignePaire)
 	{
-		if(index%8 != 8)
+		if(index%8 != 7)
 			if(pMap[index+8+1] == couleur)
 			{
 				pMap[index+8+1] = 'x';
 				destroyBCourante = true;
 				destroy(index+8+1, couleur, lignePaire);
 			}
-		if(index%8 != 8)
+		if(index%8 != 0)
 			if(pMap[index-8+1] == couleur)
 			{
 				pMap[index-8+1] = 'x';
@@ -291,14 +291,14 @@ void destroy(int index, char couleur, bool lignePaire)
 	}
 	else
 	{
-		if(index%8 != 1)
+		if(index%8 != 0)
 			if(pMap[index+8-1] == couleur)
 			{
 				pMap[index+8-1] = 'x';
 				destroyBCourante = true;
 				destroy(index+8-1, couleur, lignePaire);
 			}
-		if(index%8 != 1)
+		if(index%8 != 0)
 			if(pMap[index-8-1] == couleur)
 			{
 				pMap[index-8-1] = 'x';
@@ -312,7 +312,7 @@ void destroy(int index, char couleur, bool lignePaire)
 
 void lunched_boule(char couleur, float angle)
 {
-	bool test = Collision(posX_bcourante+(bouleSizeX/2), posY_bcourante+(bouleSizeX/2)); // methode 2 (en test)
+		bool test = Collision(posX_bcourante+(bouleSizeX/2), posY_bcourante+(bouleSizeX/2));
 		if(!test)
 		{
 			switch (couleur)
@@ -341,17 +341,16 @@ void lunched_boule(char couleur, float angle)
 			}
 
 			posY_bcourante -= 0.5; 
-			//posX_bcourante -= 0.15;
 			posX_bcourante += rot;
 			if(posX_bcourante < xMap)
 				rot = -rot;
 			if(posX_bcourante+bouleSizeX > xMap + (8*bouleSizeX) + bouleSizeX/2)
 				rot = -rot;
+
 		}
-		else
+		int y = calculPosY(posY_bcourante+(bouleSizeX/2));
+		if(test || y == 11)
 		{
-			//int x = calculPosX(posX_bcourante+(bouleSizeX/2)-5);
-			int y = calculPosY(posY_bcourante+(bouleSizeX/2));
 			int x;
 
 			bool yPaire = premierelignepaire;
@@ -472,7 +471,6 @@ bool RenderFunc()
 		lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
 	}
 	
-
 	
 	// Render graphics
 	hge->Gfx_BeginScene();
@@ -488,6 +486,13 @@ bool RenderFunc()
 	b_violet->Update(dt);
 	b_gris->Update(dt);
 	//bt_menu->Update(dt);
+
+
+	// test pour afficher la direction du tir
+	for(int i = 0; i < 400;i++)
+	{
+		b_violet->RenderStretch(380+(bouleSizeX/2)-2.5+(i*rot), 480+(bouleSizeX/2)-(i*0.5),380+(bouleSizeX/2)-2.5+(i*rot)+5,480+(bouleSizeX/2)-(i*0.5)+5);
+	}
 
 
 	if(blunched_boule)
@@ -610,8 +615,7 @@ bool RenderFunc()
 	{
 		game_over->Render(262,250);
 	}
-
-
+	
 	// Affichage du score du joueur
 	font1->printf(120, 142, HGETEXT_LEFT,"%d", score);
 
@@ -621,14 +625,15 @@ bool RenderFunc()
 	//!\\
 	
 	affiche_next(coul_bsuivante);
-
-
+	
 	// Affichage du canon
 	canon_img->SetHotSpot(65,65);
-	canon_img->RenderEx(canonLocX, canonLocY,rot);
+	canon_img->RenderEx(canonLocX, canonLocY,rot*1.5);
 	
-		if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1) rot += 0.002; // utilisation de la valeur 1 MAGIC ! 
-		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1) rot -= 0.002;
+	if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1)
+		rot += 0.0005; // utilisation de la valeur 1 MAGIC ! 
+	if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1)
+		rot -= 0.0005;
 	
 
 	/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
