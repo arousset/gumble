@@ -11,6 +11,13 @@
 #include <stdlib.h>
 #include <iostream>
 #include <time.h>
+#include <hgeparticle.h>
+ 
+
+// Particules
+hgeParticleSystemInfo particle;
+hgeParticleManager *particleManager;
+
 
 
 HGE *hge = 0;

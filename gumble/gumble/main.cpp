@@ -245,6 +245,11 @@ void affiche_next(char couleur)
 
 void destroy(int index, char couleur, bool lignePaire)
 {
+	/*int posXParticule = (index%8)*bouleSizeX + (bouleSizeX/2);
+	posXParticule = xMap + posXParticule;
+	int poxYParticule = (index/8)*bouleSizeX + (bouleSizeX/2);
+	particleManager->SpawnPS(&particle, posXParticule, poxYParticule);*/
+
 	bool destroyBCourante = false;
 	if(index%8 != 0)
 		if(pMap[index-1] == couleur)
@@ -416,7 +421,7 @@ bool FrameFunc() // Fonction appelée à chaque image
 		}
 	  }
 	  else if(id) { lastid=id; gui->Leave(); }
-  
+
  return false;
 }
 
@@ -470,10 +475,19 @@ bool RenderFunc()
 		
 		lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
 	}
+
+
+	particleManager->Update(dt);  //update all particles
+	if(hge->Input_GetKey()==HGEK_LBUTTON)
+	{
+		particleManager->SpawnPS(&particle, mouseX, mouseY);
+ 
+	}
 	
 	
 	// Render graphics
 	hge->Gfx_BeginScene();
+	hge->Gfx_Clear(0);
 	bgSprite->Render(0, 0);
 	bt_menu->Render(640,390);
 	gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
@@ -487,6 +501,9 @@ bool RenderFunc()
 	b_gris->Update(dt);
 	//bt_menu->Update(dt);
 
+
+	
+	
 
 	// test pour afficher la direction du tir
 	for(int i = 0; i < 400;i++)
@@ -699,7 +716,7 @@ bool RenderFunc()
 			//b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
 		}
 	}*/
-	
+	particleManager->Render();  //render all particles
 	hge->Gfx_EndScene();
 	return false;
 }
@@ -821,6 +838,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			first = false;
 		}
 
+		particle = Res->GetParticleSystem("particle")->info;
+		particleManager= new hgeParticleManager();
+
 		// Let's rock now!
 		hge->System_Start();
 
@@ -832,6 +852,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	    hge->Effect_Free(snd);*/
 	}
 	free(pMap);
+	delete particleManager;
 	hge->System_Shutdown();
 	hge->Release();
 	return 0; 
