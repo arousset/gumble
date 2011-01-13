@@ -287,7 +287,7 @@ void destroy(int index, char couleur, bool lignePaire)
 				destroyBCourante = true;
 				destroy(index+8+1, couleur, lignePaire);
 			}
-		if(index%8 != 0)
+		if(index%8 != 7)
 			if(pMap[index-8+1] == couleur)
 			{
 				pMap[index-8+1] = 'x';
@@ -510,13 +510,13 @@ bool RenderFunc()
 		ry2=510;
 		//hgeRect(rx1,ry1,rx2,ry2);
 		
-			if((mouseX >= rx1 && mouseY >= ry1) || (mouseX <= rx2 && mouseY <= ry2))
-			{
-				bgSprite->Render(0, 0);
-			}
+
 		
 		// Render graphics
 		hge->Gfx_BeginScene();
+
+		bgSprite->Render(0, 0);
+
 		hge->Gfx_Clear(0);
 	
 		bt_menu->Render(640,390);
@@ -615,7 +615,9 @@ bool RenderFunc()
 						switch (pMap[index])
 						{
 							case 'r': {
-								  b_rouge->RenderStretch(x1, y1, x2, y2);break;
+								  b_rouge->RenderStretch(x1, y1, x2, y2);
+								  //font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
+								  break;
 							}
 							case 'v': {
 								  b_vert->RenderStretch(x1, y1, x2, y2);break;
@@ -633,7 +635,9 @@ bool RenderFunc()
 								  b_jaune->RenderStretch(x1, y1, x2, y2);break;
 							}
 							case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
-								  b_violet->RenderStretch(x1, y1, x2, y2);break;
+							//case 'x' : {
+								  b_violet->RenderStretch(x1, y1, x2, y2);
+								  //font1->printf(x1, y1-30, HGETEXT_LEFT,"%d", index);break;
 							}
 					   }
 					}
