@@ -12,7 +12,7 @@
 #include <iostream>
 #include <time.h>
 #include <hgeparticle.h>
- 
+#include "hgeguictrls.h"
 
 // Particules
 hgeParticleSystemInfo particle;
@@ -28,6 +28,9 @@ HSTREAM myMusic;
 // Channel pour gere plusieurs flux musicaux
 HCHANNEL chan[2];
 
+
+
+
 hgeResourceManager* Res;
 hgeSprite* bgSprite;
 hgeSprite* game_over;
@@ -36,6 +39,7 @@ hgeSprite* canon_img;
 // Pointeur pour la police d'écriture
 hgeFont* font1;
 
+int id_menu = -1; // Pour gérer les différents écrans de jeux
 char* pMap = NULL; // pointeur sur la desctiption de la map
 int sizeX, sizeY;
 float fScale =27;
@@ -76,7 +80,7 @@ int score = 0;
 	float posX_depart = 380; // Coordonnées de la boule de départ dans le canon
 	float posY_depart = 480;
 
-
+	// position boule suivante
 	float bnext_X = 78;
 	float bnext_Y = 445;
 	
@@ -94,6 +98,9 @@ bool premierelignepaire = false;
 // Sprite pour le bouton du menu
 hgeAnimation* bt_menu; // bouton menu sur l'espace de jeux
 
+// Background intro
+hgeSprite* bgg; // Sprite pour le fond de l'intro
+
 // Sprite pour les boules
 hgeAnimation* b_rouge; //rouge
 hgeAnimation* b_vert; // vert
@@ -105,10 +112,10 @@ hgeAnimation* b_gris; //gris
 
 
 // Some resource handles
-//HEFFECT				snd;
+HEFFECT				snd;
 HTEXTURE			tex;
 
 // Pointeurs pour HGE object
 hgeGUI				*gui;
-//hgeFont				*fnt;
+hgeFont				*fnt;
 hgeSprite			*spr;

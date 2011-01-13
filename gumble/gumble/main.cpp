@@ -1,5 +1,6 @@
 #include "vglobales.h"
 
+
 // Fonction permettant de générer un nombre aléatoire entre 2 bornes [x-y]
 int my_rand ()
 {
@@ -395,28 +396,43 @@ void lunched_boule(char couleur, float angle)
 
 }
 
-
+void menu_pfiout()
+{
+	// La bidouille du Siou !!!!!
+		// Non sans déconner c'est pour virer le menu quanto n est sur le jeux :)
+		gui->ShowCtrl(1,false);
+		gui->ShowCtrl(2,false);
+		gui->ShowCtrl(3,false);
+		gui->ShowCtrl(4,false);
+		gui->ShowCtrl(5,false);
+		hge->Effect_Free(snd);
+}
 
 bool FrameFunc() // Fonction appelée à chaque image
 {
 	if(hge->Input_GetKeyState(HGEK_ESCAPE))
 		return true;
 	int id;
-	  static int lastid=0;
-	  float dt=hge->Timer_GetDelta();
+	static int lastid=0;
+	float dt=hge->Timer_GetDelta();
 
 	  id=gui->Update(dt);
-	  if(id == -1)
+	  if(lastid == -1)
 	  {
-		switch(lastid)
+		switch(id)
 		{
+		  case 0:
+			  id_menu = 1;
+			  break;
 		  case 1:
+			  id_menu = 2;
+			  break;
 		  case 2:
-		  case 3:
+			  id_menu = 3;
+			  break;
 		  case 4:
-			gui->SetFocus(1);
-			gui->Enter();
-			break;
+			  id_menu = 4;	
+			  break;
 		  case 5: return true;
 		}
 	  }
@@ -427,295 +443,327 @@ bool FrameFunc() // Fonction appelée à chaque image
 
 bool RenderFunc()
 {
-	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
-	timeCpt += dt; // on additionne les temps entre les images
-	if(timeCpt > timeDown) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
-	{													// on actualise pMap pour lui enlever une ligne en bas (la ligne la plus basse disparait pour faire descendre les autres)
-		if(!isDowning) // les boules ne sont pas en train de descendre
-		{
-			sizeY -= 1; // nouveau nombre de ligne (on supprime celle en bas)
-			char* pMapTmp = new char[(sizeX*sizeY)];		// pour cela, on créé un nouveau tableau		
-			for(int cpt = 0; cpt < (sizeX*sizeY);cpt++)   // puis on recopie les valeurs de pMap en enlevant la premiere ligne
-			{
-				pMapTmp[cpt] = pMap[cpt+sizeX];
-			}
-			char* toFree = pMap;
-			pMap = pMapTmp;
-			free(toFree); // on free l'ancien tableau
-			timeCpt = 0; // on remet le compteur de temps à 0;
-			swapPair = (swapPair+1)%2; // on modifie la variable a chaque descente de boules (elle prend soit 1 soit 0)
-			isDowning = true;
-		}
-	}
-
-	
-
-	// Passe lunched à vrai (pour boule lancée) si espace pressé
-	if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
+	if(id_menu == 1) // Pour le menu du jeux 
 	{
-			posX_bcourante = posX_depart;
-			posY_bcourante = posY_depart;
-			blunched_boule=true;
-			//affiche_next(alea_n);
-			coul_bsuivante = coul_bcourante;
-	}
-
-	affiche_next(coul_bsuivante);
-	// Permet de récupérer les coordonnées de la souris
-	hge->Input_GetMousePos(&mouseX, &mouseY);
-	
-
-	//Génerer un nombre aléatoire si la variable 'lunched' est à vrai/////////////////////////////////////////////////////////////////////////////////////////////
-	if(lunched==true)
-	{
-		alea_c = my_rand(); // Génére un nombre entre 1 et 7 compris pourl a boule courante
-		attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de boules
-		//alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
-		//attrib_boule(alea_n); // idem
+		menu_pfiout(); // Bidouille du siou pour virer le menu sur le jeux
 		
-		lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
-	}
-
-
-	particleManager->Update(dt);  //update all particles
-	if(hge->Input_GetKey()==HGEK_LBUTTON)
-	{
-		particleManager->SpawnPS(&particle, mouseX, mouseY);
- 
-	}
-	
-	
-	// Render graphics
-	hge->Gfx_BeginScene();
-	hge->Gfx_Clear(0);
-	bgSprite->Render(0, 0);
-	bt_menu->Render(640,390);
-	gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
-
-	b_rouge->Update(dt);  //update the animation
-	b_vert->Update(dt);
-	b_bleu->Update(dt);
-	b_orange->Update(dt);
-	b_jaune->Update(dt);
-	b_violet->Update(dt);
-	b_gris->Update(dt);
-	//bt_menu->Update(dt);
-
-
-	
-	
-
-	// test pour afficher la direction du tir
-	for(int i = 0; i < 400;i++)
-	{
-		b_violet->RenderStretch(380+(bouleSizeX/2)-2.5+(i*rot), 480+(bouleSizeX/2)-(i*0.5),380+(bouleSizeX/2)-2.5+(i*rot)+5,480+(bouleSizeX/2)-(i*0.5)+5);
-	}
-
-
-	if(blunched_boule)
-	{
-		lunched_boule(coul_bsuivante, rot); // coul b_courante
-	}
-
-	for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
-	{
-		float posY =y*bouleSizeY;
-		for(int x=0; x<sizeX; ++x)
-		{
-			if(y < 11)
+		float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
+		timeCpt += dt; // on additionne les temps entre les images
+		if(timeCpt > timeDown) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
+		{													// on actualise pMap pour lui enlever une ligne en bas (la ligne la plus basse disparait pour faire descendre les autres)
+			if(!isDowning) // les boules ne sont pas en train de descendre
 			{
-				if(y == 0 && x == 0 && isDowning) // si les boules sont en train de descendre, on leur attribut pour chaque image une position décalée de 0.05 px (descente petit à petit)
-					animDowning += 0.05;
-
-
-				float decalage = 0.0;       // si la ligne est paire, on la décale
-				if((y+swapPair)%2 == 0)
+				sizeY -= 1; // nouveau nombre de ligne (on supprime celle en bas)
+				char* pMapTmp = new char[(sizeX*sizeY)];		// pour cela, on créé un nouveau tableau		
+				for(int cpt = 0; cpt < (sizeX*sizeY);cpt++)   // puis on recopie les valeurs de pMap en enlevant la premiere ligne
 				{
-					decalage = bouleSizeX/2;
-					if(y == 0)
-						premierelignepaire = true;
-					if(y == 1)
-						premierelignepaire = false;
+					pMapTmp[cpt] = pMap[cpt+sizeX];
 				}
-				/*
-				On utilise swapPair pour regarder si on doit décaler ou non la ligne
-				Exemple : premieres secondes du jeu, la ligne 5 est impaire et la ligne 6 est paire
-				On affiche donc la ligne 26 décalée à droite par rapport à la ligne 5 (selon les modalités du jeu)
+				char* toFree = pMap;
+				pMap = pMapTmp;
+				free(toFree); // on free l'ancien tableau
+				timeCpt = 0; // on remet le compteur de temps à 0;
+				swapPair = (swapPair+1)%2; // on modifie la variable a chaque descente de boules (elle prend soit 1 soit 0)
+				isDowning = true;
+			}
+		}
 
-				Ensuite, durant la deuxième phase (les boules descendent d'un cran), la ligne 5 devient la ligne 4 (donc paire) et la ligne 6 devient la ligne 5 (donc impaire)
-				on doit donc dire à l'affichage de ne plus décaler les lignes paires, mais impaires pour que les lignes restent toujours au même endroit en ordonnées.
-				La variable swapPair sert alterner le modulo 2 du numéro de ligne pour que celui ci reste contant selon la ligne.
-				*/
+		// Passe lunched à vrai (pour boule lancée) si espace pressé
+		if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
+		{
+				posX_bcourante = posX_depart;
+				posY_bcourante = posY_depart;
+				blunched_boule=true;
+				//affiche_next(alea_n);
+				coul_bsuivante = coul_bcourante;
+		}
 
-				// Nouvelles positions pour l'affichages des boules
-				float x1 = xMap+((x)*bouleSizeX+decalage);
-				float y1 = yMap-((y-1)*bouleSizeY);
-				float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
-				float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
-				if(isDowning && loose==false)
-				{	
-					if(animDowning < bouleSizeX)
+		affiche_next(coul_bsuivante);
+		// Permet de récupérer les coordonnées de la souris
+		hge->Input_GetMousePos(&mouseX, &mouseY);
+	
+
+		//Génerer un nombre aléatoire si la variable 'lunched' est à vrai/////////////////////////////////////////////////////////////////////////////////////////////
+		if(lunched==true)
+		{
+			alea_c = my_rand(); // Génére un nombre entre 1 et 7 compris pourl a boule courante
+			attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de boules
+			//alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+			//attrib_boule(alea_n); // idem
+		
+			lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
+		}
+
+
+		particleManager->Update(dt);  //update all particles
+		if(hge->Input_GetKey()==HGEK_LBUTTON)
+		{
+			particleManager->SpawnPS(&particle, mouseX, mouseY);
+ 
+		}
+	
+		// essai pour le bouton menu 
+		float rx1,ry1,rx2,ry2;
+		rx1=640;
+		ry1=390;
+		rx2=760;
+		ry2=510;
+		//hgeRect(rx1,ry1,rx2,ry2);
+		
+			if((mouseX >= rx1 && mouseY >= ry1) || (mouseX <= rx2 && mouseY <= ry2))
+			{
+				bgSprite->Render(0, 0);
+			}
+		
+		// Render graphics
+		hge->Gfx_BeginScene();
+		hge->Gfx_Clear(0);
+	
+		bt_menu->Render(640,390);
+		gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
+
+		b_rouge->Update(dt);  //update the animation
+		b_vert->Update(dt);
+		b_bleu->Update(dt);
+		b_orange->Update(dt);
+		b_jaune->Update(dt);
+		b_violet->Update(dt);
+		b_gris->Update(dt);
+
+		// test pour afficher la direction du tir
+		for(int i = 0; i < 400;i++)
+		{
+			b_violet->RenderStretch(380+(bouleSizeX/2)-2.5+(i*rot), 480+(bouleSizeX/2)-(i*0.5),380+(bouleSizeX/2)-2.5+(i*rot)+5,480+(bouleSizeX/2)-(i*0.5)+5);
+		}
+
+
+		if(blunched_boule)
+		{
+			lunched_boule(coul_bsuivante, rot); // coul b_courante
+		}
+
+		for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
+		{
+			float posY =y*bouleSizeY;
+			for(int x=0; x<sizeX; ++x)
+			{
+				if(y < 11)
+				{
+					if(y == 0 && x == 0 && isDowning) // si les boules sont en train de descendre, on leur attribut pour chaque image une position décalée de 0.05 px (descente petit à petit)
+						animDowning += 0.05;
+
+
+					float decalage = 0.0;       // si la ligne est paire, on la décale
+					if((y+swapPair)%2 == 0)
 					{
-						// Modification des coordonnées des boules si elles sont en train de descendre (descente progressive sur les y)
-						y1 -= (bouleSizeX-animDowning);
-						y2 -= (bouleSizeX-animDowning);
+						decalage = bouleSizeX/2;
+						if(y == 0)
+							premierelignepaire = true;
+						if(y == 1)
+							premierelignepaire = false;
+					}
+					/*
+					On utilise swapPair pour regarder si on doit décaler ou non la ligne
+					Exemple : premieres secondes du jeu, la ligne 5 est impaire et la ligne 6 est paire
+					On affiche donc la ligne 26 décalée à droite par rapport à la ligne 5 (selon les modalités du jeu)
+
+					Ensuite, durant la deuxième phase (les boules descendent d'un cran), la ligne 5 devient la ligne 4 (donc paire) et la ligne 6 devient la ligne 5 (donc impaire)
+					on doit donc dire à l'affichage de ne plus décaler les lignes paires, mais impaires pour que les lignes restent toujours au même endroit en ordonnées.
+					La variable swapPair sert alterner le modulo 2 du numéro de ligne pour que celui ci reste contant selon la ligne.
+					*/
+
+					// Nouvelles positions pour l'affichages des boules
+					float x1 = xMap+((x)*bouleSizeX+decalage);
+					float y1 = yMap-((y-1)*bouleSizeY);
+					float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
+					float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
+					if(isDowning && loose==false)
+					{	
+						if(animDowning < bouleSizeX)
+						{
+							// Modification des coordonnées des boules si elles sont en train de descendre (descente progressive sur les y)
+							y1 -= (bouleSizeX-animDowning);
+							y2 -= (bouleSizeX-animDowning);
+						}
+						else
+						{
+						
+							for(int i=0; i<7; i++)
+							{
+								if(pMap[i] != 'x')
+								{
+									loose = true; // Permet d'arreter le jeux
+									stop_time = true; // Permet d'arreter le temps quand la partie GameOver
+								}
+							}
+
+							animDowning = 0;
+							isDowning = false;
+							timeCpt = 0;
+						}
+					}
+					
+					float posX =x*bouleSizeX;
+
+					int index =y*sizeX+x;
+				
+					if(isDowning && y == 10)
+					{	
 					}
 					else
 					{
-						
-						for(int i=0; i<7; i++)
+						switch (pMap[index])
 						{
-							if(pMap[i] != 'x')
-							{
-								loose = true; // Permet d'arreter le jeux
-								stop_time = true; // Permet d'arreter le temps quand la partie GameOver
+							case 'r': {
+								  b_rouge->RenderStretch(x1, y1, x2, y2);break;
 							}
-						}
-
-						animDowning = 0;
-						isDowning = false;
-						timeCpt = 0;
+							case 'v': {
+								  b_vert->RenderStretch(x1, y1, x2, y2);break;
+							}
+							case 'b': {
+								  b_bleu->RenderStretch(x1, y1, x2, y2);break;
+							}
+							case 'o': {
+								  b_orange->RenderStretch(x1, y1, x2, y2);break;
+							}
+							case 'g': {
+								  b_gris->RenderStretch(x1, y1, x2, y2);break;
+							}
+							case 'j': {
+								  b_jaune->RenderStretch(x1, y1, x2, y2);break;
+							}
+							case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
+								  b_violet->RenderStretch(x1, y1, x2, y2);break;
+							}
+					   }
 					}
 				}
-					
-				float posX =x*bouleSizeX;
-
-				int index =y*sizeX+x;
-				
-				if(isDowning && y == 10)
-				{	
-				}
-				else
-				{
-					switch (pMap[index])
-					{
-						case 'r': {
-							  b_rouge->RenderStretch(x1, y1, x2, y2);break;
-						}
-						case 'v': {
-							  b_vert->RenderStretch(x1, y1, x2, y2);break;
-						}
-						case 'b': {
-							  b_bleu->RenderStretch(x1, y1, x2, y2);break;
-						}
-						case 'o': {
-							  b_orange->RenderStretch(x1, y1, x2, y2);break;
-						}
-						case 'g': {
-							  b_gris->RenderStretch(x1, y1, x2, y2);break;
-						}
-						case 'j': {
-							  b_jaune->RenderStretch(x1, y1, x2, y2);break;
-						}
-						case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
-							  b_violet->RenderStretch(x1, y1, x2, y2);break;
-						}
-				   }
-				}
 			}
-		}
-	}	
+		}	
 		
 
-	//!\\ A revoir car je dois faire un pointeur pour stopper le temps quand la partie est perdu ou gagné ! :)
-	// initialisation du compteur de temps et test pour l'affichage
-	if(stop_time == false)
-	{
-		float time=0; // Permet de gérer le compteur de temps
-		time = hge->Timer_GetTime();
-		font1->SetColor(ARGB(255,1,148,48));  //set color of text to black
-		font1->printf(678,142, HGETEXT_LEFT, "%.2f", time); // .2f pour afficher uniquement 2 décimales
-	}
+		//!\\ A revoir car je dois faire un pointeur pour stopper le temps quand la partie est perdu ou gagné ! :)
+		// initialisation du compteur de temps et test pour l'affichage
+		if(stop_time == false)
+		{
+			float time=0; // Permet de gérer le compteur de temps
+			time = hge->Timer_GetTime();
+			font1->SetColor(ARGB(255,1,148,48));  //set color of text to black
+			font1->printf(678,142, HGETEXT_LEFT, "%.2f", time); // .2f pour afficher uniquement 2 décimales
+		}
 	
-	// Affiche le message GameOver 
-	if (loose == true)
-	{
-		game_over->Render(262,250);
-	}
+		// Affiche le message GameOver 
+		if (loose == true)
+		{
+			game_over->Render(262,250);
+		}
 	
-	// Affichage du score du joueur
-	font1->printf(120, 142, HGETEXT_LEFT,"%d", score);
+		// Affichage du score du joueur
+		font1->printf(120, 142, HGETEXT_LEFT,"%d", score);
 
 
-	//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
-	font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
-	//!\\
+		//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
+		font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
+		//!\\
 	
-	affiche_next(coul_bsuivante);
+		affiche_next(coul_bsuivante);
 	
-	// Affichage du canon
-	canon_img->SetHotSpot(65,65);
-	canon_img->RenderEx(canonLocX, canonLocY,rot*1.5);
+		// Affichage du canon
+		canon_img->SetHotSpot(65,65);
+		canon_img->RenderEx(canonLocX, canonLocY,rot*1.5);
 	
-	if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1)
-		rot += 0.0005; // utilisation de la valeur 1 MAGIC ! 
-	if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1)
-		rot -= 0.0005;
+		if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1)
+			rot += 0.0005; // utilisation de la valeur 1 MAGIC ! 
+		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1)
+			rot -= 0.0005;
 	
 
-	/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
-	/* Bon Je sais c'est déguellasse car je code en dur les coordonnées :p */
-	if(!blunched_boule)
-	{
-		switch (alea_c)
+		/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
+		/* Bon Je sais c'est déguellasse car je code en dur les coordonnées :p */
+		if(!blunched_boule)
 		{
-			case 1: {
-				  b_rouge->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
-			}
-			case 2: {
-				  b_vert->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
-			}
-			case 3: {
-				  b_bleu->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
-			}
-			case 4: {
-				  b_orange->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
-			}
-			case 5: {
-				  b_gris->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
-			}
-			case 6: {
-				  b_jaune->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
-			}
-			case 7: {
-				  b_violet->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+			switch (alea_c)
+			{
+				case 1: {
+					  b_rouge->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+				}
+				case 2: {
+					  b_vert->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+				}
+				case 3: {
+					  b_bleu->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+				}
+				case 4: {
+					  b_orange->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+				}
+				case 5: {
+					  b_gris->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+				}
+				case 6: {
+					  b_jaune->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+				}
+				case 7: {
+					  b_violet->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
+				}
 			}
 		}
-	}
 	
-	/*
-	// tests tout caca
-	if(jesus)
-	{
-		if(hge->Input_GetKeyState(HGEK_UP))
-			posbouley -= 0.1;
-		if(hge->Input_GetKeyState(HGEK_DOWN))
-			posbouley += 0.1;
-		if(hge->Input_GetKeyState(HGEK_LEFT))
+		/*
+		// tests tout caca
+		if(jesus)
 		{
-			if((posboulex -0.1)>xMap)
-				posboulex -= 0.1;
-		}
-		if(hge->Input_GetKeyState(HGEK_RIGHT))
-		{
-			if((posboulex+bouleSizeX+ 0.1)<xMap+(8.5*bouleSizeX))
-				posboulex += 0.1;
-		}
+			if(hge->Input_GetKeyState(HGEK_UP))
+				posbouley -= 0.1;
+			if(hge->Input_GetKeyState(HGEK_DOWN))
+				posbouley += 0.1;
+			if(hge->Input_GetKeyState(HGEK_LEFT))
+			{
+				if((posboulex -0.1)>xMap)
+					posboulex -= 0.1;
+			}
+			if(hge->Input_GetKeyState(HGEK_RIGHT))
+			{
+				if((posboulex+bouleSizeX+ 0.1)<xMap+(8.5*bouleSizeX))
+					posboulex += 0.1;
+			}
 		
-		bool test = Collision(posboulex+(bouleSizeX/2), posbouley+(bouleSizeX/2)); // methode 2 (en test)
-		if(!test)
-		{
-			b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
-		}
-		else
-		{
-			int x = calculPosX(posboulex+(bouleSizeX/2));
-			int y = calculPosY(posbouley+(bouleSizeX/2));
-			pMap[(y-1)*8+x-1] = 'b';
-			jesus = false;
-			//b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
-		}
-	}*/
+			bool test = Collision(posboulex+(bouleSizeX/2), posbouley+(bouleSizeX/2)); // methode 2 (en test)
+			if(!test)
+			{
+				b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
+			}
+			else
+			{
+				int x = calculPosX(posboulex+(bouleSizeX/2));
+				int y = calculPosY(posbouley+(bouleSizeX/2));
+				pMap[(y-1)*8+x-1] = 'b';
+				jesus = false;
+				//b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
+			}
+		}*/
+	}
+
+	if(id_menu == -1) // Pour le menu du jeux 
+	{
+		// Render graphics
+		hge->Gfx_BeginScene();
+		bgg->Render(0, 0); // pour le backgroune gumble
+		gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
+	}
+
+	if (id_menu == 2) // Mode multijoueur 
+	{
+		hge->Gfx_BeginScene();
+		fnt->SetColor(0xFFFFFFFF);
+		fnt->Render(18, 18, HGETEXT_LEFT, "Gumble instructions\n"
+			"Shoot the color balls\n\n"
+			"\n\n"
+			"ESPACE - Shoot\n"
+			"Left / Right - Turn the canon\n\n"
+			"");
+		gui->Render();
+	}
+
 	particleManager->Render();  //render all particles
 	hge->Gfx_EndScene();
 	return false;
@@ -770,6 +818,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Chargement du background
 		bgSprite = Res->GetSprite("bgSprite");
 		canon_img = Res->GetSprite("img_canon");
+		// Chargement image menu 
+		bgg = Res->GetSprite("bgg");
 		//Chargement des différentes boules de couleurs
 		b_rouge = Res->GetAnimation("br");
 		b_vert = Res->GetAnimation("bv");
@@ -809,27 +859,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// Chargement textures et sons
 		tex=hge->Texture_Load("cursor.png");
-		//snd=hge->Effect_Load("boing_2.wav");
+		snd=hge->Effect_Load("boing_2.wav");
 		
 		// Chargement de la police et du sprite du cursor
-		//fnt=new hgeFont("font1.fnt");
+		fnt=new hgeFont("font1.fnt");
 		spr=new hgeSprite(tex,0,0,32,32);
 
 
 		// Initialise le GUI
 		gui=new hgeGUI();
 
-		/*
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,bouleSizeX0,0.1f,"Options"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,4bouleSizeX,0.2f,"Instructions"));
+		
+
+
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Instructions"));
 		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
 		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
-		*/
+		
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		gui->SetCursor(spr);
 		gui->SetFocus(1);
-		//gui->Enter();
+		gui->Enter();
+		gui->Render();
 
 		if(first)
 		{
@@ -845,11 +898,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		hge->System_Start();
 
 		// Libération des ressoureces
-		/*delete gui;
+		delete gui;
 	    delete fnt;
 	    delete spr;
 	    hge->Texture_Free(tex);
-	    hge->Effect_Free(snd);*/
+	    hge->Effect_Free(snd);
 	}
 	free(pMap);
 	delete particleManager;
