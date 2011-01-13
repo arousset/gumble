@@ -399,7 +399,7 @@ void lunched_boule(char couleur, float angle)
 void menu_pfiout()
 {
 	// La bidouille du Siou !!!!!
-		// Non sans déconner c'est pour virer le menu quanto n est sur le jeux :)
+		// Non sans déconner c'est pour virer le menu quant on est sur le jeux :)
 		gui->ShowCtrl(1,false);
 		gui->ShowCtrl(2,false);
 		gui->ShowCtrl(3,false);
@@ -407,6 +407,7 @@ void menu_pfiout()
 		gui->ShowCtrl(5,false);
 		hge->Effect_Free(snd);
 }
+
 
 bool FrameFunc() // Fonction appelée à chaque image
 {
@@ -422,9 +423,6 @@ bool FrameFunc() // Fonction appelée à chaque image
 	  {
 		switch(lastid)
 		{
-		  case 0:
-			  id_menu = -1;
-			  break;
 		  case 1:
 			  id_menu = 1;
 			  break;
@@ -453,7 +451,7 @@ bool RenderFunc()
 {
 	if(id_menu == 1) // Pour le menu du jeux 
 	{
-		menu_pfiout(); // Bidouille du siou pour virer le menu sur le jeux
+		//menu_pfiout(); // Bidouille du siou pour virer le menu sur le jeux
 		
 		float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
@@ -507,22 +505,11 @@ bool RenderFunc()
 		if(hge->Input_GetKey()==HGEK_LBUTTON)
 		{
 			particleManager->SpawnPS(&particle, mouseX, mouseY);
-		}
-// essai pour le bouton menu 
-  float rx1,ry1,rx2,ry2;
-  rx1=640;
-  ry1=390;
-  rx2=760;
-  ry2=510;
-  //hgeRect(rx1,ry1,rx2,ry2);
-  
+		}  
 
-  
   // Render graphics
   hge->Gfx_BeginScene();
-
   bgSprite->Render(0, 0);
-
   hge->Gfx_Clear(0);
 	
 		bt_menu->Render(640,390);
@@ -717,68 +704,34 @@ bool RenderFunc()
 				}
 			}
 		}
-	
-		/*
-		// tests tout caca
-		if(jesus)
-		{
-			if(hge->Input_GetKeyState(HGEK_UP))
-				posbouley -= 0.1;
-			if(hge->Input_GetKeyState(HGEK_DOWN))
-				posbouley += 0.1;
-			if(hge->Input_GetKeyState(HGEK_LEFT))
-			{
-				if((posboulex -0.1)>xMap)
-					posboulex -= 0.1;
-			}
-			if(hge->Input_GetKeyState(HGEK_RIGHT))
-			{
-				if((posboulex+bouleSizeX+ 0.1)<xMap+(8.5*bouleSizeX))
-					posboulex += 0.1;
-			}
-		
-			bool test = Collision(posboulex+(bouleSizeX/2), posbouley+(bouleSizeX/2)); // methode 2 (en test)
-			if(!test)
-			{
-				b_bleu->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
-			}
-			else
-			{
-				int x = calculPosX(posboulex+(bouleSizeX/2));
-				int y = calculPosY(posbouley+(bouleSizeX/2));
-				pMap[(y-1)*8+x-1] = 'b';
-				jesus = false;
-				//b_rouge->RenderStretch(posboulex, posbouley, posboulex+bouleSizeX, posbouley+bouleSizeX);
-			}
-		}*/
 	}
 
 	if(id_menu == -1) // Pour le menu du jeux 
 	{
 		// Render graphics
 		hge->Gfx_BeginScene();
-		bgg->Render(0, 0); // pour le backgroune gumble
+		bgg->Render(0, 0); // pour le backg gumble
 		gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
 	}
 
 	if (id_menu == 2) // Mode multijoueur 
 	{
+		float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		hge->Gfx_BeginScene();
+		hge->Gfx_Clear(0);
+		bgg->Render(0, 0);	// Affichage du fond
 		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(18, 18, HGETEXT_LEFT, "2 \n"
-			"Shoot the color balls\n\n"
-			"\n\n"
-			"ESPACE - Shoot\n"
-			"Left / Right - Turn the canon\n\n"
-			"");
+		fnt->Render(18, 18, HGETEXT_LEFT, "2 \n");
 		gui->Render();
 	}
 
-	if (id_menu == 3) // Mode multijoueur 
+	if (id_menu == 3) // Intructions
 	{
 		hge->Gfx_BeginScene();
+		hge->Gfx_Clear(0);
+		bgg->Render(0, 0);	// Affichage du fond 
 		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(18, 18, HGETEXT_LEFT, "3\n"
+		fnt->Render(390, 345, HGETEXT_CENTER, "Instructions\n"
 			"Shoot the color balls\n\n"
 			"\n\n"
 			"ESPACE - Shoot\n"
@@ -790,21 +743,26 @@ bool RenderFunc()
 	if (id_menu == 4) // Crédits 
 	{
 		hge->Gfx_BeginScene();
+		hge->Gfx_Clear(0);
+		bgg->Render(0, 0);	// Affichage du fond
 		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(150, 150, HGETEXT_LEFT, "Credit\n"
-			"GUMBLE\n"
-			"KAWZAC Clement & ROUSSET Alban\n"
+		fnt->Render(390, 345, HGETEXT_CENTER, "Credit\n"
+			"GUMBLE\n\n"
+			"KAWCZAK Clement & ROUSSET Alban\n"
 			"\n\n"
 			"using HGE and C++\n\n"
-			"");
- 		
-		gui->Render();
-		if(hge->Input_GetKey()==HGEK_SPACE)
+			"Space to quit");
+
+		/*if(hge->Input_GetKey()==HGEK_SPACE)
 		{
 			id_menu = -1; // Pour quitter la page crédit et revenir au menu
+			fnt->Render(200, 150, HGETEXT_LEFT, "Credit\n" "dfgdfgdfgdfgdfgdfgdfg");
 		}
+		*/ // sa plante un peux a coause du refresh Gfx_scene()
+  		gui->Render();
 	}
-	
+
+
 	particleManager->Render();  //render all particles
 	hge->Gfx_EndScene();
 	return false;
