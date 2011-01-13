@@ -1,3 +1,14 @@
+Texture backg
+{
+ filename=bgintro.jpg
+}
+
+Sprite bgg
+{
+ texture=backg
+ rect=0, 0, 800, 600
+}
+
 Texture background
 {
  filename=bgj.jpg
