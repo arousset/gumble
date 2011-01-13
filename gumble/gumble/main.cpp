@@ -412,22 +412,26 @@ bool FrameFunc() // Fonction appelée à chaque image
 {
 	if(hge->Input_GetKeyState(HGEK_ESCAPE))
 		return true;
-	int id;
+	int id = -1;
 	static int lastid=0;
 	float dt=hge->Timer_GetDelta();
 
-	  id=gui->Update(dt);
-	  if(lastid == -1)
+	  id = gui->Update(dt);
+	  
+	  if(id == -1)
 	  {
-		switch(id)
+		switch(lastid)
 		{
 		  case 0:
-			  id_menu = 1;
+			  id_menu = -1;
 			  break;
 		  case 1:
-			  id_menu = 2;
+			  id_menu = 1;
 			  break;
 		  case 2:
+			  id_menu = 2;
+			  break;
+		  case 3:
 			  id_menu = 3;
 			  break;
 		  case 4:
@@ -436,8 +440,12 @@ bool FrameFunc() // Fonction appelée à chaque image
 		  case 5: return true;
 		}
 	  }
-	  else if(id) { lastid=id; gui->Leave(); }
-
+	  else if(id) 
+	  {   
+        lastid = id;   
+        gui->Leave();     
+      }  
+	  
  return false;
 }
 
@@ -499,25 +507,23 @@ bool RenderFunc()
 		if(hge->Input_GetKey()==HGEK_LBUTTON)
 		{
 			particleManager->SpawnPS(&particle, mouseX, mouseY);
- 
 		}
-	
-		// essai pour le bouton menu 
-		float rx1,ry1,rx2,ry2;
-		rx1=640;
-		ry1=390;
-		rx2=760;
-		ry2=510;
-		//hgeRect(rx1,ry1,rx2,ry2);
-		
+// essai pour le bouton menu 
+  float rx1,ry1,rx2,ry2;
+  rx1=640;
+  ry1=390;
+  rx2=760;
+  ry2=510;
+  //hgeRect(rx1,ry1,rx2,ry2);
+  
 
-		
-		// Render graphics
-		hge->Gfx_BeginScene();
+  
+  // Render graphics
+  hge->Gfx_BeginScene();
 
-		bgSprite->Render(0, 0);
+  bgSprite->Render(0, 0);
 
-		hge->Gfx_Clear(0);
+  hge->Gfx_Clear(0);
 	
 		bt_menu->Render(640,390);
 		gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
@@ -759,7 +765,7 @@ bool RenderFunc()
 	{
 		hge->Gfx_BeginScene();
 		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(18, 18, HGETEXT_LEFT, "Gumble instructions\n"
+		fnt->Render(18, 18, HGETEXT_LEFT, "2 \n"
 			"Shoot the color balls\n\n"
 			"\n\n"
 			"ESPACE - Shoot\n"
@@ -768,6 +774,37 @@ bool RenderFunc()
 		gui->Render();
 	}
 
+	if (id_menu == 3) // Mode multijoueur 
+	{
+		hge->Gfx_BeginScene();
+		fnt->SetColor(0xFFFFFFFF);
+		fnt->Render(18, 18, HGETEXT_LEFT, "3\n"
+			"Shoot the color balls\n\n"
+			"\n\n"
+			"ESPACE - Shoot\n"
+			"Left / Right - Turn the canon\n\n"
+			"");
+		gui->Render();
+	}
+
+	if (id_menu == 4) // Crédits 
+	{
+		hge->Gfx_BeginScene();
+		fnt->SetColor(0xFFFFFFFF);
+		fnt->Render(150, 150, HGETEXT_LEFT, "Credit\n"
+			"GUMBLE\n"
+			"KAWZAC Clement & ROUSSET Alban\n"
+			"\n\n"
+			"using HGE and C++\n\n"
+			"");
+ 		
+		gui->Render();
+		if(hge->Input_GetKey()==HGEK_SPACE)
+		{
+			id_menu = -1; // Pour quitter la page crédit et revenir au menu
+		}
+	}
+	
 	particleManager->Render();  //render all particles
 	hge->Gfx_EndScene();
 	return false;
@@ -872,9 +909,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// Initialise le GUI
 		gui=new hgeGUI();
-
-		
-
 
 		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
 		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
