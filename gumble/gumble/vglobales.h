@@ -47,13 +47,13 @@ const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boule
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 400; // temps avant de faire tomber les boules(secondes)
+float timeDown = 300; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
 float animDowning = 0; // utile pour faire une sorte d'animation lors de la descente des boules
-float speedY = 0.05; // vitesse de la boule du joueur
-float speedX = 0.1; // inclinaison de la boule du joueur
+float speedY = (float)0.05; // vitesse de la boule du joueur
+float speedX = (float)0.1; // inclinaison de la boule du joueur
 bool loose = false; // Permet de gérer si la partie est perdu
 float rot = 0; // Permet la rotation du canon
 float mouseX, mouseY; // Coordonnées de la souris
@@ -67,6 +67,13 @@ bool first = true; // Pour la 1er génération de nombre aléatoire
 
 //boolean pour stopper le temps
 bool stop_time = false;
+
+//Compteur pour supprimer les boules si plus de 2 sont accolées
+int cptDestroy = 0;
+bool tabToDestroy[88];
+
+// test pour détruire les boules non suspendues
+bool tabNoSuspended[88];
 
 // Variable pour calculer le score
 int score = 0;
