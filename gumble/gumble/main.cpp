@@ -12,7 +12,7 @@ int my_rand ()
 
 void attrib_boule(int couleur)
 {
-	/*switch (couleur)
+	switch (couleur)
 	{
 		case 1: {
 			  coul_bcourante='r';break;
@@ -35,8 +35,7 @@ void attrib_boule(int couleur)
 		case 7: {
 			  coul_bcourante='w';break;
 		}
-	}*/
-	coul_bcourante = 'r';
+	}
 }
 
 int calculPosX(int x)
@@ -84,16 +83,16 @@ bool Collision(int newX, int newY)
 	if(yPaire)
 	{
 		//decalage = bouleSizeX/2;
-		mapX =  calculPosX(newX-bouleSizeX/2);
+		mapX =  calculPosX((int)(newX-bouleSizeX/2));
 		
 		if(mapX < 8 && mapY < 11)
 			if(pMap[(mapX)+((mapY)*8)] != 'x')
 			{
-				xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-				ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+				xcoll = (int)(xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+				ycoll = (int)(yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2));
 				if(isDowning)
-					ycoll -= (bouleSizeY-animDowning);
-				b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+					ycoll -= (int)(bouleSizeY-animDowning);
+				b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 				if(detect < bouleSizeX*bouleSizeX)
@@ -102,11 +101,11 @@ bool Collision(int newX, int newY)
 		if(mapX < 8 && mapY > 1)
 			if(pMap[(mapX)+((mapY-2)*8)] != 'x')
 			{
-				xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-				ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+				xcoll = (int)(xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+				ycoll = (int)(yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2));
 				if(isDowning)
-					ycoll -= (bouleSizeY-animDowning);
-				b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+					ycoll -= (int)(bouleSizeY-animDowning);
+				b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 				int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 				if(detect < bouleSizeX*bouleSizeX)
@@ -116,16 +115,16 @@ bool Collision(int newX, int newY)
 	else
 	{
 		mapX =  calculPosX(newX);
-		decalage = bouleSizeX/2;
+		decalage = (int)(bouleSizeX/2);
 
 		if(mapX > 1 && mapY < 11)
 		if(pMap[(mapX-2)+((mapY)*8)] != 'x')
 		{
-		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		xcoll = (int)(xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+		ycoll = (int)(yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2));
 		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			ycoll -= (int)(bouleSizeY-animDowning);
+		b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
@@ -135,11 +134,11 @@ bool Collision(int newX, int newY)
 		if(mapX > 1 && mapY > 1)
 		if(pMap[(mapX-2)+((mapY-2)*8)] != 'x')
 		{
-		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		xcoll = (int)(xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+		ycoll = (int)(yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2));
 		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			ycoll -= (int)(bouleSizeY-animDowning);
+		b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
@@ -153,17 +152,17 @@ bool Collision(int newX, int newY)
 		collision = true;
 	}
 	if(yPaire)
-		decalage = bouleSizeX/2;
+		decalage = (int)(bouleSizeX/2);
 	else
 		decalage = 0;
 	if(mapX > 1)
 	if(pMap[(mapX-2)+((mapY-1)*8)] != 'x')
 	{
-		xcoll = xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2);
+		xcoll = (int)(xMap+    ((mapX-2)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+		ycoll = (int)(yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2));
 		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			ycoll -= (int)(bouleSizeY-animDowning);
+		b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
@@ -172,28 +171,28 @@ bool Collision(int newX, int newY)
 	if(mapX < 8)
 	if(pMap[(mapX)+((mapY-1)*8)] != 'x')
 	{
-		xcoll = xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2);
+		xcoll = (int)(xMap+    ((mapX)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+		ycoll = (int)(yMap-         ((mapY-2)*bouleSizeY)      -(bouleSizeX/2));
 		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			ycoll -= (int)(bouleSizeY-animDowning);
+		b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
 					collision = true;
 	}
 	if(!yPaire)
-		decalage = bouleSizeX/2;
+		decalage = (int)(bouleSizeX/2);
 	else
 		decalage = 0;
 	if(mapY < 11)
 	if(pMap[(mapX-1)+((mapY)*8)] != 'x')
 	{
-		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2);
+		xcoll = (int)(xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+		ycoll = (int)(yMap-         ((mapY-1)*bouleSizeY)      -(bouleSizeX/2));
 		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			ycoll -= (int)(bouleSizeY-animDowning);
+		b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 			if(detect < bouleSizeX*bouleSizeX)
@@ -202,11 +201,11 @@ bool Collision(int newX, int newY)
 	if(mapY > 1)
 	if(pMap[(mapX-1)+((mapY-2)*8)] != 'x')
 	{
-		xcoll = xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage;
-		ycoll = yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2);
+		xcoll = (int)(xMap+    ((mapX-1)*bouleSizeX)    +(bouleSizeX/2)   +decalage);
+		ycoll = (int)(yMap-         ((mapY-3)*bouleSizeY)      -(bouleSizeX/2));
 		if(isDowning)
-			ycoll -= (bouleSizeY-animDowning);
-		b_orange->RenderStretch(xcoll-2, ycoll-2, xcoll+2, ycoll+2);
+			ycoll -= (int)(bouleSizeY-animDowning);
+		b_orange->RenderStretch((float)(xcoll-2), (float)(ycoll-2), (float)(xcoll+2), (float)(ycoll+2));
 
 		int detect = (newX-xcoll)*(newX-xcoll) + (newY-ycoll)*(newY-ycoll);
 				if(detect < bouleSizeX*bouleSizeX)
@@ -243,20 +242,18 @@ void affiche_next(char couleur)
 			}
 }
 
-
+// destroy() va bientôt être supprimée pour laisser place a destroy2()
 void destroy(int index, char couleur, bool lignePaire)
 {
-	/*int posXParticule = (index%8)*bouleSizeX + (bouleSizeX/2);
-	posXParticule = xMap + posXParticule;
-	int poxYParticule = (index/8)*bouleSizeX + (bouleSizeX/2);
-	particleManager->SpawnPS(&particle, posXParticule, poxYParticule);*/
-
 	bool destroyBCourante = false;
+	//pMap[index] = 'x';
+
 	if(index%8 != 0)
 		if(pMap[index-1] == couleur)
 		{
 			pMap[index-1] = 'x';
 			destroyBCourante = true;
+			cptDestroy++;
 			destroy(index-1, couleur, lignePaire);
 		}
 	if(index%8 != 7)
@@ -264,18 +261,21 @@ void destroy(int index, char couleur, bool lignePaire)
 		{
 			pMap[index+1] = 'x';
 			destroyBCourante = true;
+			cptDestroy++;
 			destroy(index+1, couleur, lignePaire);
 		}
 	if(pMap[index+8] == couleur)
 	{
 		pMap[index+8] = 'x';
 		destroyBCourante = true;
+		cptDestroy++;
 		destroy(index+8, couleur, lignePaire);
 	}
 	if(pMap[index-8] == couleur)
 	{
 		pMap[index-8] = 'x';
 		destroyBCourante = true;
+		cptDestroy++;
 		destroy(index-8, couleur, lignePaire);
 	}
 	if(lignePaire)
@@ -285,6 +285,7 @@ void destroy(int index, char couleur, bool lignePaire)
 			{
 				pMap[index+8+1] = 'x';
 				destroyBCourante = true;
+				cptDestroy++;
 				destroy(index+8+1, couleur, lignePaire);
 			}
 		if(index%8 != 7)
@@ -292,6 +293,7 @@ void destroy(int index, char couleur, bool lignePaire)
 			{
 				pMap[index-8+1] = 'x';
 				destroyBCourante = true;
+				cptDestroy++;
 				destroy(index-8+1, couleur, lignePaire);
 			}
 	}
@@ -302,6 +304,7 @@ void destroy(int index, char couleur, bool lignePaire)
 			{
 				pMap[index+8-1] = 'x';
 				destroyBCourante = true;
+				cptDestroy++;
 				destroy(index+8-1, couleur, lignePaire);
 			}
 		if(index%8 != 0)
@@ -309,16 +312,136 @@ void destroy(int index, char couleur, bool lignePaire)
 			{
 				pMap[index-8-1] = 'x';
 				destroyBCourante = true;
+				cptDestroy++;
 				destroy(index-8-1, couleur, lignePaire);
 			}
 	}
+	//if(destroyBCourante && cptDestroy > 2)
 	if(destroyBCourante)
 		pMap[index] = 'x';
+
+}
+
+void particleDisplay(int index)
+{
+	int posXParticule = (int)((index%8)*bouleSizeX + (bouleSizeX/2));
+	posXParticule = xMap + posXParticule;
+	int poxYParticule = (int)((index/8)*bouleSizeX + (bouleSizeX/2));
+	poxYParticule = yMap - poxYParticule;
+	particleManager->SpawnPS(&particle, (float)posXParticule, (float)poxYParticule);
+}
+
+void destroy2(int index, char couleur, bool lignePaire)
+{
+	if(!tabToDestroy[index])
+	{
+		cptDestroy++;
+		tabToDestroy[index] = true;
+
+		if(index%8 != 0)
+			if(pMap[index-1] == couleur)
+			{
+				destroy2(index-1, couleur, lignePaire);
+			}
+		if(index%8 != 7)
+			if(pMap[index+1] == couleur)
+			{
+				destroy2(index+1, couleur, lignePaire);
+			}
+		if(pMap[index+8] == couleur)
+		{
+			destroy2(index+8, couleur, !lignePaire);
+		}
+		if(pMap[index-8] == couleur)
+		{
+			destroy2(index-8, couleur, !lignePaire);
+		}
+		if(lignePaire)
+		{
+			if(index%8 != 7)
+				if(pMap[index+8+1] == couleur)
+				{
+					destroy2(index+8+1, couleur, !lignePaire);
+				}
+			if(index%8 != 7)
+				if(pMap[index-8+1] == couleur)
+				{
+					destroy2(index-8+1, couleur, !lignePaire);
+				}
+		}
+		else
+		{
+			if(index%8 != 0)
+				if(pMap[index+8-1] == couleur)
+				{
+					destroy2(index+8-1, couleur, !lignePaire);
+				}
+			if(index%8 != 0)
+				if(pMap[index-8-1] == couleur)
+				{
+					destroy2(index-8-1, couleur, !lignePaire);
+				}
+		}
+	}
+
+}
+
+void destroyNoSuspended(int index, bool lignePaire)
+{
+
+	if(!tabNoSuspended[index] && index/8 < 11 )
+	{
+		tabNoSuspended[index] = true;
+		if(index%8 != 0)
+			if(pMap[index-1] != 'x')
+			{
+				destroyNoSuspended(index-1, lignePaire);
+			}
+		if(index%8 != 7)
+			if(pMap[index+1] != 'x')
+			{
+				destroyNoSuspended(index+1, lignePaire);
+			}
+		if(pMap[index+8] != 'x')
+		{
+			destroyNoSuspended(index+8, !lignePaire);
+		}
+		if(pMap[index-8] != 'x')
+		{
+			destroyNoSuspended(index-8, !lignePaire);
+		}
+		if(lignePaire)
+		{
+			if(index%8 != 7)
+				if(pMap[index+8+1] != 'x')
+				{
+					destroyNoSuspended(index+8+1, !lignePaire);
+				}
+			if(index%8 != 7)
+				if(pMap[index-8+1] != 'x')
+				{
+					destroyNoSuspended(index-8+1, !lignePaire);
+				}
+		}
+		else
+		{
+			if(index%8 != 0)
+				if(pMap[index+8-1] != 'x')
+				{
+					destroyNoSuspended(index+8-1, !lignePaire);
+				}
+			if(index%8 != 0)
+				if(pMap[index-8-1] != 'x')
+				{
+					destroyNoSuspended(index-8-1, !lignePaire);
+				}
+		}
+	}
 }
 
 void lunched_boule(char couleur, float angle)
 {
-		bool test = Collision(posX_bcourante+(bouleSizeX/2), posY_bcourante+(bouleSizeX/2));
+		bool test = Collision((int)(posX_bcourante+(bouleSizeX/2)), (int)(posY_bcourante+(bouleSizeX/2)));
 		if(!test)
 		{
 			switch (couleur)
@@ -354,7 +477,7 @@ void lunched_boule(char couleur, float angle)
 				rot = -rot;
 
 		}
-		int y = calculPosY(posY_bcourante+(bouleSizeX/2));
+		int y = calculPosY((int)(posY_bcourante+(bouleSizeX/2)));
 		if(test || y == 11)
 		{
 			int x;
@@ -364,34 +487,52 @@ void lunched_boule(char couleur, float angle)
 				yPaire = !yPaire;
 
 			if(yPaire)
-				x = calculPosX(posX_bcourante);
+				x = calculPosX((int)posX_bcourante);
 			else
-				x = calculPosX(posX_bcourante+(bouleSizeX/2));
+				x = calculPosX((int)(posX_bcourante+(bouleSizeX/2)));
 
 			int index = (y-1)*8+x-1;
 
+			//initialisation du tableau des boules a détruire
+			for(int i = 0;i < 88;i++)
+				tabToDestroy[i] = false;
+			cptDestroy = 0; // initialisation du compteur de boules a supprimer ( > 3? )
 
 			if(!isDowning)
 			{
 				pMap[index] = couleur;
-				destroy(index, couleur, yPaire);
+				destroy2(index, couleur, yPaire);
 			}
 			else
 			{
 				if(pMap[(x-1)+((y-1)*8)] != 'x')
 				{
-					pMap[index-8] = couleur;
-					destroy(couleur, index-8, yPaire);
+					index -= 8;
+					pMap[index] = couleur;
+					destroy2(index, couleur, yPaire);
 				}
 				else
 				{
 					pMap[index] = couleur;
-					destroy(couleur, index, yPaire);
+					destroy2(index, couleur, yPaire);
 				}
 			}
+
+			// destruction des boules
+			if(cptDestroy > 2)
+			{
+				for(int i = 0;i < 88;i++)
+				{
+					if(tabToDestroy[i])
+					{
+						particleDisplay(i);
+						pMap[i] = 'x';
+					}
+				}
+			}
+			
 			blunched_boule = false;
 			lunched=true;  
-
 		}
 
 }
@@ -492,7 +633,7 @@ bool RenderFunc()
 		//Génerer un nombre aléatoire si la variable 'lunched' est à vrai/////////////////////////////////////////////////////////////////////////////////////////////
 		if(lunched==true)
 		{
-			alea_c = my_rand(); // Génére un nombre entre 1 et 7 compris pourl a boule courante
+			alea_c = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule courante
 			attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de boules
 			//alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
 			//attrib_boule(alea_n); // idem
@@ -526,7 +667,11 @@ bool RenderFunc()
 		// test pour afficher la direction du tir
 		for(int i = 0; i < 400;i++)
 		{
-			b_violet->RenderStretch(380+(bouleSizeX/2)-2.5+(i*rot), 480+(bouleSizeX/2)-(i*0.5),380+(bouleSizeX/2)-2.5+(i*rot)+5,480+(bouleSizeX/2)-(i*0.5)+5);
+			b_violet->RenderStretch(
+				(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
+				(float)(480+(bouleSizeX/2)-(i*0.5)),
+				(float)(380+(bouleSizeX/2)-2.5+(i*rot)+5),
+				(float)(480+(bouleSizeX/2)-(i*0.5)+5));
 		}
 
 
@@ -543,7 +688,7 @@ bool RenderFunc()
 				if(y < 11)
 				{
 					if(y == 0 && x == 0 && isDowning) // si les boules sont en train de descendre, on leur attribut pour chaque image une position décalée de 0.05 px (descente petit à petit)
-						animDowning += 0.05;
+						animDowning += (float)0.05;
 
 
 					float decalage = 0.0;       // si la ligne est paire, on la décale
@@ -609,7 +754,7 @@ bool RenderFunc()
 						{
 							case 'r': {
 								  b_rouge->RenderStretch(x1, y1, x2, y2);
-								  //font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
+								  font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
 								  break;
 							}
 							case 'v': {
@@ -667,12 +812,12 @@ bool RenderFunc()
 	
 		// Affichage du canon
 		canon_img->SetHotSpot(65,65);
-		canon_img->RenderEx(canonLocX, canonLocY,rot*1.5);
+		canon_img->RenderEx(canonLocX, canonLocY,(float)(rot*1.5));
 	
 		if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1)
-			rot += 0.0005; // utilisation de la valeur 1 MAGIC ! 
+			rot += (float)0.0005;
 		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1)
-			rot -= 0.0005;
+			rot -= (float)0.0005;
 	
 
 		/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
@@ -773,13 +918,13 @@ bool RenderFunc()
 void LoadMap()
 {
 	FILE* f = NULL;
-	f = fopen("../Debug/map4.txt", "rb"); // ouverture du fichier map
+	f = fopen("../Debug/map.txt", "rb"); // ouverture du fichier map
 	if(f == NULL)
 		return;
 
 	char line[512];
 	fgets(line, sizeof(line),f);
-	sizeX  =atoi(line); // nombre de colones
+	sizeX = atoi(line); // nombre de colones
 	fgets(line, sizeof(line),f);
 	sizeY = atoi(line); // nombres de lignes
 
