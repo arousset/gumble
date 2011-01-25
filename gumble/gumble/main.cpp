@@ -387,41 +387,58 @@ void destroy2(int index, char couleur, bool lignePaire)
 
 }
 
-void destroyNoSuspended(int index, bool lignePaire)
+void init(bool *tab)
 {
+	for(int i = 0;i < 88;i++)
+		tab[i] = false;
+} 
 
-	if(!tabNoSuspended[index] && index/8 < 11 )
+bool needDestroyation(bool *tab)
+{
+	for(int i = 80; i < 88;i++)
 	{
-		tabNoSuspended[index] = true;
+		if(tab[i])
+			return false;
+	}
+	noSuspendedIsDowning = true;
+	return true;
+}
+
+void destroyNoSuspended(int index, bool lignePaire, bool *tab)
+{
+	if(!tab[index] && index/8 < 11 )
+	{
+		tab[index] = true;
+
 		if(index%8 != 0)
 			if(pMap[index-1] != 'x')
 			{
-				destroyNoSuspended(index-1, lignePaire);
+				destroyNoSuspended(index-1, lignePaire, tab);
 			}
 		if(index%8 != 7)
 			if(pMap[index+1] != 'x')
 			{
-				destroyNoSuspended(index+1, lignePaire);
+				destroyNoSuspended(index+1, lignePaire, tab);
 			}
 		if(pMap[index+8] != 'x')
 		{
-			destroyNoSuspended(index+8, !lignePaire);
+			destroyNoSuspended(index+8, !lignePaire, tab);
 		}
 		if(pMap[index-8] != 'x')
 		{
-			destroyNoSuspended(index-8, !lignePaire);
+			destroyNoSuspended(index-8, !lignePaire, tab);
 		}
 		if(lignePaire)
 		{
 			if(index%8 != 7)
 				if(pMap[index+8+1] != 'x')
 				{
-					destroyNoSuspended(index+8+1, !lignePaire);
+					destroyNoSuspended(index+8+1, !lignePaire, tab);
 				}
 			if(index%8 != 7)
 				if(pMap[index-8+1] != 'x')
 				{
-					destroyNoSuspended(index-8+1, !lignePaire);
+					destroyNoSuspended(index-8+1, !lignePaire, tab);
 				}
 		}
 		else
@@ -429,15 +446,135 @@ void destroyNoSuspended(int index, bool lignePaire)
 			if(index%8 != 0)
 				if(pMap[index+8-1] != 'x')
 				{
-					destroyNoSuspended(index+8-1, !lignePaire);
+					destroyNoSuspended(index+8-1, !lignePaire, tab);
 				}
 			if(index%8 != 0)
 				if(pMap[index-8-1] != 'x')
 				{
-					destroyNoSuspended(index-8-1, !lignePaire);
+					destroyNoSuspended(index-8-1, !lignePaire, tab);
 				}
 		}
 	}
+}
+
+void tmp2(bool *tab)
+{
+	for(int i = 0; i < 88;i++)
+	{
+		if(tab[i])
+		{
+			pMap[i] = 'x';
+			noSuspendedTab[i] = true;
+		}
+	}
+}
+
+void tmp(int index, bool lignePaire)
+{
+	bool* tab = new bool[88];
+
+/*////////////// tableau 1
+	init(tab);
+	destroyNoSuspended(index-1, lignePaire, tab);
+	if(needDestroyation(tab))
+	{
+		int loooool = 0;
+	// detruire les boules de tab
+	}
+	
+////////////// tableau 2
+	init(tab);
+	destroyNoSuspended(index+1, lignePaire, tab);
+	if(needDestroyation(tab))
+	{
+		int loooool = 0;
+	// detruire les boules de tab
+	}*/
+
+		if(index%8 != 0)
+			if(pMap[index-1] != 'x')
+			{
+				init(tab);
+				destroyNoSuspended(index-1, lignePaire, tab);
+				if(needDestroyation(tab))
+				{
+					tmp2(tab);
+				}
+			}
+		if(index%8 != 7)
+			if(pMap[index+1] != 'x')
+			{
+				init(tab);
+				destroyNoSuspended(index+1, lignePaire, tab);
+				if(needDestroyation(tab))
+				{
+					tmp2(tab);
+				}
+			}
+		if(pMap[index+8] != 'x')
+		{
+			init(tab);
+			destroyNoSuspended(index+8, !lignePaire, tab);
+			if(needDestroyation(tab))
+			{
+				tmp2(tab);
+			}
+		}
+		if(pMap[index-8] != 'x')
+		{
+			init(tab);
+			destroyNoSuspended(index-8, !lignePaire, tab);
+			if(needDestroyation(tab))
+				{
+					tmp2(tab);
+				}
+		}
+		if(lignePaire)
+		{
+			if(index%8 != 7)
+				if(pMap[index+8+1] != 'x')
+				{
+					init(tab);
+					destroyNoSuspended(index+8+1, !lignePaire, tab);
+					if(needDestroyation(tab))
+					{
+						tmp2(tab);
+					}
+				}
+			if(index%8 != 7)
+				if(pMap[index-8+1] != 'x')
+				{
+					init(tab);
+					destroyNoSuspended(index-8+1, !lignePaire, tab);
+					if(needDestroyation(tab))
+					{
+						tmp2(tab);
+					}
+				}
+		}
+		else
+		{
+			if(index%8 != 0)
+				if(pMap[index+8-1] != 'x')
+				{
+					init(tab);
+					destroyNoSuspended(index+8-1, !lignePaire, tab);
+					if(needDestroyation(tab))
+					{
+						tmp2(tab);
+					}
+				}
+			if(index%8 != 0)
+				if(pMap[index-8-1] != 'x')
+				{
+					init(tab);
+					destroyNoSuspended(index-8-1, !lignePaire, tab);
+					if(needDestroyation(tab))
+					{
+						tmp2(tab);
+					}
+				}
+		}
 }
 
 void lunched_boule(char couleur, float angle)
@@ -470,7 +607,7 @@ void lunched_boule(char couleur, float angle)
 				}
 			}
 
-			posY_bcourante -= 1; 
+			posY_bcourante -= 0.5; 
 			posX_bcourante += rot;
 			if(posX_bcourante < xMap)
 				rot = -rot;
@@ -528,6 +665,7 @@ void lunched_boule(char couleur, float angle)
 					{
 						particleDisplay(i);
 						pMap[i] = 'x';
+						tmp(i, yPaire);
 					}
 				}
 			}
@@ -682,6 +820,52 @@ bool RenderFunc()
 			lunched_boule(coul_bcourante, rot); // coul b_courante
 		}
 
+		/* du bon gros caca pour l'instant
+		if(noSuspendedIsDowning) ///// FAIRE DESCENDRE LES BOULES NON SUSPENDUES (chaud chaud chaud !)
+		{
+			noSuspendedAnimDowning += 0.5;
+			if(animDowning < 100)
+			{
+				for(int i = 0;i < 80;i++)
+				{
+					if(noSuspendedTab[i])
+					{
+						int y = i/8;
+						int x = i%8;
+
+						float decalage = 0.0;       // si la ligne est paire, on la décale
+
+						if((y+swapPair)%2 == 0)
+						{
+							decalage = bouleSizeX/2;
+							if(y == 0)
+								premierelignepaire = true;
+							if(y == 1)
+								premierelignepaire = false;
+						}
+						float x1 = xMap+((x)*bouleSizeX+decalage);
+						float y1 = yMap-((y-1)*bouleSizeY);
+
+						float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
+						float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
+
+						y1 -= noSuspendedAnimDowning;
+						y2 -= noSuspendedAnimDowning;
+						b_orange->RenderStretch(x1, y1, x2, y2);
+					}
+				}
+			}
+			else
+			{
+				animDowning = 0;
+				for(int i = 0; i < 80;i++)
+				{
+					noSuspendedTab[i] = false;
+				}
+				noSuspendedIsDowning = false;
+			}
+		}*/
+
 		for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
 		{
 			float posY =y*bouleSizeY;
@@ -728,7 +912,7 @@ bool RenderFunc()
 						else
 						{
 						
-							for(int i=0; i<7; i++)
+							for(int i=0; i<8; i++)
 							{
 								if(pMap[i] != 'x')
 								{
@@ -756,7 +940,7 @@ bool RenderFunc()
 						{
 							case 'r': {
 								  b_rouge->RenderStretch(x1, y1, x2, y2);
-								  font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
+								  //font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
 								  break;
 							}
 							case 'v': {

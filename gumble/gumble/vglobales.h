@@ -72,8 +72,10 @@ bool stop_time = false;
 int cptDestroy = 0;
 bool tabToDestroy[88];
 
-// test pour détruire les boules non suspendues
-bool tabNoSuspended[88];
+// pour faire descendre les boules non suspendus
+bool noSuspendedIsDowning = false;
+int noSuspendedAnimDowning = 0;
+bool noSuspendedTab[80];
 
 // Variable pour calculer le score
 int score = 0;
