@@ -1,6 +1,5 @@
 #include "vglobales.h"
 
-
 // Fonction permettant de générer un nombre aléatoire entre 2 bornes [x-y]
 int my_rand ()
 {
@@ -10,32 +9,34 @@ int my_rand ()
 
 
 
-void attrib_boule(int couleur)
+char attrib_boule(int couleur)
 {
+	char Ccouleur;
 	switch (couleur)
 	{
 		case 1: {
-			  coul_bcourante='r';break;
+			  Ccouleur = 'r';break;
 		}
 		case 2: {
-			  coul_bcourante='v';break;
+			  Ccouleur = 'v';break;
 		}
 		case 3: {
-			  coul_bcourante='b';break;
+			  Ccouleur = 'b';break;
 		}
 		case 4: {
-			  coul_bcourante='o';break;
+			  Ccouleur = 'o';break;
 		}
 		case 5: {
-			  coul_bcourante='g';break;
+			  Ccouleur = 'g';break;
 		}
 		case 6: {
-			  coul_bcourante='j';break;
+			  Ccouleur = 'j';break;
 		}
 		case 7: {
-			  coul_bcourante='w';break;
+			  Ccouleur = 'w';break;
 		}
 	}
+	return Ccouleur;
 }
 
 int calculPosX(int x)
@@ -469,7 +470,7 @@ void lunched_boule(char couleur, float angle)
 				}
 			}
 
-			posY_bcourante -= 0.5; 
+			posY_bcourante -= 1; 
 			posX_bcourante += rot;
 			if(posX_bcourante < xMap)
 				rot = -rot;
@@ -592,6 +593,7 @@ bool RenderFunc()
 {
 	if(id_menu == 1) // Pour le menu du jeux 
 	{
+		// tetre pas necessaire à vérifier
 		//menu_pfiout(); // Bidouille du siou pour virer le menu sur le jeux
 		
 		float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
@@ -620,33 +622,32 @@ bool RenderFunc()
 		{
 				posX_bcourante = posX_depart;
 				posY_bcourante = posY_depart;
-				blunched_boule=true;
-				//affiche_next(alea_n);
-				coul_bsuivante = coul_bcourante;
+				blunched_boule=true; // La boule courante a été lancée
+
+				alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
 		}
 
-		affiche_next(coul_bsuivante);
-		// Permet de récupérer les coordonnées de la souris
+		
+		// Permet de récupérer les coordonnées de la souris à virer par la suite //////////////////////////////////
 		hge->Input_GetMousePos(&mouseX, &mouseY);
-	
+		////////////////////////////// A virer par la suite ! //////////////////////////////////
 
-		//Génerer un nombre aléatoire si la variable 'lunched' est à vrai/////////////////////////////////////////////////////////////////////////////////////////////
+		//Génerer un nombre aléatoire si la variable 'lunched' est à vrai pour générer un boule suivante
 		if(lunched==true)
 		{
-			alea_c = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule courante
-			attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de boules
-			//alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
-			//attrib_boule(alea_n); // idem
-		
+			alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+			coul_bsuivante = attrib_boule(alea_n); // idem
+			coul_bcourante = attrib_boule(alea_c);
+
 			lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
 		}
 
-
+		/////// AVIRER PAR LA SUITE ///////////////// Pour l'affichage des particule à la souris 
 		particleManager->Update(dt);  //update all particles
 		if(hge->Input_GetKey()==HGEK_LBUTTON)
 		{
 			particleManager->SpawnPS(&particle, mouseX, mouseY);
-		}  
+		}////////////////////////////////////////////////////  
 
   // Render graphics
   hge->Gfx_BeginScene();
@@ -667,6 +668,7 @@ bool RenderFunc()
 		// test pour afficher la direction du tir
 		for(int i = 0; i < 400;i++)
 		{
+			//b_violet->RenderStretch(380+(bouleSizeX/2)-2.5+(i*rot), 480+(bouleSizeX/2)-(i*1),380+(bouleSizeX/2)-2.5+(i*rot)+5,480+(bouleSizeX/2)-(i*1)+5);
 			b_violet->RenderStretch(
 				(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
 				(float)(480+(bouleSizeX/2)-(i*0.5)),
@@ -677,7 +679,7 @@ bool RenderFunc()
 
 		if(blunched_boule)
 		{
-			lunched_boule(coul_bsuivante, rot); // coul b_courante
+			lunched_boule(coul_bcourante, rot); // coul b_courante
 		}
 
 		for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
@@ -807,7 +809,8 @@ bool RenderFunc()
 		//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
 		font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
 		//!\\
-	
+		
+		// Permet d'afficher la boule suivante
 		affiche_next(coul_bsuivante);
 	
 		// Affichage du canon
@@ -861,13 +864,8 @@ bool RenderFunc()
 
 	if (id_menu == 2) // Mode multijoueur 
 	{
-		float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
-		hge->Gfx_BeginScene();
-		hge->Gfx_Clear(0);
-		bgg->Render(0, 0);	// Affichage du fond
-		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(18, 18, HGETEXT_LEFT, "2 \n");
-		gui->Render();
+	
+	
 	}
 
 	if (id_menu == 3) // Intructions
@@ -898,12 +896,12 @@ bool RenderFunc()
 			"using HGE and C++\n\n"
 			"Space to quit");
 
-		/*if(hge->Input_GetKey()==HGEK_SPACE)
-		{
+ 		/*if(hge->Input_GetKey()==HGEK_SPACE)
+		{*/
 			id_menu = -1; // Pour quitter la page crédit et revenir au menu
 			fnt->Render(200, 150, HGETEXT_LEFT, "Credit\n" "dfgdfgdfgdfgdfgdfgdfg");
-		}
-		*/ // sa plante un peux a coause du refresh Gfx_scene()
+		//}
+		 // sa plante un peux a coause du refresh Gfx_scene()
   		gui->Render();
 	}
 
@@ -1027,8 +1025,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		if(first)
 		{
-			attrib_boule(alea_c); // Permet de fair conincider numéro de couleur et char de couleur de la 1er boule
-			attrib_boule(alea_n); // idem
+			alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+			coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
+			affiche_next(coul_bsuivante);
+			coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
+			
 			first = false;
 		}
 
