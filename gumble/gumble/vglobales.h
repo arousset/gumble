@@ -64,7 +64,7 @@ int alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui re
 
 bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
 bool first = true; // Pour la 1er génération de nombre aléatoire
-
+bool firstTimeMenu = true; // Pour le premier passage au menu
 //boolean pour stopper le temps
 bool stop_time = false;
 
@@ -128,3 +128,11 @@ HTEXTURE			tex;
 hgeGUI				*gui;
 hgeFont				*fnt;
 hgeSprite			*spr;
+
+int lastid=0; // pour gérer le menu
+
+// prototype de la mort 
+bool menu();
+bool game();
+bool instruction();
+bool credit();

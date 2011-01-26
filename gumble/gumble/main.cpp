@@ -676,65 +676,93 @@ void lunched_boule(char couleur, float angle)
 
 }
 
-void menu_pfiout()
-{
-	// La bidouille du Siou !!!!!
-		// Non sans déconner c'est pour virer le menu quant on est sur le jeux :)
-		gui->ShowCtrl(1,false);
-		gui->ShowCtrl(2,false);
-		gui->ShowCtrl(3,false);
-		gui->ShowCtrl(4,false);
-		gui->ShowCtrl(5,false);
-		hge->Effect_Free(snd);
-}
 
 
-bool FrameFunc() // Fonction appelée à chaque image
+
+
+/*bool FrameFunc() // Fonction appelée à chaque image
 {
 	if(hge->Input_GetKeyState(HGEK_ESCAPE))
+	{
 		return true;
-	int id = -1;
-	static int lastid=0;
+	}
+	
+	// fait boucler la FrameFunc à l'infinie 
+	return false; 
+}*/
+
+bool menu() 
+{
+	hge->Gfx_BeginScene();
+	bgg->Render(0, 0); // pour le backgroune gumble
+		
+	if (firstTimeMenu)
+	{
+		// Chargement textures et sons
+		snd=hge->Effect_Load("boing_2.wav");
+
+		// Initialise le GUI
+		delete gui;
+		gui=new hgeGUI();
+
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Instructions"));
+		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
+		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
+		
+		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+		
+		gui->SetFocus(1);
+		gui->Enter();
+		firstTimeMenu = false;
+	}
+	gui->SetCursor(spr);
+	gui->Render();
+
+	int id;
 	float dt=hge->Timer_GetDelta();
 
-	  id = gui->Update(dt);
-	  
+	 id=gui->Update(dt);
 	  if(id == -1)
 	  {
 		switch(lastid)
 		{
-		  case 1:
-			  id_menu = 1;
-			  break;
+		  case 1: 
+			   hge->System_SetState(HGE_FRAMEFUNC, game);
+			   break;
 		  case 2:
-			  id_menu = 2;
-			  break;
+			  
+			   break;
 		  case 3:
-			  id_menu = 3;
-			  break;
+			  hge->System_SetState(HGE_FRAMEFUNC, instruction);
+			   break;
 		  case 4:
-			  id_menu = 4;	
-			  break;
+				hge->System_SetState(HGE_FRAMEFUNC, credit);
+			break;
 		  case 5: return true;
 		}
 	  }
-	  else if(id) 
-	  {   
-        lastid = id;   
-        gui->Leave();     
-      }  
-	  
- return false;
+	  else if(id) { lastid=id; gui->Leave(); }
+
+	  hge->Gfx_EndScene();
+	  return false;
 }
 
-bool RenderFunc()
+
+bool game()
 {
-	if(id_menu == 1) // Pour le menu du jeux 
+	hge->Gfx_BeginScene();
+
+	if(hge->Input_GetKeyState(HGEK_ESCAPE))
 	{
-		// tetre pas necessaire à vérifier
-		//menu_pfiout(); // Bidouille du siou pour virer le menu sur le jeux
-		
-		float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
+		hge->System_SetState(HGE_FRAMEFUNC, menu);
+		lastid = 0;
+		firstTimeMenu = true;
+	}
+
+
+	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
 		if(timeCpt > timeDown) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
 		{													// on actualise pMap pour lui enlever une ligne en bas (la ligne la plus basse disparait pour faire descendre les autres)
@@ -1036,65 +1064,62 @@ bool RenderFunc()
 				}
 			}
 		}
-	}
 
-	if(id_menu == -1) // Pour le menu du jeux 
-	{
-		// Render graphics
-		hge->Gfx_BeginScene();
-		bgg->Render(0, 0); // pour le backg gumble
-		gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
-	}
 
-	if (id_menu == 2) // Mode multijoueur 
-	{
+	hge->Gfx_EndScene();
+	return false;
+}
 	
-	
-	}
+bool instruction()
+{
+	hge->Gfx_BeginScene();
+	hge->Gfx_Clear(0);
+	bgg->Render(0, 0);	// Affichage du fond 
+	fnt->SetColor(0xFFFFFFFF);
+	fnt->Render(390, 345, HGETEXT_CENTER, "Instructions\n"
+								     	"Shoot the color balls\n\n"
+										"\n\n"
+										"ESPACE - Shoot\n"
+										"Left / Right - Turn the canon\n\n"
+										"");
+	gui->Render();
 
-	if (id_menu == 3) // Intructions
+	if(hge->Input_GetKeyState(HGEK_SPACE))
 	{
-		hge->Gfx_BeginScene();
-		hge->Gfx_Clear(0);
-		bgg->Render(0, 0);	// Affichage du fond 
-		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(390, 345, HGETEXT_CENTER, "Instructions\n"
-			"Shoot the color balls\n\n"
-			"\n\n"
-			"ESPACE - Shoot\n"
-			"Left / Right - Turn the canon\n\n"
-			"");
-		gui->Render();
+		hge->System_SetState(HGE_FRAMEFUNC, menu);
+		lastid = 0;
+		firstTimeMenu = true;
 	}
 
-	if (id_menu == 4) // Crédits 
-	{
-		hge->Gfx_BeginScene();
-		hge->Gfx_Clear(0);
-		bgg->Render(0, 0);	// Affichage du fond
-		fnt->SetColor(0xFFFFFFFF);
-		fnt->Render(390, 345, HGETEXT_CENTER, "Credit\n"
-			"GUMBLE\n\n"
-			"KAWCZAK Clement & ROUSSET Alban\n"
-			"\n\n"
-			"using HGE and C++\n\n"
-			"Space to quit");
-
- 		/*if(hge->Input_GetKey()==HGEK_SPACE)
-		{*/
-			id_menu = -1; // Pour quitter la page crédit et revenir au menu
-			fnt->Render(200, 150, HGETEXT_LEFT, "Credit\n" "dfgdfgdfgdfgdfgdfgdfg");
-		//}
-		 // sa plante un peux a coause du refresh Gfx_scene()
-  		gui->Render();
-	}
-
-
-	particleManager->Render();  //render all particles
 	hge->Gfx_EndScene();
 	return false;
 }
 
+bool credit()
+{
+	hge->Gfx_BeginScene();
+	bgg->Render(0, 0);	// Affichage du fond
+	fnt->SetColor(0xFFFFFFFF);
+	fnt->Render(390, 345, HGETEXT_CENTER, "Credit\n"
+			"GUMBLE\n\n"
+			"KAWCZAK Clement & ROUSSET Alban\n"
+			"\n\n"
+			"using HGE and C++\n\n"
+			"Space to return menu");
+	//hge->System_SetState(HGE_WINDOWED, (MessageBox(NULL, "Run game in windowed mode?", "Windowed?", MB_YESNO | MB_ICONQUESTION) == IDYES) ? true : false);
+	gui->SetCursor(spr);
+	gui->Render();
+	
+	if(hge->Input_GetKeyState(HGEK_SPACE))
+	{
+		hge->System_SetState(HGE_FRAMEFUNC, menu);
+		lastid = 0;
+		firstTimeMenu = true;
+	}
+
+	hge->Gfx_EndScene();
+	return false;
+}
 
 
 void LoadMap()
@@ -1128,8 +1153,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	hge = hgeCreate(HGE_VERSION);
 
 	hge->System_SetState(HGE_LOGFILE, "hge.log");
-	hge->System_SetState(HGE_FRAMEFUNC, FrameFunc);
-	hge->System_SetState(HGE_RENDERFUNC, RenderFunc);
+	hge->System_SetState(HGE_FRAMEFUNC, menu);
 	hge->System_SetState(HGE_TITLE, "Gumble");
 	hge->System_SetState(HGE_SHOWSPLASH, false);
 	hge->System_SetState(HGE_WINDOWED, true);
@@ -1181,31 +1205,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		bt_menu->Play();
 		LoadMap(); // charge la map
 		 
-		 
-
 		// Chargement textures et sons
 		tex=hge->Texture_Load("cursor.png");
-		snd=hge->Effect_Load("boing_2.wav");
+		//snd=hge->Effect_Load("boing_2.wav");
 		
 		// Chargement de la police et du sprite du cursor
 		fnt=new hgeFont("font1.fnt");
 		spr=new hgeSprite(tex,0,0,32,32);
-
-
-		// Initialise le GUI
-		gui=new hgeGUI();
-
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Instructions"));
-		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
-		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
-		
-		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
-		gui->SetCursor(spr);
-		gui->SetFocus(1);
-		gui->Enter();
-		gui->Render();
 
 		if(first)
 		{
@@ -1219,6 +1225,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		particle = Res->GetParticleSystem("particle")->info;
 		particleManager= new hgeParticleManager();
+
 
 		// Let's rock now!
 		hge->System_Start();
