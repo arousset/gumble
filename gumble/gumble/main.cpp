@@ -677,29 +677,15 @@ void lunched_boule(char couleur, float angle)
 }
 
 
-
-
-
-/*bool FrameFunc() // Fonction appelée à chaque image
-{
-	if(hge->Input_GetKeyState(HGEK_ESCAPE))
-	{
-		return true;
-	}
-	
-	// fait boucler la FrameFunc à l'infinie 
-	return false; 
-}*/
-
 bool menu() 
 {
 	hge->Gfx_BeginScene();
 	bgg->Render(0, 0); // pour le backgroune gumble
-		
+	
 	if (firstTimeMenu)
 	{
 		// Chargement textures et sons
-		snd=hge->Effect_Load("boing_2.wav");
+		snd=hge->Effect_Load("boing_2.mp3");
 
 		// Initialise le GUI
 		delete gui;
@@ -717,11 +703,16 @@ bool menu()
 		gui->Enter();
 		firstTimeMenu = false;
 	}
+
+	float dt=hge->Timer_GetDelta();
+	frog->RenderStretch(328,250,454,333);
+		
+	frog->Update(dt);
 	gui->SetCursor(spr);
 	gui->Render();
 
 	int id;
-	float dt=hge->Timer_GetDelta();
+	
 
 	 id=gui->Update(dt);
 	  if(id == -1)
@@ -793,7 +784,7 @@ bool game()
 				alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
 		}
 
-		
+	
 		// Permet de récupérer les coordonnées de la souris à virer par la suite //////////////////////////////////
 		hge->Input_GetMousePos(&mouseX, &mouseY);
 		////////////////////////////// A virer par la suite ! //////////////////////////////////
@@ -830,7 +821,8 @@ bool game()
 		b_jaune->Update(dt);
 		b_violet->Update(dt);
 		b_gris->Update(dt);
-
+		
+		
 		// test pour afficher la direction du tir
 		for(int i = 0; i < 400;i++)
 		{
@@ -1170,6 +1162,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		canon_img = Res->GetSprite("img_canon");
 		// Chargement image menu 
 		bgg = Res->GetSprite("bgg");
+		
 		//Chargement des différentes boules de couleurs
 		b_rouge = Res->GetAnimation("br");
 		b_vert = Res->GetAnimation("bv");
@@ -1178,6 +1171,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		b_jaune = Res->GetAnimation("bj");
 		b_violet = Res->GetAnimation("bvi");
 		b_gris = Res->GetAnimation("bgris");
+
+
+		frog = Res->GetAnimation("frog");
 
 		// Chargement de la police d'écriture
 		font1 = Res->GetFont("font1");
@@ -1191,9 +1187,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		// Initialisation de la music
 		//myMusic = Res->GetStream("theme");
+		myMusic_menu = Res->GetStream("theme_menu");
+		
 
 		// Jouer la music de fond 
-		chan[0] = hge->Stream_Play(myMusic, true);
+		//chan[0] = hge->Stream_Play(myMusic, true);
+		chan[0] = hge->Stream_Play(myMusic_menu, true);
+		
 
 		b_rouge->Play();  //start playback of animation
 		b_vert->Play();
@@ -1203,11 +1203,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		b_violet->Play();
 		b_gris->Play();
 		bt_menu->Play();
+
+		frog ->Play();
+
 		LoadMap(); // charge la map
 		 
 		// Chargement textures et sons
 		tex=hge->Texture_Load("cursor.png");
-		//snd=hge->Effect_Load("boing_2.wav");
+		
 		
 		// Chargement de la police et du sprite du cursor
 		fnt=new hgeFont("font1.fnt");

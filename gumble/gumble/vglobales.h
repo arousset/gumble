@@ -24,6 +24,7 @@ HGE *hge = 0;
 
 // Permet de créer un flux pour gérer la music
 HSTREAM myMusic;
+HSTREAM myMusic_menu;
 
 // Channel pour gere plusieurs flux musicaux
 HCHANNEL chan[2];
@@ -118,6 +119,9 @@ hgeAnimation* b_orange; //orange
 hgeAnimation* b_jaune; //jaune
 hgeAnimation* b_violet; //violet
 hgeAnimation* b_gris; //gris
+
+// frog animation TESTtttttttttttttttttttttttttttttttttttt
+hgeAnimation* frog;
 
 
 // Some resource handles
