@@ -54,6 +54,20 @@ Texture gameover
  filename=gameover.png
 }
 
+Texture lafrog
+{
+ filename=frogg.png
+}
+
+Animation frog
+{
+ texture=lafrog
+ rect=0, 0, 123, 83
+ frames=2
+ fps=2
+ mode=FORWARD,LOOP,PINGPONG
+}
+
 Sprite game_over
 {
  texture=gameover
@@ -141,6 +155,12 @@ Stream theme
  filename=music.mp3
 }
 
+Stream theme_menu
+{
+ filename=menu.mp3
+}
+
+
 Font font1
 {
  filename=font1.fnt
@@ -161,5 +181,4 @@ Particle particle
 {
  filename=particle.psi
  sprite=particleSprite
- fps=50.0
 }
