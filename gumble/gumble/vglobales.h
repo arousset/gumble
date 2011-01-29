@@ -1,3 +1,6 @@
+#ifndef VGLOBALES_H
+#define VGLOBALES_H
+
 #include <windows.h>
 #include "hge.h"
 #include <hgeresource.h>
@@ -133,11 +136,17 @@ hgeGUI				*gui;
 hgeFont				*fnt;
 hgeSprite			*spr;
 
-int lastid=0; // pour gérer le menu
+int lastid = 0; // pour gérer le menu
 
 // prototype de la mort 
 bool menu();
 bool game();
 bool instruction();
 bool credit();
+
+float rotTd = 0; // variable temporaire pour la direction du tir
+bool credit();
 bool game_int();
+
+#endif
+
