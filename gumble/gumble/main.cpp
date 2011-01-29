@@ -842,31 +842,6 @@ bool menu()
 	  return false;
 }
 
-bool game_int()
-{
-	static int i=0;
-	hge->Gfx_BeginScene();
-	bgg->Render(0, 0); // pour le backgroune gumble
-	float dt=hge->Timer_GetDelta();
-	while (i<=10000)
-	{
-	anumb->RenderStretch(328,250,448,304);	
-	anumb->Update(dt);
-	i++;
-	}
-
-	if(i==10000){
-	hge->System_SetState(HGE_FRAMEFUNC, game);
-	gui->SetCursor(spr);
-	gui->Render();
-	}
-	
-	gui->SetCursor(spr);
-	gui->Render();
-	hge->Gfx_EndScene();
-	return false;
-}
-
 bool game()
 {
 	hge->Gfx_BeginScene();
@@ -901,14 +876,17 @@ bool game()
 		}
 
 		// Passe lunched à vrai (pour boule lancée) si espace pressé
-		if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
+		if(loose == false)
 		{
-			    rotTd = rot;
-				posX_bcourante = posX_depart;
-				posY_bcourante = posY_depart;
-				blunched_boule=true; // La boule courante a été lancée
+			if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
+			{
+					rotTd = rot;
+					posX_bcourante = posX_depart;
+					posY_bcourante = posY_depart;
+					blunched_boule=true; // La boule courante a été lancée
 
-				alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
+					alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
+			}
 		}
 
 	
@@ -954,9 +932,6 @@ bool game()
 		b_gris->Update(dt);
 		//bt_menu->Update(dt);
 			//bt_menu->play();
-		
-
-		
 		// test pour afficher la direction du tir
 		for(int i = 0; i < 400;i++)
 		{
@@ -968,26 +943,69 @@ bool game()
 		}
 
 
-		if(blunched_boule)
-		{
-			lunched_boule(coul_bcourante, rotTd);
-		}
-
-		/* du bon gros caca pour l'instant
-		if(noSuspendedIsDowning) ///// FAIRE DESCENDRE LES BOULES NON SUSPENDUES (chaud chaud chaud !)
-		{
-			noSuspendedAnimDowning += 0.5;
-			if(animDowning < 100)
+			if(blunched_boule)
 			{
-				for(int i = 0;i < 80;i++)
+				lunched_boule(coul_bcourante, rotTd);
+			}
+
+			/* du bon gros caca pour l'instant
+			if(noSuspendedIsDowning) ///// FAIRE DESCENDRE LES BOULES NON SUSPENDUES (chaud chaud chaud !)
+			{
+				noSuspendedAnimDowning += 0.5;
+				if(animDowning < 100)
 				{
-					if(noSuspendedTab[i])
+					for(int i = 0;i < 80;i++)
 					{
-						int y = i/8;
-						int x = i%8;
+						if(noSuspendedTab[i])
+						{
+							int y = i/8;
+							int x = i%8;
+
+							float decalage = 0.0;       // si la ligne est paire, on la décale
+
+							if((y+swapPair)%2 == 0)
+							{
+								decalage = bouleSizeX/2;
+								if(y == 0)
+									premierelignepaire = true;
+								if(y == 1)
+									premierelignepaire = false;
+							}
+							float x1 = xMap+((x)*bouleSizeX+decalage);
+							float y1 = yMap-((y-1)*bouleSizeY);
+
+							float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
+							float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
+
+							y1 -= noSuspendedAnimDowning;
+							y2 -= noSuspendedAnimDowning;
+							b_orange->RenderStretch(x1, y1, x2, y2);
+						}
+					}
+				}
+				else
+				{
+					animDowning = 0;
+					for(int i = 0; i < 80;i++)
+					{
+						noSuspendedTab[i] = false;
+					}
+					noSuspendedIsDowning = false;
+				}
+			}*/
+
+			for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
+			{
+				float posY =y*bouleSizeY;
+				for(int x=0; x<sizeX; ++x)
+				{
+					if(y < 11)
+					{
+						if(y == 0 && x == 0 && isDowning) // si les boules sont en train de descendre, on leur attribut pour chaque image une position décalée de 0.05 px (descente petit à petit)
+							animDowning += (float)0.05;
+
 
 						float decalage = 0.0;       // si la ligne est paire, on la décale
-
 						if((y+swapPair)%2 == 0)
 						{
 							decalage = bouleSizeX/2;
@@ -996,134 +1014,93 @@ bool game()
 							if(y == 1)
 								premierelignepaire = false;
 						}
+						/*
+						On utilise swapPair pour regarder si on doit décaler ou non la ligne
+						Exemple : premieres secondes du jeu, la ligne 5 est impaire et la ligne 6 est paire
+						On affiche donc la ligne 26 décalée à droite par rapport à la ligne 5 (selon les modalités du jeu)
+
+						Ensuite, durant la deuxième phase (les boules descendent d'un cran), la ligne 5 devient la ligne 4 (donc paire) et la ligne 6 devient la ligne 5 (donc impaire)
+						on doit donc dire à l'affichage de ne plus décaler les lignes paires, mais impaires pour que les lignes restent toujours au même endroit en ordonnées.
+						La variable swapPair sert alterner le modulo 2 du numéro de ligne pour que celui ci reste contant selon la ligne.
+						*/
+
+						// Nouvelles positions pour l'affichages des boules
 						float x1 = xMap+((x)*bouleSizeX+decalage);
 						float y1 = yMap-((y-1)*bouleSizeY);
-
 						float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
 						float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
+						if(isDowning && loose==false)
+						{	
+							if(animDowning < bouleSizeX)
+							{
+								if(loose == false)
+								{
+									// Modification des coordonnées des boules si elles sont en train de descendre (descente progressive sur les y)
+									y1 -= (bouleSizeX-animDowning);
+									y2 -= (bouleSizeX-animDowning);
+								}
+							}
+							else
+							{
+						
+								for(int i=0; i<8; i++)
+								{
+									if(pMap[i] != 'x')
+									{
+										loose = true; // Permet d'arreter le jeux
+										stop_time = true; // Permet d'arreter le temps quand la partie GameOver
 
-						y1 -= noSuspendedAnimDowning;
-						y2 -= noSuspendedAnimDowning;
-						b_orange->RenderStretch(x1, y1, x2, y2);
-					}
-				}
-			}
-			else
-			{
-				animDowning = 0;
-				for(int i = 0; i < 80;i++)
-				{
-					noSuspendedTab[i] = false;
-				}
-				noSuspendedIsDowning = false;
-			}
-		}*/
+									}
+								}
 
-		for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
-		{
-			float posY =y*bouleSizeY;
-			for(int x=0; x<sizeX; ++x)
-			{
-				if(y < 11)
-				{
-					if(y == 0 && x == 0 && isDowning) // si les boules sont en train de descendre, on leur attribut pour chaque image une position décalée de 0.05 px (descente petit à petit)
-						animDowning += (float)0.05;
+								animDowning = 0;
+								isDowning = false;
+								timeCpt = 0;
+							}
+						}
+					
+						float posX =x*bouleSizeX;
 
-
-					float decalage = 0.0;       // si la ligne est paire, on la décale
-					if((y+swapPair)%2 == 0)
-					{
-						decalage = bouleSizeX/2;
-						if(y == 0)
-							premierelignepaire = true;
-						if(y == 1)
-							premierelignepaire = false;
-					}
-					/*
-					On utilise swapPair pour regarder si on doit décaler ou non la ligne
-					Exemple : premieres secondes du jeu, la ligne 5 est impaire et la ligne 6 est paire
-					On affiche donc la ligne 26 décalée à droite par rapport à la ligne 5 (selon les modalités du jeu)
-
-					Ensuite, durant la deuxième phase (les boules descendent d'un cran), la ligne 5 devient la ligne 4 (donc paire) et la ligne 6 devient la ligne 5 (donc impaire)
-					on doit donc dire à l'affichage de ne plus décaler les lignes paires, mais impaires pour que les lignes restent toujours au même endroit en ordonnées.
-					La variable swapPair sert alterner le modulo 2 du numéro de ligne pour que celui ci reste contant selon la ligne.
-					*/
-
-					// Nouvelles positions pour l'affichages des boules
-					float x1 = xMap+((x)*bouleSizeX+decalage);
-					float y1 = yMap-((y-1)*bouleSizeY);
-					float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
-					float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
-					if(isDowning && loose==false)
-					{	
-						if(animDowning < bouleSizeX)
-						{
-							// Modification des coordonnées des boules si elles sont en train de descendre (descente progressive sur les y)
-							y1 -= (bouleSizeX-animDowning);
-							y2 -= (bouleSizeX-animDowning);
+						int index =y*sizeX+x;
+				
+						if(isDowning && y == 10)
+						{	
 						}
 						else
 						{
-						
-							for(int i=0; i<8; i++)
+							switch (pMap[index])
 							{
-								if(pMap[i] != 'x')
-								{
-									loose = true; // Permet d'arreter le jeux
-									stop_time = true; // Permet d'arreter le temps quand la partie GameOver
-
+								case 'r': {
+									  b_rouge->RenderStretch(x1, y1, x2, y2);
+									  //font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
+									  break;
 								}
-							}
-
-							animDowning = 0;
-							isDowning = false;
-							timeCpt = 0;
+								case 'v': {
+									  b_vert->RenderStretch(x1, y1, x2, y2);break;
+								}
+								case 'b': {
+									  b_bleu->RenderStretch(x1, y1, x2, y2);break;
+								}
+								case 'o': {
+									  b_orange->RenderStretch(x1, y1, x2, y2);break;
+								}
+								case 'g': {
+									  b_gris->RenderStretch(x1, y1, x2, y2);break;
+								}
+								case 'j': {
+									  b_jaune->RenderStretch(x1, y1, x2, y2);break;
+								}
+								case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
+								//case 'x' : {
+									  b_violet->RenderStretch(x1, y1, x2, y2);
+									  //font1->printf(x1, y1-30, HGETEXT_LEFT,"%d", index);break;
+								}
+						   }
 						}
 					}
-					
-					float posX =x*bouleSizeX;
-
-					int index =y*sizeX+x;
-				
-					if(isDowning && y == 10)
-					{	
-					}
-					else
-					{
-						switch (pMap[index])
-						{
-							case 'r': {
-								  b_rouge->RenderStretch(x1, y1, x2, y2);
-								  //font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
-								  break;
-							}
-							case 'v': {
-								  b_vert->RenderStretch(x1, y1, x2, y2);break;
-							}
-							case 'b': {
-								  b_bleu->RenderStretch(x1, y1, x2, y2);break;
-							}
-							case 'o': {
-								  b_orange->RenderStretch(x1, y1, x2, y2);break;
-							}
-							case 'g': {
-								  b_gris->RenderStretch(x1, y1, x2, y2);break;
-							}
-							case 'j': {
-								  b_jaune->RenderStretch(x1, y1, x2, y2);break;
-							}
-							case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
-							//case 'x' : {
-								  b_violet->RenderStretch(x1, y1, x2, y2);
-								  //font1->printf(x1, y1-30, HGETEXT_LEFT,"%d", index);break;
-							}
-					   }
-					}
 				}
-			}
-		}	
+			}	
 		
-
 		//!\\ A revoir car je dois faire un pointeur pour stopper le temps quand la partie est perdu ou gagné ! :)
 		// initialisation du compteur de temps et test pour l'affichage
 		if(stop_time == false)
@@ -1316,7 +1293,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 		frog = Res->GetAnimation("frog");
-		anumb = Res->GetAnimation("lesnumeros");
 		// Chargement de la police d'écriture
 		font1 = Res->GetFont("font1");
 
@@ -1347,7 +1323,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		bt_menu->Play();
 
 		frog ->Play();
-		anumb->Play();
 
 		LoadMap(); // charge la map
 		 
