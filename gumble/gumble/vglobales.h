@@ -18,8 +18,6 @@
 hgeParticleSystemInfo particle;
 hgeParticleManager *particleManager;
 
-
-
 HGE *hge = 0;
 
 // Permet de créer un flux pour gérer la music
@@ -29,26 +27,25 @@ HSTREAM myMusic_menu;
 // Channel pour gere plusieurs flux musicaux
 HCHANNEL chan[2];
 
-
-
-
 hgeResourceManager* Res;
 hgeSprite* bgSprite;
 hgeSprite* game_over;
 hgeSprite* you_win;
 hgeSprite* canon_img;
+
 // Pointeur pour la police d'écriture
 hgeFont* font1;
 
 int id_menu = -1; // Pour gérer les différents écrans de jeux
 char* pMap = NULL; // pointeur sur la desctiption de la map
+int* Tboule_count; // Pointeur pour les boules
 int sizeX, sizeY;
 float fScale =27;
 const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boules
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 300; // temps avant de faire tomber les boules(secondes)
+float timeDown = 10; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
@@ -66,6 +63,7 @@ int alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui re
 bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
 bool first = true; // Pour la 1er génération de nombre aléatoire
 bool firstTimeMenu = true; // Pour le premier passage au menu
+
 //boolean pour stopper le temps
 bool stop_time = false;
 
@@ -96,7 +94,7 @@ int score = 0;
 	
 	// Boule suivante
 	char coul_bsuivante;
-	
+	float ttime=0; // Permet de gérer le compteur de temps
 
 //test
 float posboulex = 240+(320/2)-(bouleSizeX/2);
@@ -120,9 +118,11 @@ hgeAnimation* b_jaune; //jaune
 hgeAnimation* b_violet; //violet
 hgeAnimation* b_gris; //gris
 
-// frog animation TESTtttttttttttttttttttttttttttttttttttt
+// frog animation
 hgeAnimation* frog;
 
+// numbers animation
+hgeAnimation* anumb;
 
 // Some resource handles
 HEFFECT				snd;
@@ -140,3 +140,4 @@ bool menu();
 bool game();
 bool instruction();
 bool credit();
+bool game_int();
