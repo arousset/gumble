@@ -1,6 +1,5 @@
 #include "vglobales.h"
 
-
 /////////////////////////////////////////////////////////////////
 
 // permet de connaitre le nombre de boule total présente dans le jeux
@@ -175,41 +174,36 @@ int calculPosX(int x)
 
 int calculPosY(int y)
 {
-	/*int mapY = 1; 
-	while((350/11)*mapY < (y-72))
-		mapY++;
-	mapY = 11-mapY;
-	return mapY;
-	*/
-	//int mapY = 1;
 	int mapY = 11;
-	//while(mapY*bouleSizeY < y - 72)
 	while(mapY*bouleSizeY > y - ((yMap+bouleSizeY)-(11*bouleSizeY)))
+	{
 		mapY--;
-		//mapY++;
+	}
 	mapY = 11-mapY;
 	int jesus = 465456;
 	return mapY;
 }
 
+
 bool Collision(int newX, int newY)
 {
 	if(newY > yMap + bouleSizeX/2)
+	{
 		return false;
-
+	}
 	int mapY = calculPosY(newY);
 	bool yPaire = premierelignepaire;
 	for(int cpt = 1;cpt < mapY;cpt++)
+	{
 		yPaire = !yPaire;
+	}
 	int mapX;
 	bool collision = false;
-	//mapY -= 1;
 	int decalage = 0;
 	int xcoll = 0;
 	int ycoll = 0;
 	if(yPaire)
 	{
-		//decalage = bouleSizeX/2;
 		mapX =  calculPosX((int)(newX-bouleSizeX/2));
 		
 		if(mapX < 8 && mapY < 11)
@@ -340,6 +334,7 @@ bool Collision(int newX, int newY)
 	}
 	return collision;
 }
+
 
 void affiche_next(char couleur)
 {
@@ -599,25 +594,7 @@ void tmp(int index, bool lignePaire)
 {
 	bool* tab = new bool[88];
 
-/*////////////// tableau 1
-	init(tab);
-	destroyNoSuspended(index-1, lignePaire, tab);
-	if(needDestroyation(tab))
-	{
-		int loooool = 0;
-	// detruire les boules de tab
-	}
-	
-////////////// tableau 2
-	init(tab);
-	destroyNoSuspended(index+1, lignePaire, tab);
-	if(needDestroyation(tab))
-	{
-		int loooool = 0;
-	// detruire les boules de tab
-	}*/
-
-		if(index%8 != 0)
+	if(index%8 != 0)
 			if(pMap[index-1] != 'x')
 			{
 				init(tab);
@@ -734,11 +711,11 @@ void lunched_boule(char couleur, float angle)
 			}
 
 			posY_bcourante -= 0.5; 
-			posX_bcourante += rot;
+			posX_bcourante += angle;
 			if(posX_bcourante < xMap)
-				rot = -rot;
+				rotTd = -angle;
 			if(posX_bcourante+bouleSizeX > xMap + (8*bouleSizeX) + bouleSizeX/2)
-				rot = -rot;
+				rotTd = -angle;
 
 		}
 		int y = calculPosY((int)(posY_bcourante+(bouleSizeX/2)));
@@ -791,6 +768,7 @@ void lunched_boule(char couleur, float angle)
 					{
 						particleDisplay(i);
 						pMap[i] = 'x';
+						score += 100;
 						tmp(i, yPaire);
 					}
 				}
@@ -925,6 +903,7 @@ bool game()
 		// Passe lunched à vrai (pour boule lancée) si espace pressé
 		if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
 		{
+			    rotTd = rot;
 				posX_bcourante = posX_depart;
 				posY_bcourante = posY_depart;
 				blunched_boule=true; // La boule courante a été lancée
@@ -940,6 +919,7 @@ bool game()
 		//Génerer un nombre aléatoire si la variable 'lunched' est à vrai pour générer un boule suivante
 		if(lunched==true)
 		{
+			
 			alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
 			coul_bsuivante = attrib_boule(alea_n); // idem
 			coul_bcourante = attrib_boule(alea_c);
@@ -980,7 +960,6 @@ bool game()
 		// test pour afficher la direction du tir
 		for(int i = 0; i < 400;i++)
 		{
-			//b_violet->RenderStretch(380+(bouleSizeX/2)-2.5+(i*rot), 480+(bouleSizeX/2)-(i*1),380+(bouleSizeX/2)-2.5+(i*rot)+5,480+(bouleSizeX/2)-(i*1)+5);
 			b_violet->RenderStretch(
 				(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
 				(float)(480+(bouleSizeX/2)-(i*0.5)),
@@ -991,7 +970,7 @@ bool game()
 
 		if(blunched_boule)
 		{
-			lunched_boule(coul_bcourante, rot); // coul b_courante
+			lunched_boule(coul_bcourante, rotTd);
 		}
 
 		/* du bon gros caca pour l'instant
