@@ -1,13 +1,136 @@
 #include "vglobales.h"
 
-// Fonction permettant de générer un nombre aléatoire entre 2 bornes [x-y]
-int my_rand ()
+
+/////////////////////////////////////////////////////////////////
+
+// permet de connaitre le nombre de boule total présente dans le jeux
+int sum_boule()
 {
-	hge->Random_Seed(0);  //sets the seed to the current time
-	return (hge->Random_Int(1, 7));
+		int sum=0;
+		for(int i=0;i<8;i++)
+		{
+			sum += Tboule_count[i];
+		}
+		
+		return sum;
+}
+
+// permet de connaitre l'indice de la couleur la plus présente dans l'air de jeux
+int see_max_ind()
+{
+	int j=0;
+	int max=0;
+	int gmax=0;
+
+	while (j < 8)
+	{						
+		if (Tboule_count[j] > max){
+			max = Tboule_count[j];
+			gmax = j; 
+		}
+		j++;
+	}
+	return gmax;
+}
+
+// permet de connaitre le max de la couleur la plus présente dans l'air de jeux
+int see_max_nb()
+{
+	int j=0;
+	int max=0;
+	int gmax=0;
+
+	while (j < 8)
+	{						
+		if (Tboule_count[j] > max){
+			max = Tboule_count[j];
+			gmax = max; 
+		}
+		j++;
+	}
+	return gmax;
+}
+
+// Permet de compter le nombre d'occurence de chaque boule dans le jeux
+void count_occurence()
+{
+	// Nous devons parcourir le tableau de boules du jeux de 1 à 88 pour 
+	// pouvoir effectuer un bilan sur le nombre de chaque boules pour 
+	// faire des statistiques.
+	 // Tableau de boule pMap[]
+	 
+	 // Correspondance entre indice et char : r v b o g j w
+	 //										  0 1 2 3 4 5 6
+	 
+	 //faire un tab qui commpte genre Tboule_count[7];
+	 for(int i=0;i<88;i++)
+	 {
+		switch(pMap[i])
+		{
+				case 'r' : //0
+					Tboule_count[0] +=1; 
+				break;
+				
+				case 'v' : //1
+					Tboule_count[1] +=1; 
+				break;
+				
+				case 'b' : //2
+					Tboule_count[2] +=1; 
+				break;
+				
+				case 'o' : //3
+					Tboule_count[3] +=1; 
+				break;
+				
+				case 'g' : //4
+					Tboule_count[4] +=1; 
+				break;
+				
+				case 'j' : //5
+					Tboule_count[5] +=1; 
+				break;
+				
+				case 'w' : //6
+					Tboule_count[6] +=1; 
+				break;
+
+				case 'x' : // NULL
+				break;
+		}
+	 }
 }
 
 
+/////////////////////////////////////////////////////////////////
+// Fonction permettant de générer un nombre aléatoire entre 2 bornes [x-y]
+int my_rand ()
+{
+	int maxnb = 0;
+	int ind=0;
+	int sum = 0;
+	float division=0;
+	
+	for(int i = 0;i<8;i++)
+	{
+		Tboule_count[i]=0;
+	}
+
+	count_occurence();
+	sum = sum_boule();
+	ind = see_max_ind();
+	maxnb = see_max_nb();
+	division = (float)maxnb/(float)sum;
+	
+	// On fait les statistiques (Little player !!!)
+	if(division > 0.3)
+	{ 
+		return ind+1; // retourne l'indice de la couleur la plus présente si >50% || 35%
+	}else{
+			hge->Random_Seed(0);  //sets the seed to the current time
+			return (hge->Random_Int(1, 7)); // Aleatoire
+	}
+}
 
 char attrib_boule(int couleur)
 {
@@ -34,6 +157,9 @@ char attrib_boule(int couleur)
 		}
 		case 7: {
 			  Ccouleur = 'w';break;
+		}
+		default: {
+			  Ccouleur = 'r';break;
 		}
 	}
 	return Ccouleur;
@@ -676,7 +802,6 @@ void lunched_boule(char couleur, float angle)
 
 }
 
-
 bool menu() 
 {
 	hge->Gfx_BeginScene();
@@ -701,26 +826,25 @@ bool menu()
 		
 		gui->SetFocus(1);
 		gui->Enter();
+		
 		firstTimeMenu = false;
 	}
 
 	float dt=hge->Timer_GetDelta();
-	frog->RenderStretch(328,250,454,333);
-		
+	frog->RenderStretch(328,250,454,333);	
 	frog->Update(dt);
+
 	gui->SetCursor(spr);
 	gui->Render();
 
 	int id;
-	
-
 	 id=gui->Update(dt);
 	  if(id == -1)
 	  {
 		switch(lastid)
 		{
 		  case 1: 
-			   hge->System_SetState(HGE_FRAMEFUNC, game);
+			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
 			   break;
 		  case 2:
 			  
@@ -740,6 +864,30 @@ bool menu()
 	  return false;
 }
 
+bool game_int()
+{
+	static int i=0;
+	hge->Gfx_BeginScene();
+	bgg->Render(0, 0); // pour le backgroune gumble
+	float dt=hge->Timer_GetDelta();
+	while (i<=10000)
+	{
+	anumb->RenderStretch(328,250,448,304);	
+	anumb->Update(dt);
+	i++;
+	}
+
+	if(i==10000){
+	hge->System_SetState(HGE_FRAMEFUNC, game);
+	gui->SetCursor(spr);
+	gui->Render();
+	}
+	
+	gui->SetCursor(spr);
+	gui->Render();
+	hge->Gfx_EndScene();
+	return false;
+}
 
 bool game()
 {
@@ -752,7 +900,7 @@ bool game()
 		firstTimeMenu = true;
 	}
 
-
+	
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
 		if(timeCpt > timeDown) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
@@ -809,10 +957,13 @@ bool game()
   // Render graphics
   hge->Gfx_BeginScene();
   bgSprite->Render(0, 0);
-  hge->Gfx_Clear(0);
+  //hge->Gfx_Clear(0);
 	
 		bt_menu->Render(640,390);
+		gui->SetCursor(spr);
 		gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
+		gui->Update(dt);
+		
 
 		b_rouge->Update(dt);  //update the animation
 		b_vert->Update(dt);
@@ -821,7 +972,10 @@ bool game()
 		b_jaune->Update(dt);
 		b_violet->Update(dt);
 		b_gris->Update(dt);
+		//bt_menu->Update(dt);
+			//bt_menu->play();
 		
+
 		
 		// test pour afficher la direction du tir
 		for(int i = 0; i < 400;i++)
@@ -938,6 +1092,7 @@ bool game()
 								{
 									loose = true; // Permet d'arreter le jeux
 									stop_time = true; // Permet d'arreter le temps quand la partie GameOver
+
 								}
 							}
 
@@ -994,16 +1149,19 @@ bool game()
 		// initialisation du compteur de temps et test pour l'affichage
 		if(stop_time == false)
 		{
-			float time=0; // Permet de gérer le compteur de temps
-			time = hge->Timer_GetTime();
+			ttime = hge->Timer_GetTime();
 			font1->SetColor(ARGB(255,1,148,48));  //set color of text to black
-			font1->printf(678,142, HGETEXT_LEFT, "%.2f", time); // .2f pour afficher uniquement 2 décimales
+			font1->printf(678,142, HGETEXT_LEFT, "%.2f", ttime); // .2f pour afficher uniquement 2 décimales
+
 		}
 	
 		// Affiche le message GameOver 
 		if (loose == true)
 		{
 			game_over->Render(262,250);
+			float end_time = 0;
+			end_time = ttime;
+			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
 		}
 	
 		// Affichage du score du joueur
@@ -1064,6 +1222,7 @@ bool game()
 	
 bool instruction()
 {
+	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 	hge->Gfx_BeginScene();
 	hge->Gfx_Clear(0);
 	bgg->Render(0, 0);	// Affichage du fond 
@@ -1075,7 +1234,8 @@ bool instruction()
 										"Left / Right - Turn the canon\n\n"
 										"");
 	gui->Render();
-
+	gui->Update(dt);
+	gui->SetCursor(spr);
 	if(hge->Input_GetKeyState(HGEK_SPACE))
 	{
 		hge->System_SetState(HGE_FRAMEFUNC, menu);
@@ -1089,6 +1249,7 @@ bool instruction()
 
 bool credit()
 {
+	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 	hge->Gfx_BeginScene();
 	bgg->Render(0, 0);	// Affichage du fond
 	fnt->SetColor(0xFFFFFFFF);
@@ -1101,6 +1262,7 @@ bool credit()
 	//hge->System_SetState(HGE_WINDOWED, (MessageBox(NULL, "Run game in windowed mode?", "Windowed?", MB_YESNO | MB_ICONQUESTION) == IDYES) ? true : false);
 	gui->SetCursor(spr);
 	gui->Render();
+	gui->Update(dt);
 	
 	if(hge->Input_GetKeyState(HGEK_SPACE))
 	{
@@ -1112,7 +1274,6 @@ bool credit()
 	hge->Gfx_EndScene();
 	return false;
 }
-
 
 void LoadMap()
 {
@@ -1155,6 +1316,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	if(hge->System_Initiate())
 	{
+		Tboule_count = new int[7];
+		
 		// Chargement du fichier 'ressource.res'
 		Res = new hgeResourceManager("resource.res");  
 		// Chargement du background
@@ -1174,7 +1337,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 		frog = Res->GetAnimation("frog");
-
+		anumb = Res->GetAnimation("lesnumeros");
 		// Chargement de la police d'écriture
 		font1 = Res->GetFont("font1");
 
@@ -1194,7 +1357,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		//chan[0] = hge->Stream_Play(myMusic, true);
 		chan[0] = hge->Stream_Play(myMusic_menu, true);
 		
-
+		
 		b_rouge->Play();  //start playback of animation
 		b_vert->Play();
 		b_bleu->Play();
@@ -1205,6 +1368,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		bt_menu->Play();
 
 		frog ->Play();
+		anumb->Play();
 
 		LoadMap(); // charge la map
 		 
