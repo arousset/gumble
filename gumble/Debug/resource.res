@@ -160,6 +160,15 @@ Stream theme_menu
  filename=menu.mp3
 }
 
+Stream legameover
+{
+ filename=gameover.mp3
+}
+
+Stream lewin
+{
+ filename=win.wav
+}
 
 Font font1
 {
