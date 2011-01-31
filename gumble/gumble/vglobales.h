@@ -25,7 +25,8 @@ HGE *hge = 0;
 
 // Permet de créer un flux pour gérer la music
 HSTREAM myMusic;
-HSTREAM myMusic_menu;
+HSTREAM myMusic_menu; // Music du menu
+
 
 // Channel pour gere plusieurs flux musicaux
 HCHANNEL chan[2];
@@ -48,7 +49,7 @@ const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boule
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 0.1; // temps avant de faire tomber les boules(secondes)
+float timeDown = 10; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
@@ -130,6 +131,11 @@ hgeAnimation* anumb;
 // Some resource handles
 HEFFECT				snd;
 HTEXTURE			tex;
+
+HEFFECT sgameover;
+HEFFECT	swin;
+HEFFECT letire;
+HEFFECT explosion;
 
 // Pointeurs pour HGE object
 hgeGUI				*gui;

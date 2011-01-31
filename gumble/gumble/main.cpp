@@ -1,7 +1,5 @@
 #include "vglobales.h"
 
-/////////////////////////////////////////////////////////////////
-
 // permet de connaitre le nombre de boule total présente dans le jeux
 int sum_boule()
 {
@@ -100,8 +98,6 @@ void count_occurence()
 	 }
 }
 
-
-/////////////////////////////////////////////////////////////////
 // Fonction permettant de générer un nombre aléatoire entre 2 bornes [x-y]
 int my_rand ()
 {
@@ -183,7 +179,6 @@ int calculPosY(int y)
 	int jesus = 465456;
 	return mapY;
 }
-
 
 bool Collision(int newX, int newY)
 {
@@ -335,7 +330,6 @@ bool Collision(int newX, int newY)
 	return collision;
 }
 
-
 void affiche_next(char couleur)
 {
 	switch (couleur)
@@ -451,6 +445,7 @@ void particleDisplay(int index)
 	int poxYParticule = (int)((index/8)*bouleSizeX + (bouleSizeX/2));
 	poxYParticule = yMap - poxYParticule;
 	particleManager->SpawnPS(&particle, (float)posXParticule, (float)poxYParticule);
+	particleManager->Render();
 }
 
 void destroy2(int index, char couleur, bool lignePaire)
@@ -770,8 +765,11 @@ void lunched_boule(char couleur, float angle)
 						pMap[i] = 'x';
 						score += 100;
 						tmp(i, yPaire);
+						
 					}
 				}
+				explosion=hge->Effect_Load("explode.wav");
+				hge->Effect_Play(explosion);
 			}
 			
 			blunched_boule = false;
@@ -789,7 +787,7 @@ bool menu()
 	{
 		// Chargement textures et sons
 		snd=hge->Effect_Load("boing_2.mp3");
-
+		
 		// Initialise le GUI
 		delete gui;
 		gui=new hgeGUI();
@@ -884,6 +882,10 @@ bool game()
 					posX_bcourante = posX_depart;
 					posY_bcourante = posY_depart;
 					blunched_boule=true; // La boule courante a été lancée
+					
+					// Pour le bruit du tire du canon
+					letire=hge->Effect_Load("tire.wav");
+					hge->Effect_Play(letire);
 
 					alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
 			}
@@ -912,11 +914,10 @@ bool game()
 			particleManager->SpawnPS(&particle, mouseX, mouseY);
 		}////////////////////////////////////////////////////  
 
-  // Render graphics
-  hge->Gfx_BeginScene();
-  bgSprite->Render(0, 0);
-  //hge->Gfx_Clear(0);
-	
+		// Render graphics
+		bgSprite->Render(0, 0);
+ 
+		particleManager->Render();
 		bt_menu->Render(640,390);
 		gui->SetCursor(spr);
 		gui->Render(); // Permet de lancer le GUI et donc d'utiliser d'afficher le curseur.png définit avant
@@ -1118,11 +1119,19 @@ bool game()
 			float end_time = 0;
 			end_time = ttime;
 			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
+			hge->Stream_Free(myMusic_menu); // supprime la music du jeux 
+			
+				static bool ttest = true;	
+				if(ttest)
+				{
+					sgameover=hge->Effect_Load("gameover.mp3");
+					hge->Effect_Play(sgameover);
+					ttest=false;
+				}
 		}
 	
 		// Affichage du score du joueur
 		font1->printf(120, 142, HGETEXT_LEFT,"%d", score);
-
 
 		//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
 		font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
@@ -1293,6 +1302,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 		frog = Res->GetAnimation("frog");
+
 		// Chargement de la police d'écriture
 		font1 = Res->GetFont("font1");
 
@@ -1306,6 +1316,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Initialisation de la music
 		//myMusic = Res->GetStream("theme");
 		myMusic_menu = Res->GetStream("theme_menu");
+		
 		
 
 		// Jouer la music de fond 
@@ -1346,8 +1357,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		particle = Res->GetParticleSystem("particle")->info;
 		particleManager= new hgeParticleManager();
-
-
+		
 		// Let's rock now!
 		hge->System_Start();
 
