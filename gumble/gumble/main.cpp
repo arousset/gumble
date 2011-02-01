@@ -764,6 +764,8 @@ void lunched_boule(char couleur, float angle)
 						particleDisplay(i);
 						pMap[i] = 'x';
 						score += 100;
+						if(cptDestroy > 5)
+							score += 500;
 						tmp(i, yPaire);
 						
 					}
@@ -933,15 +935,17 @@ bool game()
 		b_gris->Update(dt);
 		//bt_menu->Update(dt);
 			//bt_menu->play();
+
+
 		// test pour afficher la direction du tir
-		for(int i = 0; i < 400;i++)
+		/*for(int i = 0; i < 400;i++)
 		{
 			b_violet->RenderStretch(
 				(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
 				(float)(480+(bouleSizeX/2)-(i*0.5)),
 				(float)(380+(bouleSizeX/2)-2.5+(i*rot)+5),
 				(float)(480+(bouleSizeX/2)-(i*0.5)+5));
-		}
+		}*/
 
 
 			if(blunched_boule)
@@ -1131,7 +1135,7 @@ bool game()
 		}
 	
 		// Affichage du score du joueur
-		font1->printf(120, 142, HGETEXT_LEFT,"%d", score);
+		font1->printf(50, 142, HGETEXT_LEFT,"%d", score);
 
 		//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
 		font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
@@ -1142,8 +1146,17 @@ bool game()
 	
 		// Affichage du canon
 		canon_img->SetHotSpot(65,65);
-		canon_img->RenderEx(canonLocX, canonLocY,(float)(rot*1.5));
-	
+
+
+		// pas très joli mais au moins ça fonctionne
+		if(rot > 0)
+			canon_img->RenderEx(canonLocX, canonLocY,(float)(atan(-0.5/rot))+(M_PI/2));
+		else if(rot < 0)
+			canon_img->RenderEx(canonLocX, canonLocY,(float)(atan(-0.5/rot))-(M_PI/2));
+		else
+			canon_img->RenderEx(canonLocX, canonLocY,(float)(atan(-0.5/rot))-(3*M_PI/2));
+
+
 		if(hge->Input_GetKeyState(HGEK_RIGHT) && rot < 1)
 			rot += (float)0.0005;
 		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1)
