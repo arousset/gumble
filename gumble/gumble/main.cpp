@@ -780,6 +780,32 @@ void lunched_boule(char couleur, float angle)
 
 }
 
+void LoadMap()
+{
+	FILE* f = NULL;
+	f = fopen("../Debug/map.txt", "rb"); // ouverture du fichier map
+	if(f == NULL)
+		return;
+
+	char line[512];
+	fgets(line, sizeof(line),f);
+	sizeX = atoi(line); // nombre de colones
+	fgets(line, sizeof(line),f);
+	sizeY = atoi(line); // nombres de lignes
+
+	//!\\ La première ligne de la map est la ligne se trouvant le plus en bas sur le jeu. La dernière ligne de la map représente donc la ligne de boules le plus en haut possible
+
+	pMap = new char[sizeX*sizeY]; // la pointeur sur la map réserve la taille de la map en mémoire
+
+	for(int iline=0; iline<sizeY; ++iline) // copies des informations du fichier map
+	{
+		fgets(line, sizeof(line),f);
+		memcpy(&pMap[iline*sizeX], line, sizeX);
+	}
+
+	fclose(f);	
+}
+
 bool menu() 
 {
 	hge->Gfx_BeginScene();
@@ -817,10 +843,10 @@ bool menu()
 	frog->Update(dt);
 
 	particleManager->Update(dt);
-	if(hge->Input_GetKey()==HGEK_LBUTTON)
+	/*if(hge->Input_GetKey()==HGEK_LBUTTON)
 	{
 			particleManager->SpawnPS(&particle_bulles, 335, 255);
-	}
+	}*/
 	//if((int)(100000*dt)%50 == 0)
 	if(bulles%3000 == 0)
 	{
@@ -842,6 +868,17 @@ bool menu()
 		switch(lastid)
 		{
 		  case 1: 
+			  LoadMap();
+			  timeBegin = hge->Timer_GetTime();
+			  if(first)
+				{
+					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+					coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
+					affiche_next(coul_bsuivante);
+					coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
+			
+					first = false;
+				}
 			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
 			   break;
 		  case 2:
@@ -912,6 +949,18 @@ bool game()
 					alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
 			}
 		}
+		else
+		{
+			if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
+			{
+				hge->System_SetState(HGE_FRAMEFUNC, menu);
+				lastid = 0;
+				firstTimeMenu = true;
+				loose = false;
+				score = 0;
+				stop_time = false;
+			}
+		}
 
 	
 		// Permet de récupérer les coordonnées de la souris à virer par la suite //////////////////////////////////
@@ -931,10 +980,10 @@ bool game()
 
 		/////// AVIRER PAR LA SUITE ///////////////// Pour l'affichage des particule à la souris 
 		particleManager->Update(dt);  //update all particles
-		if(hge->Input_GetKey()==HGEK_LBUTTON)
+		/*if(hge->Input_GetKey()==HGEK_LBUTTON)
 		{
 			particleManager->SpawnPS(&particle, mouseX, mouseY);
-		}////////////////////////////////////////////////////  
+		}////////////////////////////////////////////////////  */
 
 		// Render graphics
 		bgSprite->Render(0, 0);
@@ -1129,7 +1178,7 @@ bool game()
 		// initialisation du compteur de temps et test pour l'affichage
 		if(stop_time == false)
 		{
-			ttime = hge->Timer_GetTime();
+			ttime = hge->Timer_GetTime() - timeBegin;
 			font1->SetColor(ARGB(255,1,148,48));  //set color of text to black
 			font1->printf(678,142, HGETEXT_LEFT, "%.2f", ttime); // .2f pour afficher uniquement 2 décimales
 
@@ -1272,32 +1321,6 @@ bool credit()
 	return false;
 }
 
-void LoadMap()
-{
-	FILE* f = NULL;
-	f = fopen("../Debug/map.txt", "rb"); // ouverture du fichier map
-	if(f == NULL)
-		return;
-
-	char line[512];
-	fgets(line, sizeof(line),f);
-	sizeX = atoi(line); // nombre de colones
-	fgets(line, sizeof(line),f);
-	sizeY = atoi(line); // nombres de lignes
-
-	//!\\ La première ligne de la map est la ligne se trouvant le plus en bas sur le jeu. La dernière ligne de la map représente donc la ligne de boules le plus en haut possible
-
-	pMap = new char[sizeX*sizeY]; // la pointeur sur la map réserve la taille de la map en mémoire
-
-	for(int iline=0; iline<sizeY; ++iline) // copies des informations du fichier map
-	{
-		fgets(line, sizeof(line),f);
-		memcpy(&pMap[iline*sizeX], line, sizeX);
-	}
-
-	fclose(f);	
-}
-
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	hge = hgeCreate(HGE_VERSION);
@@ -1367,7 +1390,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		frog ->Play();
 
-		LoadMap(); // charge la map
+		//LoadMap(); // charge la map
 		 
 		// Chargement textures et sons
 		tex=hge->Texture_Load("cursor.png");
@@ -1377,7 +1400,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		fnt=new hgeFont("font1.fnt");
 		spr=new hgeSprite(tex,0,0,32,32);
 
-		if(first)
+		/*if(first)
 		{
 			alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
 			coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
@@ -1385,7 +1408,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
 			
 			first = false;
-		}
+		}*/
 
 		particle = Res->GetParticleSystem("particle")->info;
 		particle_bulles = Res->GetParticleSystem("particle_bulles")->info;

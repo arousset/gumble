@@ -191,3 +191,16 @@ Particle particle
  filename=particle.psi
  sprite=particleSprite
 }
+
+Sprite particleSprite2
+{
+ texture=particleTexture
+ rect=96, 64, 32, 32
+}
+
+Particle particle_bulles
+{
+ filename=particle_bulles.psi
+ sprite=particleSprite2
+ fps=50000.0
+}

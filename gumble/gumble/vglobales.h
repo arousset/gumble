@@ -157,5 +157,7 @@ float rotTd = 0; // variable temporaire pour la direction du tir
 bool credit();
 bool game_int();
 
+float timeBegin;
+
 #endif
 
