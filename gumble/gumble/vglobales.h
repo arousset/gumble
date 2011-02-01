@@ -17,6 +17,8 @@
 #include <hgeparticle.h>
 #include "hgeguictrls.h"
 
+#include <math.h>
+
 // Particules
 hgeParticleSystemInfo particle;
 hgeParticleManager *particleManager;
@@ -57,7 +59,7 @@ float animDowning = 0; // utile pour faire une sorte d'animation lors de la desc
 float speedY = (float)0.05; // vitesse de la boule du joueur
 float speedX = (float)0.1; // inclinaison de la boule du joueur
 bool loose = false; // Permet de gérer si la partie est perdu
-float rot = 0; // Permet la rotation du canon
+float rot = 0.0; // Permet la rotation du canon
 float mouseX, mouseY; // Coordonnées de la souris
 float canonLocX = 398, canonLocY = 498; // Coordonnées pour le canon
 bool lunched = false; // Permet de savoir si la boule courante a été lancé ou non
