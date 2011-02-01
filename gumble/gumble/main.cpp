@@ -809,8 +809,28 @@ bool menu()
 	}
 
 	float dt=hge->Timer_GetDelta();
+	
+
+	static int bulles = 0;
+
 	frog->RenderStretch(328,250,454,333);	
 	frog->Update(dt);
+
+	particleManager->Update(dt);
+	if(hge->Input_GetKey()==HGEK_LBUTTON)
+	{
+			particleManager->SpawnPS(&particle_bulles, 335, 255);
+	}
+	//if((int)(100000*dt)%50 == 0)
+	if(bulles%3000 == 0)
+	{
+		bulles = 0;
+		particleManager->SpawnPS(&particle_bulles, 340, 260);
+	}
+	particleManager->Render();
+
+	bulles++;
+
 
 	gui->SetCursor(spr);
 	gui->Render();
@@ -856,7 +876,7 @@ bool game()
 	
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
-		if(timeCpt > timeDown) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
+		if(timeCpt > timeDown && !loose) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
 		{													// on actualise pMap pour lui enlever une ligne en bas (la ligne la plus basse disparait pour faire descendre les autres)
 			if(!isDowning) // les boules ne sont pas en train de descendre
 			{
@@ -1054,7 +1074,6 @@ bool game()
 									{
 										loose = true; // Permet d'arreter le jeux
 										stop_time = true; // Permet d'arreter le temps quand la partie GameOver
-
 									}
 								}
 
@@ -1369,6 +1388,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 
 		particle = Res->GetParticleSystem("particle")->info;
+		particle_bulles = Res->GetParticleSystem("particle_bulles")->info;
 		particleManager= new hgeParticleManager();
 		
 		// Let's rock now!
