@@ -780,10 +780,32 @@ void lunched_boule(char couleur, float angle)
 
 }
 
-void LoadMap()
+void LoadMap(int map)
 {
 	FILE* f = NULL;
-	f = fopen("../Debug/map.txt", "rb"); // ouverture du fichier map
+	switch (map)
+	{
+		case 0: {
+			 f = fopen("../Debug/map.txt", "rb");break;
+		}
+		case 1: {
+			  f = fopen("../Debug/map1.txt", "rb");break;
+		}
+		case 2: {
+			  f = fopen("../Debug/map2.txt", "rb");break;
+		}
+		case 3: {
+			  f = fopen("../Debug/map3.txt", "rb");break;
+		}
+		case 4: {
+			  f = fopen("../Debug/map4.txt", "rb");break;
+		}
+		default : {
+			 f = fopen("../Debug/map.txt", "rb");break;
+		}
+	}
+		
+	
 	if(f == NULL)
 		return;
 
@@ -843,11 +865,7 @@ bool menu()
 	frog->Update(dt);
 
 	particleManager->Update(dt);
-	/*if(hge->Input_GetKey()==HGEK_LBUTTON)
-	{
-			particleManager->SpawnPS(&particle_bulles, 335, 255);
-	}*/
-	//if((int)(100000*dt)%50 == 0)
+
 	if(bulles%3000 == 0)
 	{
 		bulles = 0;
@@ -856,7 +874,6 @@ bool menu()
 	particleManager->Render();
 
 	bulles++;
-
 
 	gui->SetCursor(spr);
 	gui->Render();
@@ -868,8 +885,9 @@ bool menu()
 		switch(lastid)
 		{
 		  case 1: 
-			  LoadMap();
+			  LoadMap(0);
 			  timeBegin = hge->Timer_GetTime();
+			  rot = 0.0;
 			  if(first)
 				{
 					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
@@ -912,7 +930,7 @@ bool game()
 
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
-		if(timeCpt > timeDown && !loose) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
+		if(timeCpt > timeDown && !loose && !win) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
 		{													// on actualise pMap pour lui enlever une ligne en bas (la ligne la plus basse disparait pour faire descendre les autres)
 			if(!isDowning) // les boules ne sont pas en train de descendre
 			{
@@ -932,7 +950,7 @@ bool game()
 		}
 
 		// Passe lunched à vrai (pour boule lancée) si espace pressé
-		if(loose == false)
+		if(!loose && !win)
 		{
 			if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
 			{
@@ -948,6 +966,29 @@ bool game()
 					alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
 			}
 		}
+		else if(win)
+		{
+			if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
+			{
+				
+				timeBegin = hge->Timer_GetTime();
+				rot = 0.0;
+				if(first)
+				{
+					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+					coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
+					affiche_next(coul_bsuivante);
+					coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
+					first = false;
+				}
+				lastid = 0;
+				niveau++;
+				LoadMap(niveau);
+				win = false;
+				score = 0;
+				stop_time = false;
+			}
+		}
 		else
 		{
 			if( (hge->Input_GetKey()==HGEK_SPACE) && (!blunched_boule))
@@ -960,6 +1001,7 @@ bool game()
 				stop_time = false;
 			}
 		}
+
 
 	
 		// Permet de récupérer les coordonnées de la souris à virer par la suite //////////////////////////////////
@@ -977,12 +1019,7 @@ bool game()
 			lunched = false; // on passe lunched à faux tant que la boule n'est pas lancée
 		}
 
-		/////// AVIRER PAR LA SUITE ///////////////// Pour l'affichage des particule à la souris 
 		particleManager->Update(dt);  //update all particles
-		/*if(hge->Input_GetKey()==HGEK_LBUTTON)
-		{
-			particleManager->SpawnPS(&particle, mouseX, mouseY);
-		}////////////////////////////////////////////////////  */
 
 		// Render graphics
 		bgSprite->Render(0, 0);
@@ -1003,15 +1040,15 @@ bool game()
 		b_gris->Update(dt);
 		
 		hge->Input_GetMousePos(&mouseX, &mouseY);   //get the current mouse position
-	// Permet de gérer le bouton menu !
-	if(mouseX > 643 && mouseX < 770 && mouseY > 393 && mouseY < 513){
-		bt_menu->Update(dt);
-		if(hge->Input_GetKey()==HGEK_LBUTTON){
-			hge->System_SetState(HGE_FRAMEFUNC, menu);
-			lastid = 0;
-			firstTimeMenu = true;
+		// Permet de gérer le bouton menu !
+		if(mouseX > 643 && mouseX < 770 && mouseY > 393 && mouseY < 513){
+			bt_menu->Update(dt);
+			if(hge->Input_GetKey()==HGEK_LBUTTON){
+				hge->System_SetState(HGE_FRAMEFUNC, menu);
+				lastid = 0;
+				firstTimeMenu = true;
+			}
 		}
-	}
 
 		// test pour afficher la direction du tir
 		/*for(int i = 0; i < 400;i++)
@@ -1171,16 +1208,38 @@ bool game()
 									  b_jaune->RenderStretch(x1, y1, x2, y2);break;
 								}
 								case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
-								//case 'x' : {
-									  b_violet->RenderStretch(x1, y1, x2, y2);
-									  //font1->printf(x1, y1-30, HGETEXT_LEFT,"%d", index);break;
+									  b_violet->RenderStretch(x1, y1, x2, y2);break;
 								}
 						   }
 						}
 					}
 				}
 			}	
-		
+
+		bool winTest = true;
+		for(int i = 0;i < 88;i++)
+		{
+			if(pMap[i] != 'x')
+				winTest = false;
+		}
+		if(winTest)
+			win = true;
+		if(win)
+		{
+			stop_time = true;
+			you_win->Render(262,250);
+			float end_time = 0;
+			end_time = ttime;
+			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
+			hge->Stream_Play(myMusic_menu,true,100); // Permet de couper le son quand on perd et de le remettre dans le menu 
+			if(ttest)
+				{
+					swin=hge->Effect_Load("win.wav");
+					hge->Effect_Play(swin);
+					ttest=false;
+				}
+		}
+
 		//!\\ A revoir car je dois faire un pointeur pour stopper le temps quand la partie est perdu ou gagné ! :)
 		// initialisation du compteur de temps et test pour l'affichage
 		if(stop_time == false)
@@ -1211,10 +1270,6 @@ bool game()
 		// Affichage du score du joueur
 		font1->printf(50, 142, HGETEXT_LEFT,"%d", score);
 
-		//!\\ Permet d'afficher les coordonnées de la souris pour mieux placer les sprites.
-		font1->printf(5, 5, HGETEXT_LEFT,"%.2f, %.2f", mouseX, mouseY); //affiche les coordonnées de la souris.
-		//!\\
-		
 		// Permet d'afficher la boule suivante
 		affiche_next(coul_bsuivante);
 	
@@ -1236,9 +1291,6 @@ bool game()
 		if(hge->Input_GetKeyState(HGEK_LEFT) && rot > -1)
 			rot -= (float)0.0005;
 	
-
-		/* Cette partie est en construction cela va permettre de faire des tests pour générer les boules aléatoirement.*/
-		/* Bon Je sais c'est déguellasse car je code en dur les coordonnées :p */
 		if(!blunched_boule)
 		{
 			switch (alea_c)
@@ -1404,16 +1456,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Chargement de la police et du sprite du cursor
 		fnt=new hgeFont("font1.fnt");
 		spr=new hgeSprite(tex,0,0,32,32);
-
-		/*if(first)
-		{
-			alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
-			coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
-			affiche_next(coul_bsuivante);
-			coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
-			
-			first = false;
-		}*/
 
 		particle = Res->GetParticleSystem("particle")->info;
 		particle_bulles = Res->GetParticleSystem("particle_bulles")->info;
