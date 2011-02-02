@@ -876,9 +876,9 @@ bool menu()
 					coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
 					affiche_next(coul_bsuivante);
 					coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
-			
 					first = false;
 				}
+			   ttest = true; // Pour le son gameover à chaque partie recommencée 
 			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
 			   break;
 		  case 2:
@@ -910,7 +910,6 @@ bool game()
 		firstTimeMenu = true;
 	}
 
-	
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
 		if(timeCpt > timeDown && !loose) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
@@ -1002,9 +1001,17 @@ bool game()
 		b_jaune->Update(dt);
 		b_violet->Update(dt);
 		b_gris->Update(dt);
-		//bt_menu->Update(dt);
-			//bt_menu->play();
-
+		
+		hge->Input_GetMousePos(&mouseX, &mouseY);   //get the current mouse position
+	// Permet de gérer le bouton menu !
+	if(mouseX > 643 && mouseX < 770 && mouseY > 393 && mouseY < 513){
+		bt_menu->Update(dt);
+		if(hge->Input_GetKey()==HGEK_LBUTTON){
+			hge->System_SetState(HGE_FRAMEFUNC, menu);
+			lastid = 0;
+			firstTimeMenu = true;
+		}
+	}
 
 		// test pour afficher la direction du tir
 		/*for(int i = 0; i < 400;i++)
@@ -1191,12 +1198,11 @@ bool game()
 			float end_time = 0;
 			end_time = ttime;
 			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
-			hge->Stream_Free(myMusic_menu); // supprime la music du jeux 
-			
-				static bool ttest = true;	
+			hge->Stream_Play(myMusic_menu,true,100); // Permet de couper le son quand on perd et de le remettre dans le menu 
+				
 				if(ttest)
 				{
-					sgameover=hge->Effect_Load("gameover.mp3");
+					sgameover=hge->Effect_Load("gameover.wav");
 					hge->Effect_Play(sgameover);
 					ttest=false;
 				}
@@ -1371,7 +1377,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Initialisation de la music
 		//myMusic = Res->GetStream("theme");
 		myMusic_menu = Res->GetStream("theme_menu");
-		
 		
 
 		// Jouer la music de fond 

@@ -70,7 +70,7 @@ int alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui re
 bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
 bool first = true; // Pour la 1er génération de nombre aléatoire
 bool firstTimeMenu = true; // Pour le premier passage au menu
-
+bool ttest = true;
 //boolean pour stopper le temps
 bool stop_time = false;
 
@@ -145,6 +145,9 @@ hgeGUI				*gui;
 hgeFont				*fnt;
 hgeSprite			*spr;
 
+hgeGUIButton		*btn;
+
+
 int lastid = 0; // pour gérer le menu
 
 // prototype de la mort 
@@ -156,7 +159,6 @@ bool credit();
 float rotTd = 0; // variable temporaire pour la direction du tir
 bool credit();
 bool game_int();
-
 float timeBegin;
 
 #endif
