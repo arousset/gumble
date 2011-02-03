@@ -156,6 +156,7 @@ bool menu();
 bool game();
 bool instruction();
 bool credit();
+bool multiplayer();
 
 float rotTd = 0; // variable temporaire pour la direction du tir
 bool credit();
