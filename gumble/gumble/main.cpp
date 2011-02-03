@@ -786,7 +786,7 @@ void LoadMap(int map)
 	switch (map)
 	{
 		case 0: {
-			 f = fopen("../Debug/map.txt", "rb");break;
+			  f = fopen("../Debug/map.txt", "rb");break;
 		}
 		case 1: {
 			  f = fopen("../Debug/map1.txt", "rb");break;
@@ -801,7 +801,7 @@ void LoadMap(int map)
 			  f = fopen("../Debug/map4.txt", "rb");break;
 		}
 		default : {
-			 f = fopen("../Debug/map.txt", "rb");break;
+			  f = fopen("../Debug/map.txt", "rb");break;
 		}
 	}
 		
@@ -831,11 +831,11 @@ void LoadMap(int map)
 bool menu() 
 {
 	hge->Gfx_BeginScene();
-	bgg->Render(0, 0); // pour le backgroune gumble
+	bgg->Render(0, 0); // background gumble
 	
 	if (firstTimeMenu)
 	{
-		// Chargement textures et sons
+		// Chargement sons munu click
 		snd=hge->Effect_Load("boing_2.mp3");
 		
 		// Initialise le GUI
@@ -857,9 +857,8 @@ bool menu()
 	}
 
 	float dt=hge->Timer_GetDelta();
-	
-
 	static int bulles = 0;
+
 
 	frog->RenderStretch(328,250,454,333);	
 	frog->Update(dt);
@@ -885,7 +884,7 @@ bool menu()
 		switch(lastid)
 		{
 		  case 1: 
-			  LoadMap(0);
+			  LoadMap(0); // Charge Map0 pourle début du jeux
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  if(first)
@@ -900,13 +899,14 @@ bool menu()
 			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
 			   break;
 		  case 2:
-			  
+			    firstTimeMenu = true;
+			    hge->System_SetState(HGE_FRAMEFUNC, multiplayer);
 			   break;
 		  case 3:
-			  hge->System_SetState(HGE_FRAMEFUNC, instruction);
+			   hge->System_SetState(HGE_FRAMEFUNC, instruction);
 			   break;
 		  case 4:
-				hge->System_SetState(HGE_FRAMEFUNC, credit);
+			   hge->System_SetState(HGE_FRAMEFUNC, credit);
 			break;
 		  case 5: return true;
 		}
@@ -921,12 +921,12 @@ bool game()
 {
 	hge->Gfx_BeginScene();
 
-	if(hge->Input_GetKeyState(HGEK_ESCAPE))
+	/*if(hge->Input_GetKeyState(HGEK_ESCAPE))
 	{
 		hge->System_SetState(HGE_FRAMEFUNC, menu);
 		lastid = 0;
 		firstTimeMenu = true;
-	}
+	}*/
 
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
@@ -1219,11 +1219,18 @@ bool game()
 		bool winTest = true;
 		for(int i = 0;i < 88;i++)
 		{
-			if(pMap[i] != 'x')
+			if(pMap[i] != 'x' || pMap[i] != 'ý' || pMap[i] != '«' || pMap[i] != 'î' || pMap[i] != 'þ')
+			{
 				winTest = false;
+			}
+			else
+			{
+				winTest = true;
+			}
 		}
 		if(winTest)
 			win = true;
+		
 		if(win)
 		{
 			stop_time = true;
@@ -1232,7 +1239,7 @@ bool game()
 			end_time = ttime;
 			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
 			hge->Stream_Play(myMusic_menu,true,100); // Permet de couper le son quand on perd et de le remettre dans le menu 
-			if(ttest)
+				if(ttest)
 				{
 					swin=hge->Effect_Load("win.wav");
 					hge->Effect_Play(swin);
@@ -1269,6 +1276,9 @@ bool game()
 	
 		// Affichage du score du joueur
 		font1->printf(50, 142, HGETEXT_LEFT,"%d", score);
+
+		// Affichage du niveau 
+		font1->printf(90, 242, HGETEXT_LEFT,"%d", niveau+1);
 
 		// Permet d'afficher la boule suivante
 		affiche_next(coul_bsuivante);
@@ -1328,8 +1338,24 @@ bool instruction()
 {
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 	hge->Gfx_BeginScene();
-	hge->Gfx_Clear(0);
 	bgg->Render(0, 0);	// Affichage du fond 
+
+	// Pour gumble la grounouille particule !
+	static int bulles = 0;
+	frog->RenderStretch(328,250,454,333);	
+	frog->Update(dt);
+
+	particleManager->Update(dt);
+
+	if(bulles%3000 == 0)
+	{
+		bulles = 0;
+		particleManager->SpawnPS(&particle_bulles, 340, 260);
+	}
+	particleManager->Render();
+
+	bulles++;
+
 	fnt->SetColor(0xFFFFFFFF);
 	fnt->Render(390, 345, HGETEXT_CENTER, "Instructions\n"
 								     	"Shoot the color balls\n\n"
@@ -1356,6 +1382,23 @@ bool credit()
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 	hge->Gfx_BeginScene();
 	bgg->Render(0, 0);	// Affichage du fond
+	
+	// Pour gumble la grounouille particule !
+	static int bulles = 0;
+	frog->RenderStretch(328,250,454,333);	
+	frog->Update(dt);
+
+	particleManager->Update(dt);
+
+	if(bulles%3000 == 0)
+	{
+		bulles = 0;
+		particleManager->SpawnPS(&particle_bulles, 340, 260);
+	}
+	particleManager->Render();
+
+	bulles++;
+
 	fnt->SetColor(0xFFFFFFFF);
 	fnt->Render(390, 345, HGETEXT_CENTER, "Credit\n"
 			"GUMBLE\n\n"
@@ -1377,6 +1420,78 @@ bool credit()
 
 	hge->Gfx_EndScene();
 	return false;
+}
+
+bool multiplayer()
+{
+	hge->Gfx_BeginScene();
+	bgg->Render(0, 0); // background gumble
+
+	if (firstTimeMenu)
+	{
+		// Chargement sons munu click
+		snd=hge->Effect_Load("boing_2.mp3");
+		
+		// Initialise le GUI
+		delete gui;
+		gui=new hgeGUI();
+
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Create a party"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Join a party"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Back to menu"));
+		
+		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+		
+		gui->SetFocus(1);
+		gui->Enter();
+		
+		firstTimeMenu = false;
+	}
+
+	float dt=hge->Timer_GetDelta();
+	static int bulles = 0;
+
+
+	frog->RenderStretch(328,250,454,333);	
+	frog->Update(dt);
+
+	particleManager->Update(dt);
+
+	if(bulles%3000 == 0)
+	{
+		bulles = 0;
+		particleManager->SpawnPS(&particle_bulles, 340, 260);
+	}
+	particleManager->Render();
+
+	bulles++;
+
+	gui->SetCursor(spr);
+	gui->Render();
+
+	int id;
+	 id=gui->Update(dt);
+	  if(id == -1)
+	  {
+		switch(lastid)
+		{
+		  case 1:
+			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
+			   break;
+		  case 2:
+			  
+			   break;
+		  case 3:
+			   lastid = 0;
+			   firstTimeMenu = true;
+			   hge->System_SetState(HGE_FRAMEFUNC, menu);
+			   break;
+		}
+	  }
+	  else if(id) { lastid=id; gui->Leave(); }
+
+	  hge->Gfx_EndScene();
+	  return false;
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
