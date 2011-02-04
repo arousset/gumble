@@ -13,6 +13,17 @@ Texture background
 {
  filename=bgj.jpg
 }
+
+Texture back4
+{
+ filename=bgj4.jpg
+}
+
+Texture backfin
+{
+ filename=bgfin.jpg
+}
+
 Texture anim_bt
 {
  filename=anim_bt.png
@@ -46,7 +57,7 @@ Texture youwin
 Sprite you_win
 {
  texture=youwin
- rect=0, 0, 231, 42 
+ rect=0, 0, 213, 42 
 }
 
 Texture gameover
@@ -77,6 +88,19 @@ Sprite game_over
 Sprite bgSprite
 {
  texture=background
+ rect=0, 0, 800, 600
+}
+
+Sprite bgdelafin
+{
+ texture=backfin
+ rect=0, 0, 800, 600
+}
+
+
+Sprite blevel4
+{
+ texture=back4
  rect=0, 0, 800, 600
 }
 
@@ -165,6 +189,16 @@ Stream legameover
  filename=gameover.mp3
 }
 
+Stream lafin
+{
+ filename=fin.mp3
+}
+
+Stream mlevel4
+{
+ filename=l4.mp3
+}
+
 Stream lewin
 {
  filename=win.wav
@@ -202,5 +236,4 @@ Particle particle_bulles
 {
  filename=particle_bulles.psi
  sprite=particleSprite2
- fps=50000.0
 }
