@@ -29,6 +29,8 @@ HGE *hge = 0;
 // Permet de créer un flux pour gérer la music
 HSTREAM myMusic;
 HSTREAM myMusic_menu; // Music du menu
+HSTREAM l4; //music level 4
+HSTREAM myMusic_fin; // Music du menu
 
 
 // Channel pour gere plusieurs flux musicaux
@@ -39,6 +41,7 @@ hgeSprite* bgSprite;
 hgeSprite* game_over;
 hgeSprite* you_win;
 hgeSprite* canon_img;
+hgeSprite* bgfin;
 
 // Pointeur pour la police d'écriture
 hgeFont* font1;
@@ -52,7 +55,7 @@ const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boule
 const int yMap = 385; // ordonnée de la plus basse ligne pour afficher les boules
 const float bouleSizeX = 37; // taille de la boule
 const float bouleSizeY = 31;
-float timeDown = 25; // temps avant de faire tomber les boules(secondes)
+float timeDown = 3000; // temps avant de faire tomber les boules(secondes)
 float timeCpt = 0; // compteur de temps
 int swapPair = 0; // variables utile pour déterminée si la ligne a besoin d'etre décalée
 bool isDowning = false; // les boules sont en train de descendre ?
@@ -67,14 +70,14 @@ float canonLocX = 398, canonLocY = 498; // Coordonnées pour le canon
 bool lunched = false; // Permet de savoir si la boule courante a été lancé ou non
 int alea_c = 1; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
 int alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
-
+float tglobal =0;
 bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
 bool first = true; // Pour la 1er génération de nombre aléatoire
 bool firstTimeMenu = true; // Pour le premier passage au menu
 bool ttest = true;
 //boolean pour stopper le temps
 bool stop_time = false;
-
+bool premier = true;
 //Compteur pour supprimer les boules si plus de 2 sont accolées
 int cptDestroy = 0;
 bool tabToDestroy[88];
@@ -86,6 +89,10 @@ bool noSuspendedTab[80];
 
 // Variable pour calculer le score
 int score = 0;
+
+
+// Pour afficher le tire canon (bonus)
+int bonus = 0;
 
 // Variables pour gérer les boules 'courante' et 'suivante'
 	// Boule courante
@@ -116,6 +123,8 @@ hgeAnimation* bt_menu; // bouton menu sur l'espace de jeux
 
 // Background intro
 hgeSprite* bgg; // Sprite pour le fond de l'intro
+// Back level
+hgeSprite* bg4;
 
 // Sprite pour les boules
 hgeAnimation* b_rouge; //rouge
@@ -157,9 +166,10 @@ bool game();
 bool instruction();
 bool credit();
 bool multiplayer();
+bool smenu();
+bool fin();
 
 float rotTd = 0; // variable temporaire pour la direction du tir
-bool credit();
 bool game_int();
 float timeBegin;
 int niveau = 0;// niveau du joueur
