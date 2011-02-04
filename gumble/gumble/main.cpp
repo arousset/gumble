@@ -1,4 +1,6 @@
 #include "vglobales.h"
+#include <iostream> 
+
 
 // permet de connaitre le nombre de boule total présente dans le jeux
 int sum_boule()
@@ -766,8 +768,13 @@ void lunched_boule(char couleur, float angle)
 						score += 100;
 						if(cptDestroy > 5)
 							score += 500;
+							bonus = 3;
+							// rajouter un petit son
+							if(cptDestroy > 10)
+								score += 2000;
+								bonus = 5;
+								// rajouter un petit son
 						tmp(i, yPaire);
-						
 					}
 				}
 				explosion=hge->Effect_Load("explode.wav");
@@ -789,13 +796,13 @@ void LoadMap(int map)
 			  f = fopen("../Debug/map.txt", "rb");break;
 		}
 		case 1: {
-			  f = fopen("../Debug/map1.txt", "rb");break;
-		}
-		case 2: {
 			  f = fopen("../Debug/map2.txt", "rb");break;
 		}
-		case 3: {
+		case 2: {
 			  f = fopen("../Debug/map3.txt", "rb");break;
+		}
+		case 3: {
+			  f = fopen("../Debug/map4.txt", "rb");break;
 		}
 		case 4: {
 			  f = fopen("../Debug/map4.txt", "rb");break;
@@ -828,7 +835,8 @@ void LoadMap(int map)
 	fclose(f);	
 }
 
-bool menu() 
+// Sous menu pourl e mode 1 player (difficulté)
+bool smenu()
 {
 	hge->Gfx_BeginScene();
 	bgg->Render(0, 0); // background gumble
@@ -842,11 +850,10 @@ bool menu()
 		delete gui;
 		gui=new hgeGUI();
 
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Instructions"));
-		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
-		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Hard"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Middle"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Easy"));
+		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Back to menu"));
 		
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
@@ -884,7 +891,10 @@ bool menu()
 		switch(lastid)
 		{
 		  case 1: 
-			  LoadMap(0); // Charge Map0 pourle début du jeux
+			  LoadMap(0); // Charge Map0 pourle début du jeu
+			  score = 0;
+			  niveau = 0;
+			  timeDown = 7;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  if(first)
@@ -899,13 +909,136 @@ bool menu()
 			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
 			   break;
 		  case 2:
+			  LoadMap(0); // Charge Map0 pourle début du jeu
+			  score = 0;
+			  niveau = 0;
+			  timeDown = 30;
+			  timeBegin = hge->Timer_GetTime();
+			  rot = 0.0;
+			  if(first)
+				{
+					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+					coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
+					affiche_next(coul_bsuivante);
+					coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
+					first = false;
+				}
+			   ttest = true; // Pour le son gameover à chaque partie recommencée 
+			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
+			   break;
+		  case 3:
+			  LoadMap(0); // Charge Map0 pourle début du jeu
+			  score = 0;
+			  niveau = 0;
+			  timeDown = 60;
+			  timeBegin = hge->Timer_GetTime();
+			  rot = 0.0;
+			  if(first)
+				{
+					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+					coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
+					affiche_next(coul_bsuivante);
+					coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
+					first = false;
+				}
+			   ttest = true; // Pour le son gameover à chaque partie recommencée 
+			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
+			   break;
+		  case 4:
+			   lastid = 0;
+			   firstTimeMenu = true;
+			   hge->System_SetState(HGE_FRAMEFUNC, menu);
+			   break;
+		}
+	  }
+	  else if(id) { lastid=id; gui->Leave(); }
+
+	  hge->Gfx_EndScene();
+	  return false;
+}
+
+bool menu() 
+{
+	hge->Gfx_BeginScene();
+	bgg->Render(0, 0); // background gumble
+	
+	if (firstTimeMenu)
+	{
+	
+		// Initialise le GUI
+		delete gui;
+		gui=new hgeGUI();
+
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Instructions"));
+		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
+		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
+		
+		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+		
+		gui->SetFocus(1);
+		gui->Enter();
+		
+		firstTimeMenu = false;
+		chan[0] = hge->Stream_Play(myMusic_menu, true);
+	}
+
+	float dt=hge->Timer_GetDelta();
+	static int bulles = 0;
+
+
+	frog->RenderStretch(328,250,454,333);	
+	frog->Update(dt);
+
+	particleManager->Update(dt);
+
+	if(bulles%3000 == 0)
+	{
+		bulles = 0;
+		particleManager->SpawnPS(&particle_bulles, 340, 260);
+	}
+	particleManager->Render();
+
+	bulles++;
+
+	gui->SetCursor(spr);
+	gui->Render();
+
+	int id;
+	 id=gui->Update(dt);
+	  if(id == -1)
+	  {
+		switch(lastid)
+		{
+		  case 1: 
+			  firstTimeMenu = true;
+			  LoadMap(0); // Charge Map0 pourle début du jeu
+			  score = 0;
+			  niveau = 0;
+			  timeBegin = hge->Timer_GetTime();
+			  rot = 0.0;
+			  if(first)
+				{
+					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
+					coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
+					affiche_next(coul_bsuivante);
+					coul_bcourante = attrib_boule(alea_c); // Permet d'initialiser la 1er boule 
+					first = false;
+				}
+			   ttest = true; // Pour le son gameover à chaque partie recommencée 
+			   hge->System_SetState(HGE_FRAMEFUNC, smenu); 
+			   break;
+		  case 2:
 			    firstTimeMenu = true;
 			    hge->System_SetState(HGE_FRAMEFUNC, multiplayer);
 			   break;
 		  case 3:
+			   firstTimeMenu = true;
 			   hge->System_SetState(HGE_FRAMEFUNC, instruction);
 			   break;
 		  case 4:
+			   firstTimeMenu = true;
 			   hge->System_SetState(HGE_FRAMEFUNC, credit);
 			break;
 		  case 5: return true;
@@ -917,16 +1050,129 @@ bool menu()
 	  return false;
 }
 
+//fin du jeux gumble 
+bool fin()
+{
+	hge->Gfx_BeginScene();
+	float dt=hge->Timer_GetDelta();
+	bgfin->Render(0, 0); // background gumble
+	if(premier)
+			{	
+				hge->Stream_Play(myMusic_menu,true,0);
+				// Initialisation de la music
+				chan[0] = hge->Stream_Play(l4, true);	
+				premier = false;
+			}			
+
+
+		// Mise en place menu 
+		if (firstTimeMenu)
+		{
+			// Chargement sons munu click
+			snd=hge->Effect_Load("boing_2.mp3");
+		
+			// Initialise le GUI
+			delete gui;
+			gui=new hgeGUI();
+
+			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Back to menu"));
+					
+			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+		
+			gui->Enter();
+			hge->Stream_Play(myMusic_menu,true,0);
+			hge->Stream_Play(l4,true,0);
+			// Initialisation de la music
+			chan[0] = hge->Stream_Play(myMusic_fin, true);	
+			firstTimeMenu = false;
+		}
+
+		// Pour gérer le cursor et l'update des images
+		gui->SetCursor(spr);
+		gui->Render();
+		gui->Update(dt);
+	
+		int id;
+	 id=gui->Update(dt);
+	  if(id == -1)
+	  {
+		switch(lastid)
+		{
+		  case 1: 
+			   hge->System_SetState(HGE_FRAMEFUNC, menu); //gaem_int
+			   break;
+		}
+	  }
+	  else if(id) { lastid=id; gui->Leave(); }
+
+		// Mise en place du score
+		font1->printf(50, 142, HGETEXT_LEFT,"%d", score);
+		// Mise en place du temps
+		font1->printf(678,142, HGETEXT_LEFT, "%.2f", tglobal); // .2f pour afficher uniquement 2 décimales
+		
+		
+	hge->Gfx_EndScene();
+	return false;
+}
+
 bool game()
 {
 	hge->Gfx_BeginScene();
 
-	/*if(hge->Input_GetKeyState(HGEK_ESCAPE))
+	if(hge->Input_GetKeyState(HGEK_ESCAPE))
 	{
 		hge->System_SetState(HGE_FRAMEFUNC, menu);
 		lastid = 0;
 		firstTimeMenu = true;
-	}*/
+	}
+	
+	// Pour charger le fond et la musique en fonction du niveau
+	switch (niveau)
+	{
+		case 0: {
+			// Render graphics
+			bgSprite->Render(0, 0); 
+			
+			if(premier)
+			{	
+				hge->Stream_Play(myMusic_menu,true,0);
+				// Initialisation de la music
+				chan[0] = hge->Stream_Play(l4, true);	
+				premier = false;
+			}			
+			break;
+		}
+		case 1: {
+			// Render graphics
+			bg4->Render(0, 0); 
+			if(premier)
+			{	
+				hge->Stream_Play(myMusic_menu,true,0);
+				// Initialisation de la music
+				chan[0] = hge->Stream_Play(l4, true);	
+				premier = false;
+			}	
+			break;
+		}
+		case 2: {
+			// Render graphics
+			bgSprite->Render(0, 0);   
+			break;
+		}
+		case 3: {
+			// Render graphics
+			bgSprite->Render(0, 0);   
+			break;
+		}
+		case 4: {
+			// Render graphics
+			bgSprite->Render(0, 0);   
+			break;
+		}
+		default : {
+			  break;
+		}
+	}
 
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
@@ -964,6 +1210,11 @@ bool game()
 					hge->Effect_Play(letire);
 
 					alea_c = alea_n; // Permet de passer la boule suivante à la boule courante
+
+					if(bonus > 0)
+					{
+						bonus -= 1;
+					}
 			}
 		}
 		else if(win)
@@ -985,9 +1236,18 @@ bool game()
 				niveau++;
 				LoadMap(niveau);
 				win = false;
-				score = 0;
 				stop_time = false;
+
+				if(niveau == 1 && hge->Input_GetKey()==HGEK_SPACE)
+				{
+					firstTimeMenu = true;
+					hge->System_SetState(HGE_FRAMEFUNC, fin);
+				}
+
+				
 			}
+
+			
 		}
 		else
 		{
@@ -997,7 +1257,6 @@ bool game()
 				lastid = 0;
 				firstTimeMenu = true;
 				loose = false;
-				score = 0;
 				stop_time = false;
 			}
 		}
@@ -1021,8 +1280,7 @@ bool game()
 
 		particleManager->Update(dt);  //update all particles
 
-		// Render graphics
-		bgSprite->Render(0, 0);
+		
  
 		particleManager->Render();
 		bt_menu->Render(640,390);
@@ -1050,16 +1308,19 @@ bool game()
 			}
 		}
 
-		// test pour afficher la direction du tir
-		/*for(int i = 0; i < 400;i++)
+		// Pour afficher ou non le bonus (aide au canon)
+		if(bonus > 0)
 		{
-			b_violet->RenderStretch(
-				(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
-				(float)(480+(bouleSizeX/2)-(i*0.5)),
-				(float)(380+(bouleSizeX/2)-2.5+(i*rot)+5),
-				(float)(480+(bouleSizeX/2)-(i*0.5)+5));
-		}*/
-
+			// test pour afficher la direction du tir
+			for(int i = 0; i < 400;i++)
+			{
+				b_violet->RenderStretch(
+					(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
+					(float)(480+(bouleSizeX/2)-(i*0.5)),
+					(float)(380+(bouleSizeX/2)-2.5+(i*rot)+5),
+					(float)(480+(bouleSizeX/2)-(i*0.5)+5));
+			}
+		}
 
 			if(blunched_boule)
 			{
@@ -1219,13 +1480,9 @@ bool game()
 		bool winTest = true;
 		for(int i = 0;i < 88;i++)
 		{
-			if(pMap[i] != 'x' || pMap[i] != 'ý' || pMap[i] != '«' || pMap[i] != 'î' || pMap[i] != 'þ')
+			if(pMap[i] != 'x')
 			{
 				winTest = false;
-			}
-			else
-			{
-				winTest = true;
 			}
 		}
 		if(winTest)
@@ -1234,9 +1491,10 @@ bool game()
 		if(win)
 		{
 			stop_time = true;
-			you_win->Render(262,250);
+			you_win->Render(292,248);
 			float end_time = 0;
 			end_time = ttime;
+			tglobal += end_time;
 			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
 			hge->Stream_Play(myMusic_menu,true,100); // Permet de couper le son quand on perd et de le remettre dans le menu 
 				if(ttest)
@@ -1422,6 +1680,7 @@ bool credit()
 	return false;
 }
 
+// Menu pour le partie multiplayer
 bool multiplayer()
 {
 	hge->Gfx_BeginScene();
@@ -1476,10 +1735,14 @@ bool multiplayer()
 		switch(lastid)
 		{
 		  case 1:
-			   hge->System_SetState(HGE_FRAMEFUNC, game); //gaem_int
+			   lastid = 0;
+			   firstTimeMenu = true;
+			   hge->System_SetState(HGE_FRAMEFUNC, menu);
 			   break;
 		  case 2:
-			  
+			   lastid = 0;
+			   firstTimeMenu = true;
+			   hge->System_SetState(HGE_FRAMEFUNC, menu);
 			   break;
 		  case 3:
 			   lastid = 0;
@@ -1519,6 +1782,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Chargement image menu 
 		bgg = Res->GetSprite("bgg");
 		
+		// Chargement des images fonds (level)
+		bg4 = Res->GetSprite("blevel4");
+
+		//chargement image fin
+		bgfin = Res->GetSprite("bgdelafin");
+
 		//Chargement des différentes boules de couleurs
 		b_rouge = Res->GetAnimation("br");
 		b_vert = Res->GetAnimation("bv");
@@ -1542,13 +1811,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		bt_menu = Res->GetAnimation("bt_anim");
 
 		// Initialisation de la music
-		//myMusic = Res->GetStream("theme");
 		myMusic_menu = Res->GetStream("theme_menu");
+		//Level 1
+		l4 = Res->GetStream("mlevel4");
+		//music fin
+		myMusic_fin = Res->GetStream("lafin");
 		
 
 		// Jouer la music de fond 
-		//chan[0] = hge->Stream_Play(myMusic, true);
-		chan[0] = hge->Stream_Play(myMusic_menu, true);
+		//chan[0] = hge->Stream_Play(myMusic_menu, true);
+		
 		
 		
 		b_rouge->Play();  //start playback of animation
@@ -1562,8 +1834,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 		frog ->Play();
 
-		//LoadMap(); // charge la map
-		 
 		// Chargement textures et sons
 		tex=hge->Texture_Load("cursor.png");
 		
