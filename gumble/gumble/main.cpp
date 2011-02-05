@@ -360,86 +360,6 @@ void affiche_next(char couleur)
 			}
 }
 
-// destroy() va bientôt être supprimée pour laisser place a destroy2()
-void destroy(int index, char couleur, bool lignePaire)
-{
-	bool destroyBCourante = false;
-	//pMap[index] = 'x';
-
-	if(index%8 != 0)
-		if(pMap[index-1] == couleur)
-		{
-			pMap[index-1] = 'x';
-			destroyBCourante = true;
-			cptDestroy++;
-			destroy(index-1, couleur, lignePaire);
-		}
-	if(index%8 != 7)
-		if(pMap[index+1] == couleur)
-		{
-			pMap[index+1] = 'x';
-			destroyBCourante = true;
-			cptDestroy++;
-			destroy(index+1, couleur, lignePaire);
-		}
-	if(pMap[index+8] == couleur)
-	{
-		pMap[index+8] = 'x';
-		destroyBCourante = true;
-		cptDestroy++;
-		destroy(index+8, couleur, lignePaire);
-	}
-	if(pMap[index-8] == couleur)
-	{
-		pMap[index-8] = 'x';
-		destroyBCourante = true;
-		cptDestroy++;
-		destroy(index-8, couleur, lignePaire);
-	}
-	if(lignePaire)
-	{
-		if(index%8 != 7)
-			if(pMap[index+8+1] == couleur)
-			{
-				pMap[index+8+1] = 'x';
-				destroyBCourante = true;
-				cptDestroy++;
-				destroy(index+8+1, couleur, lignePaire);
-			}
-		if(index%8 != 7)
-			if(pMap[index-8+1] == couleur)
-			{
-				pMap[index-8+1] = 'x';
-				destroyBCourante = true;
-				cptDestroy++;
-				destroy(index-8+1, couleur, lignePaire);
-			}
-	}
-	else
-	{
-		if(index%8 != 0)
-			if(pMap[index+8-1] == couleur)
-			{
-				pMap[index+8-1] = 'x';
-				destroyBCourante = true;
-				cptDestroy++;
-				destroy(index+8-1, couleur, lignePaire);
-			}
-		if(index%8 != 0)
-			if(pMap[index-8-1] == couleur)
-			{
-				pMap[index-8-1] = 'x';
-				destroyBCourante = true;
-				cptDestroy++;
-				destroy(index-8-1, couleur, lignePaire);
-			}
-	}
-	//if(destroyBCourante && cptDestroy > 2)
-	if(destroyBCourante)
-		pMap[index] = 'x';
-
-}
-
 void particleDisplay(int index)
 {
 	int posXParticule = (int)((index%8)*bouleSizeX + (bouleSizeX/2));
@@ -450,42 +370,41 @@ void particleDisplay(int index)
 	particleManager->Render();
 }
 
-void destroy2(int index, char couleur, bool lignePaire)
+void destroy(int index, char couleur, bool lignePaire)
 {
 	if(!tabToDestroy[index])
 	{
 		cptDestroy++;
 		tabToDestroy[index] = true;
-
 		if(index%8 != 0)
 			if(pMap[index-1] == couleur)
 			{
-				destroy2(index-1, couleur, lignePaire);
+				destroy(index-1, couleur, lignePaire);
 			}
 		if(index%8 != 7)
 			if(pMap[index+1] == couleur)
 			{
-				destroy2(index+1, couleur, lignePaire);
+				destroy(index+1, couleur, lignePaire);
 			}
 		if(pMap[index+8] == couleur)
 		{
-			destroy2(index+8, couleur, !lignePaire);
+			destroy(index+8, couleur, !lignePaire);
 		}
 		if(pMap[index-8] == couleur)
 		{
-			destroy2(index-8, couleur, !lignePaire);
+			destroy(index-8, couleur, !lignePaire);
 		}
 		if(lignePaire)
 		{
 			if(index%8 != 7)
 				if(pMap[index+8+1] == couleur)
 				{
-					destroy2(index+8+1, couleur, !lignePaire);
+					destroy(index+8+1, couleur, !lignePaire);
 				}
 			if(index%8 != 7)
 				if(pMap[index-8+1] == couleur)
 				{
-					destroy2(index-8+1, couleur, !lignePaire);
+					destroy(index-8+1, couleur, !lignePaire);
 				}
 		}
 		else
@@ -493,12 +412,12 @@ void destroy2(int index, char couleur, bool lignePaire)
 			if(index%8 != 0)
 				if(pMap[index+8-1] == couleur)
 				{
-					destroy2(index+8-1, couleur, !lignePaire);
+					destroy(index+8-1, couleur, !lignePaire);
 				}
 			if(index%8 != 0)
 				if(pMap[index-8-1] == couleur)
 				{
-					destroy2(index-8-1, couleur, !lignePaire);
+					destroy(index-8-1, couleur, !lignePaire);
 				}
 		}
 	}
@@ -518,7 +437,6 @@ bool needDestroyation(bool *tab)
 		if(tab[i])
 			return false;
 	}
-	noSuspendedIsDowning = true;
 	return true;
 }
 
@@ -739,7 +657,7 @@ void lunched_boule(char couleur, float angle)
 			if(!isDowning)
 			{
 				pMap[index] = couleur;
-				destroy2(index, couleur, yPaire);
+				destroy(index, couleur, yPaire);
 			}
 			else
 			{
@@ -747,12 +665,12 @@ void lunched_boule(char couleur, float angle)
 				{
 					index -= 8;
 					pMap[index] = couleur;
-					destroy2(index, couleur, yPaire);
+					destroy(index, couleur, yPaire);
 				}
 				else
 				{
 					pMap[index] = couleur;
-					destroy2(index, couleur, yPaire);
+					destroy(index, couleur, yPaire);
 				}
 			}
 
@@ -767,12 +685,16 @@ void lunched_boule(char couleur, float angle)
 						pMap[i] = 'x';
 						score += 100;
 						if(cptDestroy > 5)
+						{
 							score += 500;
 							bonus = 3;
 							// rajouter un petit son
 							if(cptDestroy > 10)
+							{
 								score += 2000;
 								bonus = 5;
+							}
+						}
 								// rajouter un petit son
 						tmp(i, yPaire);
 					}
@@ -850,9 +772,9 @@ bool smenu()
 		delete gui;
 		gui=new hgeGUI();
 
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Hard"));
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Easy"));
 		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Middle"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Easy"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Hard"));
 		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Back to menu"));
 		
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
@@ -894,7 +816,7 @@ bool smenu()
 			  LoadMap(0); // Charge Map0 pourle début du jeu
 			  score = 0;
 			  niveau = 0;
-			  timeDown = 7;
+			  timeDown = 25;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  if(first)
@@ -912,7 +834,7 @@ bool smenu()
 			  LoadMap(0); // Charge Map0 pourle début du jeu
 			  score = 0;
 			  niveau = 0;
-			  timeDown = 30;
+			  timeDown = 12;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  if(first)
@@ -930,7 +852,7 @@ bool smenu()
 			  LoadMap(0); // Charge Map0 pourle début du jeu
 			  score = 0;
 			  niveau = 0;
-			  timeDown = 60;
+			  timeDown = 7;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  if(first)
@@ -968,7 +890,7 @@ bool menu()
 		// Initialise le GUI
 		delete gui;
 		gui=new hgeGUI();
-
+		snd=hge->Effect_Load("boing_2.mp3");
 		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
 		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
 		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Instructions"));
@@ -980,8 +902,14 @@ bool menu()
 		gui->SetFocus(1);
 		gui->Enter();
 		
+		if (musicmenu)
+		{
+			hge->Stream_Free(myMusic);
+			myMusic = Res->GetStream("theme_menu");
+			chan[0] = hge->Stream_Play(myMusic, true);
+			musicmenu=false;
+		}
 		firstTimeMenu = false;
-		chan[0] = hge->Stream_Play(myMusic_menu, true);
 	}
 
 	float dt=hge->Timer_GetDelta();
@@ -1018,7 +946,7 @@ bool menu()
 			  niveau = 0;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
-			  if(first)
+				if(first)
 				{
 					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
 					coul_bsuivante = attrib_boule(alea_n); // Permet de faire le lien entre les chiffres et les couleurs de boules
@@ -1056,17 +984,19 @@ bool fin()
 	hge->Gfx_BeginScene();
 	float dt=hge->Timer_GetDelta();
 	bgfin->Render(0, 0); // background gumble
-	if(premier)
+			if(premier)
 			{	
-				hge->Stream_Play(myMusic_menu,true,0);
+				
 				// Initialisation de la music
-				chan[0] = hge->Stream_Play(l4, true);	
+				hge->Stream_Free(myMusic);
+				myMusic = Res->GetStream("lafin");
+				chan[0] = hge->Stream_Play(myMusic, true);
 				premier = false;
 			}			
 
 
 		// Mise en place menu 
-		if (firstTimeMenu)
+		if (firstTimeMenufin)
 		{
 			// Chargement sons munu click
 			snd=hge->Effect_Load("boing_2.mp3");
@@ -1084,7 +1014,7 @@ bool fin()
 			hge->Stream_Play(l4,true,0);
 			// Initialisation de la music
 			chan[0] = hge->Stream_Play(myMusic_fin, true);	
-			firstTimeMenu = false;
+			firstTimeMenufin = false;
 		}
 
 		// Pour gérer le cursor et l'update des images
@@ -1099,8 +1029,11 @@ bool fin()
 		switch(lastid)
 		{
 		  case 1: 
-			   hge->System_SetState(HGE_FRAMEFUNC, menu); //gaem_int
-			   break;
+				firstTimeMenufin = true; 
+				firstTimeMenu = true;
+				musicmenu = true;
+				hge->System_SetState(HGE_FRAMEFUNC, menu); //gaem_int
+				break;
 		}
 	  }
 	  else if(id) { lastid=id; gui->Leave(); }
@@ -1124,6 +1057,7 @@ bool game()
 		hge->System_SetState(HGE_FRAMEFUNC, menu);
 		lastid = 0;
 		firstTimeMenu = true;
+		musicmenu=true;
 	}
 	
 	// Pour charger le fond et la musique en fonction du niveau
@@ -1131,13 +1065,13 @@ bool game()
 	{
 		case 0: {
 			// Render graphics
-			bgSprite->Render(0, 0); 
+			bg4->Render(0, 0); 
 			
 			if(premier)
 			{	
-				hge->Stream_Play(myMusic_menu,true,0);
-				// Initialisation de la music
-				chan[0] = hge->Stream_Play(l4, true);	
+				hge->Stream_Free(myMusic);
+				myMusic = Res->GetStream("mlevel1");
+				chan[0] = hge->Stream_Play(myMusic, true);	
 				premier = false;
 			}			
 			break;
@@ -1147,26 +1081,47 @@ bool game()
 			bg4->Render(0, 0); 
 			if(premier)
 			{	
-				hge->Stream_Play(myMusic_menu,true,0);
-				// Initialisation de la music
-				chan[0] = hge->Stream_Play(l4, true);	
+				hge->Stream_Free(myMusic);
+				myMusic = Res->GetStream("mlevel2");
+				chan[0] = hge->Stream_Play(myMusic, true);
 				premier = false;
 			}	
 			break;
 		}
 		case 2: {
 			// Render graphics
-			bgSprite->Render(0, 0);   
+			bgSprite->Render(0, 0); 
+			if(premier)
+			{	
+				hge->Stream_Free(myMusic);
+				myMusic = Res->GetStream("mlevel3");
+				chan[0] = hge->Stream_Play(myMusic, true);
+				premier = false;
+			}	
 			break;
 		}
 		case 3: {
 			// Render graphics
-			bgSprite->Render(0, 0);   
+			bgSprite->Render(0, 0); 
+			if(premier)
+			{	
+				hge->Stream_Free(myMusic);
+				myMusic = Res->GetStream("mlevel4");
+				chan[0] = hge->Stream_Play(myMusic, true);
+				premier = false;
+			}	
 			break;
 		}
 		case 4: {
 			// Render graphics
-			bgSprite->Render(0, 0);   
+			bgSprite->Render(0, 0);  
+			if(premier)
+			{	
+				hge->Stream_Free(myMusic);	// Free de l'ancienne music
+				myMusic = Res->GetStream("lafin"); // Load de la nouvelle
+				chan[0] = hge->Stream_Play(myMusic, true); // Play de la music
+				premier = false;
+			}	
 			break;
 		}
 		default : {
@@ -1261,12 +1216,6 @@ bool game()
 			}
 		}
 
-
-	
-		// Permet de récupérer les coordonnées de la souris à virer par la suite //////////////////////////////////
-		hge->Input_GetMousePos(&mouseX, &mouseY);
-		////////////////////////////// A virer par la suite ! //////////////////////////////////
-
 		//Génerer un nombre aléatoire si la variable 'lunched' est à vrai pour générer un boule suivante
 		if(lunched==true)
 		{
@@ -1326,52 +1275,6 @@ bool game()
 			{
 				lunched_boule(coul_bcourante, rotTd);
 			}
-
-			/* du bon gros caca pour l'instant
-			if(noSuspendedIsDowning) ///// FAIRE DESCENDRE LES BOULES NON SUSPENDUES (chaud chaud chaud !)
-			{
-				noSuspendedAnimDowning += 0.5;
-				if(animDowning < 100)
-				{
-					for(int i = 0;i < 80;i++)
-					{
-						if(noSuspendedTab[i])
-						{
-							int y = i/8;
-							int x = i%8;
-
-							float decalage = 0.0;       // si la ligne est paire, on la décale
-
-							if((y+swapPair)%2 == 0)
-							{
-								decalage = bouleSizeX/2;
-								if(y == 0)
-									premierelignepaire = true;
-								if(y == 1)
-									premierelignepaire = false;
-							}
-							float x1 = xMap+((x)*bouleSizeX+decalage);
-							float y1 = yMap-((y-1)*bouleSizeY);
-
-							float x2 = xMap+bouleSizeX+((x)*bouleSizeX+decalage);
-							float y2 = yMap-bouleSizeX-((y-1)*bouleSizeY);
-
-							y1 -= noSuspendedAnimDowning;
-							y2 -= noSuspendedAnimDowning;
-							b_orange->RenderStretch(x1, y1, x2, y2);
-						}
-					}
-				}
-				else
-				{
-					animDowning = 0;
-					for(int i = 0; i < 80;i++)
-					{
-						noSuspendedTab[i] = false;
-					}
-					noSuspendedIsDowning = false;
-				}
-			}*/
 
 			for(int y=0; y<sizeY; ++y) // affiche les boules et leur descente
 			{
@@ -1490,6 +1393,7 @@ bool game()
 		
 		if(win)
 		{
+			hge->Stream_Free(myMusic);	// Free de l'ancienne music
 			stop_time = true;
 			you_win->Render(292,248);
 			float end_time = 0;
@@ -1499,9 +1403,10 @@ bool game()
 			hge->Stream_Play(myMusic_menu,true,100); // Permet de couper le son quand on perd et de le remettre dans le menu 
 				if(ttest)
 				{
-					swin=hge->Effect_Load("win.wav");
+					swin=hge->Effect_Load("win.mp3");
 					hge->Effect_Play(swin);
 					ttest=false;
+					premier = true; // permet de pouvoir recharger la music quand on re joue un level
 				}
 		}
 
@@ -1522,13 +1427,14 @@ bool game()
 			float end_time = 0;
 			end_time = ttime;
 			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
-			hge->Stream_Play(myMusic_menu,true,100); // Permet de couper le son quand on perd et de le remettre dans le menu 
+			hge->Stream_Free(myMusic);	// Free de l'ancienne music
 				
 				if(ttest)
 				{
 					sgameover=hge->Effect_Load("gameover.wav");
 					hge->Effect_Play(sgameover);
 					ttest=false;
+					premier = true; // Permet de rejouer la music quand on perd un level
 				}
 		}
 	
@@ -1664,7 +1570,6 @@ bool credit()
 			"\n\n"
 			"using HGE and C++\n\n"
 			"Space to return menu");
-	//hge->System_SetState(HGE_WINDOWED, (MessageBox(NULL, "Run game in windowed mode?", "Windowed?", MB_YESNO | MB_ICONQUESTION) == IDYES) ? true : false);
 	gui->SetCursor(spr);
 	gui->Render();
 	gui->Update(dt);
