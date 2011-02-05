@@ -90,7 +90,8 @@ bool noSuspendedTab[80];
 // Variable pour calculer le score
 int score = 0;
 
-
+bool firstTimeMenufin = true;
+bool musicmenu = true;
 // Pour afficher le tire canon (bonus)
 int bonus = 0;
 
