@@ -816,7 +816,7 @@ bool smenu()
 			  LoadMap(0); // Charge Map0 pourle début du jeu
 			  score = 0;
 			  niveau = 0;
-			  timeDown = 25;
+			  timeDown = 30;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  if(first)
@@ -1390,7 +1390,7 @@ bool game()
 		}
 		if(winTest)
 			win = true;
-		
+
 		if(win)
 		{
 			hge->Stream_Free(myMusic);	// Free de l'ancienne music
@@ -1398,16 +1398,17 @@ bool game()
 			you_win->Render(292,248);
 			float end_time = 0;
 			end_time = ttime;
-			tglobal += end_time;
+			
 			font1->printf(678,142, HGETEXT_LEFT, "%.2f", end_time); // .2f pour afficher uniquement 2 décimales
 			hge->Stream_Play(myMusic_menu,true,100); // Permet de couper le son quand on perd et de le remettre dans le menu 
-				if(ttest)
-				{
-					swin=hge->Effect_Load("win.mp3");
-					hge->Effect_Play(swin);
-					ttest=false;
-					premier = true; // permet de pouvoir recharger la music quand on re joue un level
-				}
+			if(ttest)
+			{
+				swin=hge->Effect_Load("win.mp3");
+				hge->Effect_Play(swin);
+				ttest=false;
+				tglobal += end_time;
+				premier = true; // permet de pouvoir recharger la music quand on re joue un level
+			}
 		}
 
 		//!\\ A revoir car je dois faire un pointeur pour stopper le temps quand la partie est perdu ou gagné ! :)

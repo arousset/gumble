@@ -70,7 +70,7 @@ float canonLocX = 398, canonLocY = 498; // Coordonnées pour le canon
 bool lunched = false; // Permet de savoir si la boule courante a été lancé ou non
 int alea_c = 1; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
 int alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
-float tglobal =0;
+float tglobal = 0.0;
 bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
 bool first = true; // Pour la 1er génération de nombre aléatoire
 bool firstTimeMenu = true; // Pour le premier passage au menu
