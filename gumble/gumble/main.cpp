@@ -493,6 +493,7 @@ void destroyNoSuspended(int index, bool lignePaire, bool *tab)
 	}
 }
 
+//tmp2 rempli le tableau globale (noSuspendedTab) des boules reliées a cette qui a explosée
 void tmp2(bool *tab)
 {
 	for(int i = 0; i < 88;i++)
@@ -1567,25 +1568,53 @@ bool credit()
 	fnt->SetColor(0xFFFFFFFF);
 	fnt->Render(390, 345, HGETEXT_CENTER, "Credit\n"
 			"GUMBLE\n\n"
-			"KAWCZAK Clement & ROUSSET Alban\n"
-			"\n\n"
+			"Code by Kawczak Clement & Rousset Alban\n"
+			"Design by Heannig Xavier & Rousset Alban\n"
 			"using HGE and C++\n\n"
-			"Space to return menu");
+			);
+
+	// Mise en place menu 
+		if (firstTimeMenufin)
+		{
+			// Chargement sons munu click
+			snd=hge->Effect_Load("boing_2.mp3");
+		
+			// Initialise le GUI
+			delete gui;
+			gui=new hgeGUI();
+
+			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,530,0.0f,"Back to menu"));
+					
+			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+		
+			gui->Enter();
+			firstTimeMenufin = false;
+		}
+
+
 	gui->SetCursor(spr);
 	gui->Render();
 	gui->Update(dt);
 	
-	if(hge->Input_GetKeyState(HGEK_SPACE))
-	{
-		hge->System_SetState(HGE_FRAMEFUNC, menu);
-		lastid = 0;
-		firstTimeMenu = true;
-	}
+	int id;
+	id=gui->Update(dt);
+	  if(id == -1)
+	  {
+		switch(lastid)
+		{
+		  case 1: 
+				firstTimeMenufin = true; 
+				firstTimeMenu = true;
+				musicmenu = true;
+				hge->System_SetState(HGE_FRAMEFUNC, menu); //gaem_int
+				break;
+		}
+	  }
+	  else if(id) { lastid=id; gui->Leave(); }
 
 	hge->Gfx_EndScene();
 	return false;
 }
-
 // Menu pour le partie multiplayer
 bool multiplayer()
 {
