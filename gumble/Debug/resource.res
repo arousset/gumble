@@ -189,6 +189,33 @@ Stream legameover
  filename=gameover.mp3
 }
 
+<<<<<<< .mine
+Stream lafin
+{
+ filename=fin.mp3
+}
+
+Stream mlevel1
+{
+ filename=l1.mp3
+}
+
+Stream mlevel2
+{
+ filename=l2.mp3
+}
+
+Stream mlevel3
+{
+ filename=l3.mp3
+}
+
+Stream mlevel4
+{
+ filename=l4.mp3
+}
+
+=======
 Stream lafin
 {
  filename=fin.mp3
@@ -199,6 +226,7 @@ Stream mlevel4
  filename=l4.mp3
 }
 
+>>>>>>> .r90
 Stream lewin
 {
  filename=win.wav
