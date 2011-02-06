@@ -773,10 +773,10 @@ bool smenu()
 		delete gui;
 		gui=new hgeGUI();
 
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Easy"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Middle"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Hard"));
-		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Back to menu"));
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,400,0.0f,"Easy"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,415,440,0.1f,"Middle")); 
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,415,480,0.2f,"Hard"));
+		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,415,520,0.3f,"Back to menu"));
 		
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
@@ -790,7 +790,7 @@ bool smenu()
 	static int bulles = 0;
 
 
-	frog->RenderStretch(328,250,454,333);	
+	frog->RenderStretch(340,280,483,363);	
 	frog->Update(dt);
 
 	particleManager->Update(dt);
@@ -817,9 +817,10 @@ bool smenu()
 			  LoadMap(0); // Charge Map0 pourle début du jeu
 			  score = 0;
 			  niveau = 0;
-			  timeDown = 30;
+			  timeDown = 300;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
+			  premier = true;
 			  if(first)
 				{
 					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
@@ -892,11 +893,11 @@ bool menu()
 		delete gui;
 		gui=new hgeGUI();
 		snd=hge->Effect_Load("boing_2.mp3");
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Play 1 Player"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Multiplayer"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Instructions"));
-		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,385,480,0.3f,"Credits"));
-		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,385,520,0.4f,"Exit"));
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,360,0.0f,"Play 1 Player"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,415,400,0.1f,"Multiplayer"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,415,440,0.2f,"Instructions"));
+		gui->AddCtrl(new hgeGUIMenuItem(4,fnt,snd,415,480,0.3f,"Credits"));
+		gui->AddCtrl(new hgeGUIMenuItem(5,fnt,snd,415,520,0.4f,"Exit"));
 		
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
@@ -917,7 +918,7 @@ bool menu()
 	static int bulles = 0;
 
 
-	frog->RenderStretch(328,250,454,333);	
+	frog->RenderStretch(340,280,483,363);	
 	frog->Update(dt);
 
 	particleManager->Update(dt);
@@ -987,7 +988,6 @@ bool fin()
 	bgfin->Render(0, 0); // background gumble
 			if(premier)
 			{	
-				
 				// Initialisation de la music
 				hge->Stream_Free(myMusic);
 				myMusic = Res->GetStream("lafin");
@@ -1006,13 +1006,11 @@ bool fin()
 			delete gui;
 			gui=new hgeGUI();
 
-			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Back to menu"));
+			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,360,0.0f,"Back to menu"));
 					
 			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
 			gui->Enter();
-			hge->Stream_Play(myMusic_menu,true,0);
-			hge->Stream_Play(l4,true,0);
 			// Initialisation de la music
 			chan[0] = hge->Stream_Play(myMusic_fin, true);	
 			firstTimeMenufin = false;
@@ -1040,9 +1038,9 @@ bool fin()
 	  else if(id) { lastid=id; gui->Leave(); }
 
 		// Mise en place du score
-		font1->printf(50, 142, HGETEXT_LEFT,"%d", score);
+		font1->printf(200, 400, HGETEXT_LEFT,"%d", score);
 		// Mise en place du temps
-		font1->printf(678,142, HGETEXT_LEFT, "%.2f", tglobal); // .2f pour afficher uniquement 2 décimales
+		font1->printf(550,400, HGETEXT_LEFT, "%.2f", tglobal); // .2f pour afficher uniquement 2 décimales
 		
 		
 	hge->Gfx_EndScene();
@@ -1066,7 +1064,7 @@ bool game()
 	{
 		case 0: {
 			// Render graphics
-			bg4->Render(0, 0); 
+			bgSprite->Render(0, 0); 
 			
 			if(premier)
 			{	
@@ -1079,7 +1077,7 @@ bool game()
 		}
 		case 1: {
 			// Render graphics
-			bg4->Render(0, 0); 
+			bgSprite->Render(0, 0); 
 			if(premier)
 			{	
 				hge->Stream_Free(myMusic);
@@ -1194,7 +1192,7 @@ bool game()
 				win = false;
 				stop_time = false;
 
-				if(niveau == 1 && hge->Input_GetKey()==HGEK_SPACE)
+				if(niveau == 2 && hge->Input_GetKey()==HGEK_SPACE)
 				{
 					firstTimeMenu = true;
 					hge->System_SetState(HGE_FRAMEFUNC, fin);
@@ -1508,7 +1506,7 @@ bool instruction()
 
 	// Pour gumble la grounouille particule !
 	static int bulles = 0;
-	frog->RenderStretch(328,250,454,333);	
+	frog->RenderStretch(340,280,483,363);	
 	frog->Update(dt);
 
 	particleManager->Update(dt);
@@ -1523,21 +1521,48 @@ bool instruction()
 	bulles++;
 
 	fnt->SetColor(0xFFFFFFFF);
-	fnt->Render(390, 345, HGETEXT_CENTER, "Instructions\n"
-								     	"Shoot the color balls\n\n"
-										"\n\n"
-										"ESPACE - Shoot\n"
-										"Left / Right - Turn the canon\n\n"
-										"");
+	fnt->Render(415, 345, HGETEXT_CENTER, "\n Instruction \n\n"
+			"Left / Right : turn canon\n"
+			"Space : lunched balls\n"
+			"Bonus : Over 5 balls explode, extra bonus target !\n\n"
+			);
+
+	// Mise en place menu 
+		if (firstTimeMenufin)
+		{
+			// Chargement sons munu click
+			snd=hge->Effect_Load("boing_2.mp3");
+		
+			// Initialise le GUI
+			delete gui;
+			gui=new hgeGUI();
+
+			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,530,0.0f,"Back to menu"));
+					
+			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
+		
+			gui->Enter();
+			firstTimeMenufin = false;
+			firstTimeMenu = true;
+		}
 	gui->Render();
 	gui->Update(dt);
 	gui->SetCursor(spr);
-	if(hge->Input_GetKeyState(HGEK_SPACE))
-	{
-		hge->System_SetState(HGE_FRAMEFUNC, menu);
-		lastid = 0;
-		firstTimeMenu = true;
-	}
+	
+	int id;
+	id=gui->Update(dt);
+	  if(id == -1)
+	  {
+		switch(lastid)
+		{
+		  case 1: 
+				firstTimeMenufin = true; 
+
+				hge->System_SetState(HGE_FRAMEFUNC, menu); //gaem_int
+				break;
+		}
+	  }
+	  else if(id) { lastid=id; gui->Leave(); }
 
 	hge->Gfx_EndScene();
 	return false;
@@ -1551,7 +1576,7 @@ bool credit()
 	
 	// Pour gumble la grounouille particule !
 	static int bulles = 0;
-	frog->RenderStretch(328,250,454,333);	
+	frog->RenderStretch(340,280,483,363);	
 	frog->Update(dt);
 
 	particleManager->Update(dt);
@@ -1566,14 +1591,13 @@ bool credit()
 	bulles++;
 
 	fnt->SetColor(0xFFFFFFFF);
-	fnt->Render(390, 345, HGETEXT_CENTER, "Credit\n"
-			"GUMBLE\n\n"
+	fnt->Render(415, 345, HGETEXT_CENTER, "\nCredit\n\n"
 			"Code by Kawczak Clement & Rousset Alban\n"
 			"Design by Heannig Xavier & Rousset Alban\n"
 			"using HGE and C++\n\n"
 			);
 
-	// Mise en place menu 
+		// Mise en place menu 
 		if (firstTimeMenufin)
 		{
 			// Chargement sons munu click
@@ -1583,7 +1607,7 @@ bool credit()
 			delete gui;
 			gui=new hgeGUI();
 
-			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,530,0.0f,"Back to menu"));
+			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,530,0.0f,"Back to menu"));
 					
 			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
@@ -1603,10 +1627,7 @@ bool credit()
 		switch(lastid)
 		{
 		  case 1: 
-				firstTimeMenufin = true; 
-				firstTimeMenu = true;
-				musicmenu = true;
-				hge->System_SetState(HGE_FRAMEFUNC, menu); //gaem_int
+				hge->System_SetState(HGE_FRAMEFUNC, menu); 
 				break;
 		}
 	  }
@@ -1630,9 +1651,9 @@ bool multiplayer()
 		delete gui;
 		gui=new hgeGUI();
 
-		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,385,360,0.0f,"Create a party"));
-		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,385,400,0.1f,"Join a party"));
-		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,385,440,0.2f,"Back to menu"));
+		gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,360,0.0f,"Create a party"));
+		gui->AddCtrl(new hgeGUIMenuItem(2,fnt,snd,415,400,0.1f,"Join a party"));
+		gui->AddCtrl(new hgeGUIMenuItem(3,fnt,snd,415,440,0.2f,"Back to menu"));
 		
 		gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
@@ -1646,7 +1667,7 @@ bool multiplayer()
 	static int bulles = 0;
 
 
-	frog->RenderStretch(328,250,454,333);	
+	frog->RenderStretch(340,280,483,363);	
 	frog->Update(dt);
 
 	particleManager->Update(dt);
