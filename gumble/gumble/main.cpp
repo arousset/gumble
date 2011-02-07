@@ -713,6 +713,8 @@ void lunched_boule(char couleur, float angle)
 void LoadMap(int map)
 {
 	FILE* f = NULL;
+	timeCpt = 0;
+	ttest = true;
 	switch (map)
 	{
 		case 0: {
@@ -758,7 +760,7 @@ void LoadMap(int map)
 	fclose(f);	
 }
 
-// Sous menu pourl e mode 1 player (difficulté)
+// Sous menu pour le mode 1 player (difficulté)
 bool smenu()
 {
 	hge->Gfx_BeginScene();
@@ -798,7 +800,7 @@ bool smenu()
 	if(bulles%3000 == 0)
 	{
 		bulles = 0;
-		particleManager->SpawnPS(&particle_bulles, 340, 260);
+		particleManager->SpawnPS(&particle_bulles, 360, 295);
 	}
 	particleManager->Render();
 
@@ -817,7 +819,7 @@ bool smenu()
 			  LoadMap(0); // Charge Map0 pourle début du jeu
 			  score = 0;
 			  niveau = 0;
-			  timeDown = 300;
+			  timeDown = 100;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  premier = true;
@@ -836,7 +838,7 @@ bool smenu()
 			  LoadMap(0); // Charge Map0 pourle début du jeu
 			  score = 0;
 			  niveau = 0;
-			  timeDown = 12;
+			  timeDown = 20;
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  if(first)
@@ -888,7 +890,7 @@ bool menu()
 	
 	if (firstTimeMenu)
 	{
-	
+		tglobal=0;
 		// Initialise le GUI
 		delete gui;
 		gui=new hgeGUI();
@@ -926,7 +928,7 @@ bool menu()
 	if(bulles%3000 == 0)
 	{
 		bulles = 0;
-		particleManager->SpawnPS(&particle_bulles, 340, 260);
+		particleManager->SpawnPS(&particle_bulles, 360, 295);
 	}
 	particleManager->Render();
 
@@ -1006,7 +1008,7 @@ bool fin()
 			delete gui;
 			gui=new hgeGUI();
 
-			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,360,0.0f,"Back to menu"));
+			gui->AddCtrl(new hgeGUIMenuItem(1,fnt,snd,415,460,0.0f,"Back to menu"));
 					
 			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
@@ -1037,10 +1039,11 @@ bool fin()
 	  }
 	  else if(id) { lastid=id; gui->Leave(); }
 
+		font1->SetColor(ARGB(255,0,255,48));
 		// Mise en place du score
-		font1->printf(200, 400, HGETEXT_LEFT,"%d", score);
+		font1->printf(160, 400, HGETEXT_LEFT,"%d", score);
 		// Mise en place du temps
-		font1->printf(550,400, HGETEXT_LEFT, "%.2f", tglobal); // .2f pour afficher uniquement 2 décimales
+		font1->printf(590, 400, HGETEXT_LEFT, "%.2f", tglobal); // .2f pour afficher uniquement 2 décimales
 		
 		
 	hge->Gfx_EndScene();
@@ -1059,6 +1062,15 @@ bool game()
 		musicmenu=true;
 	}
 	
+
+	if(hge->Input_GetKeyState(HGEK_CTRL) && hge->Input_GetKeyState(HGEK_P))
+	{
+		for(int i=0; i<88; i++)
+		{
+			pMap[i] = 'x';
+		}
+	}
+
 	// Pour charger le fond et la musique en fonction du niveau
 	switch (niveau)
 	{
@@ -1148,7 +1160,6 @@ bool game()
 				isDowning = true;
 			}
 		}
-
 		// Passe lunched à vrai (pour boule lancée) si espace pressé
 		if(!loose && !win)
 		{
@@ -1191,7 +1202,7 @@ bool game()
 				LoadMap(niveau);
 				win = false;
 				stop_time = false;
-
+				ttest = true;;
 				if(niveau == 2 && hge->Input_GetKey()==HGEK_SPACE)
 				{
 					firstTimeMenu = true;
@@ -1514,7 +1525,7 @@ bool instruction()
 	if(bulles%3000 == 0)
 	{
 		bulles = 0;
-		particleManager->SpawnPS(&particle_bulles, 340, 260);
+		particleManager->SpawnPS(&particle_bulles, 360, 295);
 	}
 	particleManager->Render();
 
@@ -1528,7 +1539,7 @@ bool instruction()
 			);
 
 	// Mise en place menu 
-		if (firstTimeMenufin)
+		if (firstTimeMenu)
 		{
 			// Chargement sons munu click
 			snd=hge->Effect_Load("boing_2.mp3");
@@ -1542,8 +1553,8 @@ bool instruction()
 			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
 			gui->Enter();
-			firstTimeMenufin = false;
-			firstTimeMenu = true;
+			lastid=0;
+			firstTimeMenu = false;
 		}
 	gui->Render();
 	gui->Update(dt);
@@ -1556,7 +1567,7 @@ bool instruction()
 		switch(lastid)
 		{
 		  case 1: 
-				firstTimeMenufin = true; 
+				firstTimeMenu = true; 
 
 				hge->System_SetState(HGE_FRAMEFUNC, menu); //gaem_int
 				break;
@@ -1584,7 +1595,7 @@ bool credit()
 	if(bulles%3000 == 0)
 	{
 		bulles = 0;
-		particleManager->SpawnPS(&particle_bulles, 340, 260);
+		particleManager->SpawnPS(&particle_bulles, 360, 295);
 	}
 	particleManager->Render();
 
@@ -1598,7 +1609,7 @@ bool credit()
 			);
 
 		// Mise en place menu 
-		if (firstTimeMenufin)
+		if (firstTimeMenu)
 		{
 			// Chargement sons munu click
 			snd=hge->Effect_Load("boing_2.mp3");
@@ -1612,7 +1623,8 @@ bool credit()
 			gui->SetNavMode(HGEGUI_UPDOWN | HGEGUI_CYCLED);
 		
 			gui->Enter();
-			firstTimeMenufin = false;
+			lastid=0;
+			firstTimeMenu = false;
 		}
 
 
@@ -1627,6 +1639,7 @@ bool credit()
 		switch(lastid)
 		{
 		  case 1: 
+				firstTimeMenu = true; 
 				hge->System_SetState(HGE_FRAMEFUNC, menu); 
 				break;
 		}
@@ -1675,7 +1688,7 @@ bool multiplayer()
 	if(bulles%3000 == 0)
 	{
 		bulles = 0;
-		particleManager->SpawnPS(&particle_bulles, 340, 260);
+		particleManager->SpawnPS(&particle_bulles, 360, 295);
 	}
 	particleManager->Render();
 
