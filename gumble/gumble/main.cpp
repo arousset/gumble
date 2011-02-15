@@ -496,11 +496,11 @@ void destroyNoSuspended(int index, bool lignePaire, bool *tab)
 //tmp2 rempli le tableau globale (noSuspendedTab) des boules reliées a cette qui a explosée
 void tmp2(bool *tab)
 {
-	for(int i = 0; i < 88;i++)
+	for(int i = 0; i < 80;i++)
 	{
 		if(tab[i])
 		{
-			pMap[i] = 'x';
+			//pMap[i] = 'x'; /////////////////////////////////////////////////////
 			noSuspendedTab[i] = true;
 		}
 	}
@@ -511,17 +511,17 @@ void tmp(int index, bool lignePaire)
 	bool* tab = new bool[88];
 
 	if(index%8 != 0)
-			if(pMap[index-1] != 'x')
+		if(pMap[index-1] != 'x' && !tabToDestroy[index-1])
+		{
+			init(tab);
+			destroyNoSuspended(index-1, lignePaire, tab);
+			if(needDestroyation(tab))
 			{
-				init(tab);
-				destroyNoSuspended(index-1, lignePaire, tab);
-				if(needDestroyation(tab))
-				{
-					tmp2(tab);
-				}
+				tmp2(tab);
 			}
+		}
 		if(index%8 != 7)
-			if(pMap[index+1] != 'x')
+			if(pMap[index+1] != 'x' && !tabToDestroy[index+1])
 			{
 				init(tab);
 				destroyNoSuspended(index+1, lignePaire, tab);
@@ -530,7 +530,7 @@ void tmp(int index, bool lignePaire)
 					tmp2(tab);
 				}
 			}
-		if(pMap[index+8] != 'x')
+		if(pMap[index+8] != 'x' && !tabToDestroy[index+8])
 		{
 			init(tab);
 			destroyNoSuspended(index+8, !lignePaire, tab);
@@ -539,7 +539,7 @@ void tmp(int index, bool lignePaire)
 				tmp2(tab);
 			}
 		}
-		if(pMap[index-8] != 'x')
+		if(pMap[index-8] != 'x' && !tabToDestroy[index-8])
 		{
 			init(tab);
 			destroyNoSuspended(index-8, !lignePaire, tab);
@@ -551,7 +551,7 @@ void tmp(int index, bool lignePaire)
 		if(lignePaire)
 		{
 			if(index%8 != 7)
-				if(pMap[index+8+1] != 'x')
+				if(pMap[index+8+1] != 'x' && !tabToDestroy[index+9])
 				{
 					init(tab);
 					destroyNoSuspended(index+8+1, !lignePaire, tab);
@@ -561,7 +561,7 @@ void tmp(int index, bool lignePaire)
 					}
 				}
 			if(index%8 != 7)
-				if(pMap[index-8+1] != 'x')
+				if(pMap[index-8+1] != 'x' && !tabToDestroy[index-8-1])
 				{
 					init(tab);
 					destroyNoSuspended(index-8+1, !lignePaire, tab);
@@ -574,7 +574,7 @@ void tmp(int index, bool lignePaire)
 		else
 		{
 			if(index%8 != 0)
-				if(pMap[index+8-1] != 'x')
+				if(pMap[index+8-1] != 'x' && !tabToDestroy[index+8-1])
 				{
 					init(tab);
 					destroyNoSuspended(index+8-1, !lignePaire, tab);
@@ -584,7 +584,7 @@ void tmp(int index, bool lignePaire)
 					}
 				}
 			if(index%8 != 0)
-				if(pMap[index-8-1] != 'x')
+				if(pMap[index-8-1] != 'x' && !tabToDestroy[index-8-1])
 				{
 					init(tab);
 					destroyNoSuspended(index-8-1, !lignePaire, tab);
@@ -594,6 +594,7 @@ void tmp(int index, bool lignePaire)
 					}
 				}
 		}
+		free(tab);
 }
 
 void lunched_boule(char couleur, float angle)
@@ -697,15 +698,36 @@ void lunched_boule(char couleur, float angle)
 							}
 						}
 								// rajouter un petit son
-						tmp(i, yPaire);
+
+						bool yPaire2 = premierelignepaire;
+						int j = 8;
+						while(i >= j)
+						{
+							yPaire2 = !yPaire2;
+							j += 8;
+						}
+
+						tmp(i, yPaire2);
 					}
 				}
+				for(int i = 0;i < 80;i++)
+				{
+					if(noSuspendedTab[i])
+					{
+						pMap[i] = 'x';		
+					}
+				}
+				
 				explosion=hge->Effect_Load("explode.wav");
 				hge->Effect_Play(explosion);
 			}
 			
 			blunched_boule = false;
 			lunched=true;  
+		}
+		for(int i = 0;i < 80;i++)
+		{
+			noSuspendedTab[i] = false;
 		}
 
 }
@@ -715,6 +737,8 @@ void LoadMap(int map)
 	FILE* f = NULL;
 	timeCpt = 0;
 	ttest = true;
+	bonus = 0;
+	
 	switch (map)
 	{
 		case 0: {
@@ -1139,7 +1163,6 @@ bool game()
 			  break;
 		}
 	}
-
 	float dt=hge->Timer_GetDelta();  //get the time since the last call to FrameFunc
 		timeCpt += dt; // on additionne les temps entre les images
 		if(timeCpt > timeDown && !loose && !win) // si ce compteur est supérieur aux temps définis pour faire tomber les boules :
@@ -1271,13 +1294,32 @@ bool game()
 		if(bonus > 0)
 		{
 			// test pour afficher la direction du tir
-			for(int i = 0; i < 400;i++)
+			for(int i = 0; i < 800;i++)
 			{
-				b_violet->RenderStretch(
-					(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
-					(float)(480+(bouleSizeX/2)-(i*0.5)),
-					(float)(380+(bouleSizeX/2)-2.5+(i*rot)+5),
-					(float)(480+(bouleSizeX/2)-(i*0.5)+5));
+				if((380+(bouleSizeX/2)-2.5+(i*rot)) < xMap)
+				{
+					b_violet->RenderStretch(
+						(float)(80+(bouleSizeX/2)-2.5+(-i*rot)),
+						(float)(480+(bouleSizeX/2)-(i*0.5)),
+						(float)(80+(bouleSizeX/2)-2.5+(i*-rot)+5),
+						(float)(480+(bouleSizeX/2)-(i*0.5)+5));
+				}
+				else if((380+(bouleSizeX/2)-2.5+(i*rot)) > xMap+(8*bouleSizeX))
+				{
+					b_violet->RenderStretch(
+						(float)(380+(8*bouleSizeX)+(bouleSizeX/2)-2.5+(-i*rot)),
+						(float)(480+(bouleSizeX/2)-(i*0.5)),
+						(float)(380+(8*bouleSizeX)+(bouleSizeX/2)-2.5+(-i*rot)+5),
+						(float)(480+(bouleSizeX/2)-(i*0.5)+5));
+				}
+				else
+				{
+					b_violet->RenderStretch(
+						(float)(380+(bouleSizeX/2)-2.5+(i*rot)),
+						(float)(480+(bouleSizeX/2)-(i*0.5)),
+						(float)(380+(bouleSizeX/2)-2.5+(i*rot)+5),
+						(float)(480+(bouleSizeX/2)-(i*0.5)+5));
+				}
 			}
 		}
 
@@ -1359,11 +1401,12 @@ bool game()
 						}
 						else
 						{
+							
 							switch (pMap[index])
 							{
+								
 								case 'r': {
 									  b_rouge->RenderStretch(x1, y1, x2, y2);
-									  //font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
 									  break;
 								}
 								case 'v': {
@@ -1384,7 +1427,9 @@ bool game()
 								case 'w': { // pour représenter le violet car la lettre v est déja utilisé pour le vert
 									  b_violet->RenderStretch(x1, y1, x2, y2);break;
 								}
+										  
 						   }
+							//font1->printf(x1+10, y1-30, HGETEXT_LEFT,"%d", index);
 						}
 					}
 				}
@@ -1790,6 +1835,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		// Jouer la music de fond 
 		//chan[0] = hge->Stream_Play(myMusic_menu, true);
 		
+		for(int i = 0;i < 80;i++)
+		{
+			noSuspendedTab[i] = false;
+		}
 		
 		
 		b_rouge->Play();  //start playback of animation
