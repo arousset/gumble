@@ -46,9 +46,11 @@ hgeSprite* bgfin;
 // Pointeur pour la police d'écriture
 hgeFont* font1;
 
+int alea_couleur = 0;
 int id_menu = -1; // Pour gérer les différents écrans de jeux
 char* pMap = NULL; // pointeur sur la desctiption de la map
 int* Tboule_count; // Pointeur pour les boules
+float* Tboule_stat; // Pinteur pour les stats
 int sizeX, sizeY;
 float fScale =27;
 const int xMap = 245; // abscisse de la plus basse ligne pour afficher les boules
@@ -64,12 +66,13 @@ float speedY = (float)0.05; // vitesse de la boule du joueur
 float speedX = (float)0.1; // inclinaison de la boule du joueur
 bool loose = false; // Permet de gérer si la partie est perdu
 bool win = false;
+float val = 0;
 float rot = 0.0; // Permet la rotation du canon
 float mouseX, mouseY; // Coordonnées de la souris
 float canonLocX = 398, canonLocY = 498; // Coordonnées pour le canon
 bool lunched = false; // Permet de savoir si la boule courante a été lancé ou non
-int alea_c = 1; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
-int alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
+float alea_c = 1; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
+float alea_n = 4; // Chiffre qui prendra une valeur aléatoire entre [1 - 7] qui représente le nombre de couleur des boules
 float tglobal = 0.0;
 bool blunched_boule = false; // Pour que la boule grimpe tte seul ! 
 bool first = true; // Pour la 1er génération de nombre aléatoire
