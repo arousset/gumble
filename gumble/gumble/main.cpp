@@ -101,7 +101,7 @@ void count_occurence()
 }
 
 // Fonction permettant de générer un nombre aléatoire entre 2 bornes [x-y]
-int my_rand ()
+float my_rand ()
 {
 	int maxnb = 0;
 	int ind=0;
@@ -110,29 +110,37 @@ int my_rand ()
 	
 	for(int i = 0;i<8;i++)
 	{
-		Tboule_count[i]=0;
+		Tboule_count[i] = 0;
+		Tboule_stat[i]   = 0;
 	}
 
 	count_occurence();
 	sum = sum_boule();
-	ind = see_max_ind();
-	maxnb = see_max_nb();
-	division = (float)maxnb/(float)sum;
-	
-	// On fait les statistiques (Little player !!!)
-	if(division > 0.3)
-	{ 
-		return ind+1; // retourne l'indice de la couleur la plus présente si >50% || 35%
-	}else{
-			hge->Random_Seed(0);  //sets the seed to the current time
-			return (hge->Random_Int(1, 7)); // Aleatoire
+
+	for(int j=0;j<8;j++)
+	{
+		Tboule_stat[j] = (float) Tboule_count[j]/ (float) sum;
 	}
+	
+	val = hge->Random_Float(0,1);
+	return val; // Aleatoire
 }
 
-char attrib_boule(int couleur)
+char attrib_boule(float couleur)
 {
 	char Ccouleur;
-	switch (couleur)
+	float tmp = 0;
+	float k=0;
+	int l=0;
+
+	while(couleur > k)
+	{
+		k = k + Tboule_stat[l];
+		tmp = l;
+		l++;
+	}
+
+	switch (l)
 	{
 		case 1: {
 			  Ccouleur = 'r';break;
@@ -159,6 +167,9 @@ char attrib_boule(int couleur)
 			  Ccouleur = 'r';break;
 		}
 	}
+
+	alea_couleur = l;
+
 	return Ccouleur;
 }
 
@@ -847,6 +858,7 @@ bool smenu()
 			  timeBegin = hge->Timer_GetTime();
 			  rot = 0.0;
 			  premier = true;
+			  
 			  if(first)
 				{
 					alea_n = my_rand(); // Génére un nombre entre 1 et 7 compris pour la boule suivante
@@ -1523,7 +1535,7 @@ bool game()
 	
 		if(!blunched_boule)
 		{
-			switch (alea_c)
+ 			switch (alea_couleur)
 			{
 				case 1: {
 					  b_rouge->RenderStretch(posX_depart,posY_depart,posX_depart+bouleSizeX,posY_depart+bouleSizeX);break;
@@ -1787,7 +1799,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	if(hge->System_Initiate())
 	{
 		Tboule_count = new int[7];
-		
+		Tboule_stat = new float[7];
+
 		// Chargement du fichier 'ressource.res'
 		Res = new hgeResourceManager("resource.res");  
 		// Chargement du background
